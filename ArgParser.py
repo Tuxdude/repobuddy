@@ -22,13 +22,13 @@ import argparse
 
 # An argparse Action class
 # XXX: not currently used
-class ArgParserAction(argparse.Action):
+class _ArgParserAction(argparse.Action):
     def __call__(self, parser, namespace, values, optionString=None):
         setattr(namespace, self.dest, values)
 
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
-class MasterParser(argparse.ArgumentParser):
+class _MasterParser(argparse.ArgumentParser):
     # Method overriden from argparse.ArgumentParser
     def error(self, message):
         print self.prog + ': Error!!! ' + message + '\n'
@@ -55,7 +55,7 @@ class ArgParser:
     # Setup the master and the sub-parsers for each of the commands
     def _SetupParsers(self):
         # Top level parser
-        self._masterParser = MasterParser(
+        self._masterParser = _MasterParser(
                 description = 'Multi-repo manager for Git',
                 prog        = 'repodude')
         self._masterParser.add_argument(
