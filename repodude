@@ -17,9 +17,18 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import sys
 from ArgParser import ArgParser
+from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 
-argParser = ArgParser()
-argParser.Parse()
+# XXX: Commenting arg parser till we have XML parsing working
+#argParser = ArgParser()
+#argParser.Parse()
+
+repoConfigParser = RepoConfigParser()
+try:
+    repoConfigParser.Parse(sys.argv[1])
+except RepoConfigParserError as err:
+    print err
 
 sys.exit(0)
