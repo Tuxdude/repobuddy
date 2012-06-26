@@ -46,7 +46,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         # Verify defaultClientSpec is part of clientSpecList
         # Check for duplicate names
         foundDefaultClientSpec = False
-        foundClientSpecs = { }
+        foundClientSpecs = set()
         for clientSpec in self._config['clientSpecList']:
             if clientSpec['name'] == self._config['defaultClientSpec']:
                 foundDefaultClientSpec = True
@@ -54,7 +54,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
                 raise RepoConfigParserError(
                         'Error: Duplicate Client Spec \'' +
                         clientSpec['name'] + '\' found')
-            foundClientSpecs[clientSpec['name']] = True
+            foundClientSpecs.add(clientSpec['name'])
         if not foundDefaultClientSpec:
             raise RepoConfigParserError(
                     'Error: Unable to find the Client Spec \'' +
