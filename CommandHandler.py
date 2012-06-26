@@ -16,7 +16,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-class CommandHandlers:
+class CommandHandler:
     def __init__(self, xmlConfig):
         self._xmlConfig = xmlConfig
         return
