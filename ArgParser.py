@@ -24,35 +24,22 @@ import argparse
 class _ArgParserAction(argparse.Action):
     def __call__(self, parser, namespace, values, optionString=None):
         setattr(namespace, self.dest, values)
+        return
 
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
 class _MasterParser(argparse.ArgumentParser):
     # Method overriden from argparse.ArgumentParser
     def error(self, message):
-        print self.prog + ': Error!!! ' + message + '\n'
+        print self.prog + ': Error: ' + message + '\n'
         self.print_help()
         self.exit(2)
+        return
 
 # Class to configures all the argparse parsers
 class ArgParser:
-    # init command post-parser
-    def _PostParseInit(self, args):
-        print "init command parsed"
-        print args
-
-    # help command post-parser
-    def _PostParseHelp(self, args):
-        print "help command parsed"
-        print args
-
-    # status command post-parser
-    def _PostParseStatus(self, args):
-        print "status command parsed"
-        print args
-
     # Setup the master and the sub-parsers for each of the commands
-    def _SetupParsers(self):
+    def _SetupParsers(self, handlers):
         # Top level parser
         self._masterParser = _MasterParser(
                 description = 'Multi-repo manager for Git',
@@ -72,9 +59,9 @@ class ArgParser:
                 'init',
                 help = 'Init the current directory to set up the repos')
         self._initCommandParser.add_argument(
-                'repoConfig',
-                help = 'Choose the repo config to use')
-        self._initCommandParser.set_defaults(func = self._PostParseInit)
+                'clientSpec',
+                help = 'Choose the client spec to use')
+        self._initCommandParser.set_defaults(func = handlers['init'])
 
         # help command sub-parser
         self._helpCommandParser = self._subParsers.add_parser(
@@ -83,23 +70,23 @@ class ArgParser:
         self._helpCommandParser.add_argument(
                 'command',
                 help = 'Command to see the help message for')
-        self._helpCommandParser.set_defaults(func = self._PostParseHelp)
+        self._helpCommandParser.set_defaults(func = handlers['help'])
 
         # status command sub-parser
         self._statusCommandParser = self._subParsers.add_parser(
                 'status',
                 help = 'Show status of the current repo config')
-        self._statusCommandParser.set_defaults(func = self._PostParseStatus)
+        self._statusCommandParser.set_defaults(func = handlers['status'])
         return
 
     # Constructor
-    def __init__(self):
-        self._SetupParsers()
+    def __init__(self, handlers):
+        self._SetupParsers(handlers)
         return
 
     # Parse sys.argv
-    def Parse(self):
-        self._args = self._masterParser.parse_args()
+    def Parse(self, args):
+        self._args = self._masterParser.parse_args(args)
         self._args.func(self._args)
         return
 

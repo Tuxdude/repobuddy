@@ -1,4 +1,3 @@
-#! /usr/bin/env python
 #
 #   Copyright (C) 2012 Ash (Tuxdude)
 #   tuxdude.github@gmail.com
@@ -17,27 +16,26 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import sys
-from ArgParser import ArgParser
-from RepoConfigParser import RepoConfigParser, RepoConfigParserError
-from CommandHandlers import CommandHandlers
+class CommandHandlers:
+    def __init__(self, xmlConfig):
+        self._xmlConfig = xmlConfig
+        return
 
-config = 'config/repoconfig-example.xml'
+    def GetHandlers(self):
+        handlers = { }
+        handlers['init'] = self.InitCommandHandler
+        handlers['status'] = self.StatusCommandHandler
+        handlers['help'] = self.HelpCommandHandler
+        return handlers
 
-# Parse the config file
-repoConfigParser = RepoConfigParser()
-try:
-    repoConfigParser.Parse(config)
-except RepoConfigParserError as err:
-    print err
-    sys.exit(1)
-xmlConfig = repoConfigParser.GetConfig()
+    def InitCommandHandler(self, args):
+        print 'init ' + args.clientSpec
+        return
 
-commandHandlers = CommandHandlers(xmlConfig)
-handlers = commandHandlers.GetHandlers()
+    def StatusCommandHandler(self, args):
+        print 'status command'
+        return
 
-# Now parse the command line arguments
-argParser = ArgParser(handlers)
-argParser.Parse(sys.argv[1:])
-
-sys.exit(0)
+    def HelpCommandHandler(self, args):
+        print 'help ' + args.command
+        return
