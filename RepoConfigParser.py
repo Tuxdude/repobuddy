@@ -39,19 +39,25 @@ class _XmlContentHandler(xml.sax.ContentHandler):
     def _validateConfig(self):
         # Verify that defaultClientSpec is set
         if self._config['defaultClientSpec'] == '':
-            raise RepoConfigParserError('Error: defaultClientSpec cannot be empty !')
+            raise RepoConfigParserError('Error: defaultClientSpec cannot be empty')
         # Verify that there is at least one element in the clientSpecList
         if len(self._config['clientSpecList']) == 0:
-            raise RepoConfigParserError('Error: There should be at least one valid ClientSpec')
+            raise RepoConfigParserError('Error: There should be at least one valid Client Spec')
         # Verify defaultClientSpec is part of clientSpecList
-        # XXX: Check for duplicate names ??
+        # Check for duplicate names
         foundDefaultClientSpec = False
+        foundClientSpecs = { }
         for clientSpec in self._config['clientSpecList']:
             if clientSpec['name'] == self._config['defaultClientSpec']:
                 foundDefaultClientSpec = True
+            if clientSpec['name'] in foundClientSpecs:
+                raise RepoConfigParserError(
+                        'Error: Duplicate Client Spec \'' +
+                        clientSpec['name'] + '\' found')
+            foundClientSpecs[clientSpec['name']] = True
         if not foundDefaultClientSpec:
             raise RepoConfigParserError(
-                    'Error: Unable to find the ClientSpec \'' +
+                    'Error: Unable to find the Client Spec \'' +
                     self._config['defaultClientSpec'] +
                     '\' in the list of Repos')
         return
@@ -77,14 +83,14 @@ class _XmlContentHandler(xml.sax.ContentHandler):
                 self._config['defaultClientSpec'] = \
                     copy.deepcopy(str(attrs.getValue('defaultClientSpec')))
             except KeyError:
-                raise RepoConfigParserError('Error: No defaultClientSpec found !')
+                raise RepoConfigParserError('Error: No defaultClientSpec found')
         elif name == 'ClientSpec':
             self._lastClientSpec = { }
             self._lastClientSpec['repoList'] = [ ]
             try:
                 self._lastClientSpec['name'] = attrs.getValue('name')
             except KeyError:
-                raise RepoConfigParserError('Error: No name specified for ClientSpec !')
+                raise RepoConfigParserError('Error: No name specified for ClientSpec')
         elif name == 'Repo':
             self._lastRepo = { }
 
@@ -92,7 +98,6 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         return
 
     def endElement(self, name):
-#        if name == 'RepoDudeConfig':
         if name == 'ClientSpec':
             # Add this clientspec to the config
             self._config['clientSpecList'].append(self._lastClientSpec)
