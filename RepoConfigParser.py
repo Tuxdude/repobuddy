@@ -19,13 +19,41 @@
 import copy
 import xml.sax
 
+class RepoConfigParserError:
+    def __init__(self, errorStr):
+        self._errorStr = errorStr
+        return
+
+    def __str__(self):
+        return str(self._errorStr)
+
+    def __repr__(self):
+        return repr(self._errorStr)
+
+
 # config - a list of client specs
 # Each client Spec - a list of repos
 # Each repo - a dict with following keys { Url, Branch, Destination }
 
 class _XmlContentHandler(xml.sax.ContentHandler):
     def _validateConfig(self):
-        print self._config
+        # Verify that defaultClientSpec is set
+        if self._config['defaultClientSpec'] == '':
+            raise RepoConfigParserError('Error: defaultClientSpec cannot be empty !')
+        # Verify that there is at least one element in the clientSpecList
+        if len(self._config['clientSpecList']) == 0:
+            raise RepoConfigParserError('Error: There should be at least one valid ClientSpec')
+        # Verify defaultClientSpec is part of clientSpecList
+        # XXX: Check for duplicate names ??
+        foundDefaultClientSpec = False
+        for clientSpec in self._config['clientSpecList']:
+            if clientSpec['name'] == self._config['defaultClientSpec']:
+                foundDefaultClientSpec = True
+        if not foundDefaultClientSpec:
+            raise RepoConfigParserError(
+                    'Error: Unable to find the ClientSpec \'' +
+                    self._config['defaultClientSpec'] +
+                    '\' in the list of Repos')
         return
 
     def __init__(self):
@@ -49,13 +77,14 @@ class _XmlContentHandler(xml.sax.ContentHandler):
                 self._config['defaultClientSpec'] = \
                     copy.deepcopy(str(attrs.getValue('defaultClientSpec')))
             except KeyError:
-                raise RepoConfigParserError('Error: No defaultClientSpec found!')
+                raise RepoConfigParserError('Error: No defaultClientSpec found !')
         elif name == 'ClientSpec':
+            self._lastClientSpec = { }
+            self._lastClientSpec['repoList'] = [ ]
             try:
-                self._clientSpecName = attrs.getValue('name')
+                self._lastClientSpec['name'] = attrs.getValue('name')
             except KeyError:
-                raise RepoConfigParserError('Error: No name specified for ClientSpec')
-            self._lastClientSpec = [ ]
+                raise RepoConfigParserError('Error: No name specified for ClientSpec !')
         elif name == 'Repo':
             self._lastRepo = { }
 
@@ -69,7 +98,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
             self._config['clientSpecList'].append(self._lastClientSpec)
         elif name == 'Repo':
             # Add this repo to the clientspec
-            self._lastClientSpec.append(self._lastRepo)
+            self._lastClientSpec['repoList'].append(self._lastRepo)
         elif name == 'Url':
             # Set the url key in the repo
             self._lastRepo['url'] = self._lastContent
@@ -84,18 +113,6 @@ class _XmlContentHandler(xml.sax.ContentHandler):
     def characters(self, content):
         self._lastContent += str(content)
         return
-
-
-class RepoConfigParserError:
-    def __init__(self, errorStr):
-        self._errorStr = errorStr
-        return
-
-    def __str__(self):
-        return str(self._errorStr)
-
-    def __repr__(self):
-        return repr(self._errorStr)
 
 
 class RepoConfigParser:
@@ -114,3 +131,6 @@ class RepoConfigParser:
         finally:
             repoConfigXmlFile.close()
         return
+
+    def GetConfig(self):
+        return self._config
