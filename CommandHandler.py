@@ -23,21 +23,21 @@ class CommandHandler:
         self._xmlConfig = xmlConfig
         return
 
-    def GetHandlers(self):
+    def getHandlers(self):
         handlers = { }
-        handlers['init'] = self.InitCommandHandler
-        handlers['status'] = self.StatusCommandHandler
-        handlers['help'] = self.HelpCommandHandler
+        handlers['init'] = self.initCommandHandler
+        handlers['status'] = self.statusCommandHandler
+        handlers['help'] = self.helpCommandHandler
         return handlers
 
-    def InitCommandHandler(self, args):
+    def initCommandHandler(self, args):
         print 'init ' + args.clientSpec
         return
 
-    def StatusCommandHandler(self, args):
+    def statusCommandHandler(self, args):
         print 'status command'
         return
 
-    def HelpCommandHandler(self, args):
+    def helpCommandHandler(self, args):
         print 'help ' + args.command
         return

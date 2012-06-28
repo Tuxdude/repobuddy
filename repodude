@@ -29,17 +29,17 @@ config = 'config/repoconfig-example.xml'
 # Parse the config file
 repoConfigParser = RepoConfigParser()
 try:
-    repoConfigParser.Parse(config)
+    repoConfigParser.parse(config)
 except RepoConfigParserError as err:
     print err
     sys.exit(1)
-xmlConfig = repoConfigParser.GetConfig()
+xmlConfig = repoConfigParser.getConfig()
 
 commandHandler = CommandHandler(xmlConfig)
-handlers = commandHandler.GetHandlers()
+handlers = commandHandler.getHandlers()
 
 # Now parse the command line arguments
 argParser = ArgParser(handlers)
-argParser.Parse(sys.argv[1:])
+argParser.parse(sys.argv[1:])
 
 sys.exit(0)

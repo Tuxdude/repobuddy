@@ -127,7 +127,7 @@ class RepoConfigParser:
         self._xmlContentHandler = _XmlContentHandler()
         return
 
-    def Parse(self, fileName):
+    def parse(self, fileName):
         repoConfigXmlFile = open(fileName)
         try:
             self._config = xml.sax.parse(repoConfigXmlFile,
@@ -139,5 +139,5 @@ class RepoConfigParser:
             repoConfigXmlFile.close()
         return
 
-    def GetConfig(self):
+    def getConfig(self):
         return self._config

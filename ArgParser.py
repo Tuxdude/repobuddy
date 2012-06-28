@@ -41,7 +41,7 @@ class _MasterParser(argparse.ArgumentParser):
 # Class to configures all the argparse parsers
 class ArgParser:
     # Setup the master and the sub-parsers for each of the commands
-    def _SetupParsers(self, handlers):
+    def _setupParsers(self, handlers):
         # Top level parser
         self._masterParser = _MasterParser(
                 description = 'Multi-repo manager for Git',
@@ -83,11 +83,11 @@ class ArgParser:
 
     # Constructor
     def __init__(self, handlers):
-        self._SetupParsers(handlers)
+        self._setupParsers(handlers)
         return
 
-    # Parse sys.argv
-    def Parse(self, args):
+    # Parse
+    def parse(self, args):
         self._args = self._masterParser.parse_args(args)
         self._args.func(self._args)
         return
