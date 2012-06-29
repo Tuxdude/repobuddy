@@ -33,6 +33,28 @@ class RepoConfigParserError:
         return repr(self._errorStr)
 
 
+class Repo:
+    def __init__(self):
+        self.url = ''
+        self.branch = ''
+        self.destination = ''
+        return
+
+
+class ClientSpec:
+    def __init__(self):
+        self.name = ''
+        self.repoList = [ ]
+        return
+
+
+class RepoConfig:
+    def __init__(self):
+        self.defaultClientSpec = ''
+        self.clientSpecList = [ ]
+        return
+
+
 # config - a list of client specs
 # Each client Spec - a list of repos
 # Each repo - a dict with following keys { Url, Branch, Destination }
@@ -40,27 +62,27 @@ class RepoConfigParserError:
 class _XmlContentHandler(xml.sax.ContentHandler):
     def _validateConfig(self):
         # Verify that defaultClientSpec is set
-        if self._config['defaultClientSpec'] == '':
+        if self._config.defaultClientSpec == '':
             raise RepoConfigParserError('Error: defaultClientSpec cannot be empty')
         # Verify that there is at least one element in the clientSpecList
-        if len(self._config['clientSpecList']) == 0:
+        if len(self._config.clientSpecList) == 0:
             raise RepoConfigParserError('Error: There should be at least one valid Client Spec')
         # Verify defaultClientSpec is part of clientSpecList
         # Check for duplicate names
         foundDefaultClientSpec = False
         foundClientSpecs = set()
-        for clientSpec in self._config['clientSpecList']:
-            if clientSpec['name'] == self._config['defaultClientSpec']:
+        for clientSpec in self._config.clientSpecList:
+            if clientSpec.name == self._config.defaultClientSpec:
                 foundDefaultClientSpec = True
-            if clientSpec['name'] in foundClientSpecs:
+            if clientSpec.name in foundClientSpecs:
                 raise RepoConfigParserError(
                         'Error: Duplicate Client Spec \'' +
-                        clientSpec['name'] + '\' found')
-            foundClientSpecs.add(clientSpec['name'])
+                        clientSpec.name + '\' found')
+            foundClientSpecs.add(clientSpec.name)
         if not foundDefaultClientSpec:
             raise RepoConfigParserError(
                     'Error: Unable to find the Client Spec \'' +
-                    self._config['defaultClientSpec'] +
+                    self._config.defaultClientSpec +
                     '\' in the list of Repos')
         return
 
@@ -70,9 +92,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
 
     # Overriden methods of xml.sax.ContentHandler
     def startDocument(self):
-        self._config = { }
-        self._config['defaultClientSpec'] = ''
-        self._config['clientSpecList'] = [ ]
+        self._config = RepoConfig()
         return
 
     def endDocument(self):
@@ -82,19 +102,18 @@ class _XmlContentHandler(xml.sax.ContentHandler):
     def startElement(self, name, attrs):
         if name == 'RepoDudeConfig':
             try:
-                self._config['defaultClientSpec'] = \
+                self._config.defaultClientSpec = \
                     copy.deepcopy(str(attrs.getValue('defaultClientSpec')))
             except KeyError:
                 raise RepoConfigParserError('Error: No defaultClientSpec found')
         elif name == 'ClientSpec':
-            self._lastClientSpec = { }
-            self._lastClientSpec['repoList'] = [ ]
+            self._lastClientSpec = ClientSpec()
             try:
-                self._lastClientSpec['name'] = attrs.getValue('name')
+                self._lastClientSpec.name = attrs.getValue('name')
             except KeyError:
                 raise RepoConfigParserError('Error: No name specified for ClientSpec')
         elif name == 'Repo':
-            self._lastRepo = { }
+            self._lastRepo = Repo()
 
         self._lastContent = ''
         return
@@ -102,19 +121,19 @@ class _XmlContentHandler(xml.sax.ContentHandler):
     def endElement(self, name):
         if name == 'ClientSpec':
             # Add this clientspec to the config
-            self._config['clientSpecList'].append(self._lastClientSpec)
+            self._config.clientSpecList.append(self._lastClientSpec)
         elif name == 'Repo':
             # Add this repo to the clientspec
-            self._lastClientSpec['repoList'].append(self._lastRepo)
+            self._lastClientSpec.repoList.append(self._lastRepo)
         elif name == 'Url':
             # Set the url key in the repo
-            self._lastRepo['url'] = self._lastContent
+            self._lastRepo.url = self._lastContent
         elif name == 'Branch':
             # Set the branch key in the repo
-            self._lastRepo['branch'] = self._lastContent
+            self._lastRepo.branch = self._lastContent
         elif name == 'Destination':
             # Set the destination key in the repo
-            self._lastRepo['destination'] = self._lastContent
+            self._lastRepo.destination = self._lastContent
         return
 
     def characters(self, content):

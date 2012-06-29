@@ -47,8 +47,8 @@ class CommandHandler:
     def initCommandHandler(self, args):
         foundClientSpec = False
         clientSpec = None
-        for spec in self._xmlConfig['clientSpecList']:
-            if spec['name'] == args.clientSpec:
+        for spec in self._xmlConfig.clientSpecList:
+            if spec.name == args.clientSpec:
                 clientSpec = spec
                 break
         if clientSpec == None:
@@ -56,9 +56,9 @@ class CommandHandler:
                     'Unable to find the Client Spec: \'' +
                     args.clientSpec + '\'')
         currentDir = os.getcwd()
-        for repo in clientSpec['repoList']:
+        for repo in clientSpec.repoList:
             git = GitWrapper(currentDir)
-            git.clone(repo['url'], repo['branch'], repo['destination'])
+            git.clone(repo.url, repo.branch, repo.destination)
         return
 
     def statusCommandHandler(self, args):
