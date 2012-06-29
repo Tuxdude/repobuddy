@@ -32,7 +32,7 @@ class CommandHandlerError(Exception):
     def __repr__(self):
         return repr(self._errorStr)
 
-class CommandHandler:
+class CommandHandler(object):
     def __init__(self, xmlConfig):
         self._xmlConfig = xmlConfig
         return

@@ -33,7 +33,7 @@ class RepoConfigParserError(Exception):
         return repr(self._errorStr)
 
 
-class Repo:
+class Repo(object):
     def __init__(self):
         self.url = ''
         self.branch = ''
@@ -41,14 +41,14 @@ class Repo:
         return
 
 
-class ClientSpec:
+class ClientSpec(object):
     def __init__(self):
         self.name = ''
         self.repoList = [ ]
         return
 
 
-class RepoConfig:
+class RepoConfig(object):
     def __init__(self):
         self.defaultClientSpec = ''
         self.clientSpecList = [ ]
@@ -144,7 +144,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         return self._config
 
 
-class RepoConfigParser:
+class RepoConfigParser(object):
     def __init__(self):
         self._xmlContentHandler = _XmlContentHandler()
         return

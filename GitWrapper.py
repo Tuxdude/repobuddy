@@ -31,7 +31,7 @@ class GitWrapperError(Exception):
     def __repr__(self):
         return repr(self._errorStr)
 
-class GitWrapper:
+class GitWrapper(object):
     def _execGit(self, command, dontChangeDir = False):
         gitCmd = command[:]
         gitCmd.insert(0, 'git')

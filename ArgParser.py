@@ -39,7 +39,7 @@ class _MasterParser(argparse.ArgumentParser):
         return
 
 # Class to configures all the argparse parsers
-class ArgParser:
+class ArgParser(object):
     # Setup the master and the sub-parsers for each of the commands
     def _setupParsers(self, handlers):
         # Top level parser
