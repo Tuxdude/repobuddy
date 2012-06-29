@@ -18,6 +18,20 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import os
+from GitWrapper import GitWrapper
+
+class CommandHandlerError:
+    def __init__(self, errorStr):
+        self._errorStr = errorStr
+        return
+
+    def __str__(self):
+        return str(self._errorStr)
+
+    def __repr__(self):
+        return repr(self._errorStr)
+
 class CommandHandler:
     def __init__(self, xmlConfig):
         self._xmlConfig = xmlConfig
@@ -31,7 +45,20 @@ class CommandHandler:
         return handlers
 
     def initCommandHandler(self, args):
-        print 'init ' + args.clientSpec
+        foundClientSpec = False
+        clientSpec = None
+        for spec in self._xmlConfig['clientSpecList']:
+            if spec['name'] == args.clientSpec:
+                clientSpec = spec
+                break
+        if clientSpec == None:
+            raise CommandHandlerError(
+                    'Unable to find the Client Spec: \'' +
+                    args.clientSpec + '\'')
+        currentDir = os.getcwd()
+        for repo in clientSpec['repoList']:
+            git = GitWrapper(currentDir)
+            git.clone(repo['url'], repo['branch'], repo['destination'])
         return
 
     def statusCommandHandler(self, args):

@@ -121,6 +121,9 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         self._lastContent += str(content)
         return
 
+    def getConfig(self):
+        return self._config
+
 
 class RepoConfigParser:
     def __init__(self):
@@ -129,14 +132,15 @@ class RepoConfigParser:
 
     def parse(self, fileName):
         repoConfigXmlFile = open(fileName)
+        xmlParser = _XmlContentHandler()
         try:
-            self._config = xml.sax.parse(repoConfigXmlFile,
-                                         _XmlContentHandler())
+            xml.sax.parse(repoConfigXmlFile, xmlParser)
         except xml.sax.SAXParseException as err:
             raise RepoConfigParserError(
                     'Unable to parse the RepoConfig Xml file: ' + str(err))
         finally:
             repoConfigXmlFile.close()
+        self._config = xmlParser.getConfig()
         return
 
     def getConfig(self):

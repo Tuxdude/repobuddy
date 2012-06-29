@@ -35,7 +35,7 @@ class GitWrapper:
     def _execGit(self, command, dontChangeDir = False):
         gitCmd = command[:]
         gitCmd.insert(0, 'git')
-        print gitCmd
+        print 'Exec: ' + ' '.join(gitCmd)
         try:
             if not dontChangeDir:
                 proc = subprocess.Popen(
@@ -53,10 +53,11 @@ class GitWrapper:
             if errMsg != '':
                 print errMsg
             returnCode = proc.wait()
-            print returnCode
+            if returnCode != 0:
+                raise GitWrapperError(str(errMsg))
         except OSError as err:
             raise GitWrapperError(str(err))
-            return
+        return
 
     # Constructor
     # baseDir - is the base directory of the git repo
@@ -69,6 +70,6 @@ class GitWrapper:
 
     # Clone the git repo at remoteUrl checking out branch
     # Equivalent of git clone -b branch remoteUrl
-    def clone(self, remoteUrl, branch):
-        self._execGit(['clone', '-b', branch, remoteUrl, self._baseDir], True)
+    def clone(self, remoteUrl, branch, destDir):
+        self._execGit(['clone', '-b', branch, remoteUrl, destDir])
         return
