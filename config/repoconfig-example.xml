@@ -3,26 +3,26 @@
 <RepoDudeConfig defaultClientSpec="Spec1">
     <ClientSpec name="Spec1">
         <Repo>
-            <Url>github:somerepo1.git</Url>
+            <Url>github:Tuxdude/delphinus.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/somerepo1-test</Destination>
+            <Destination>testing-ground/delphinus</Destination>
         </Repo>
         <Repo>
-            <Url>github:somerepo2.git</Url>
+            <Url>github:Tuxdude/repodude.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/somerepo2-test</Destination>
+            <Destination>testing-ground/repodude</Destination>
         </Repo>
     </ClientSpec>
     <ClientSpec name="Spec2">
         <Repo>
-            <Url>github:somerepo1.git</Url>
+            <Url>github:Tuxdude/delphinus.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/somerepo1-test</Destination>
+            <Destination>testing-ground/delphinus</Destination>
         </Repo>
         <Repo>
-            <Url>github:somerepo2.git</Url>
+            <Url>github:Tuxdude/repodude.git</Url>
             <Branch>dev</Branch>
-            <Destination>testing-ground/somerepo2-test</Destination>
+            <Destination>testing-ground/repodude</Destination>
         </Repo>
     </ClientSpec>
 </RepoDudeConfig>
