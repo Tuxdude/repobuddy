@@ -41,15 +41,12 @@ class GitWrapper(object):
                 proc = subprocess.Popen(
                         gitCmd,
                         cwd = self._baseDir,
-                        stdout = subprocess.PIPE,
                         stderr = subprocess.PIPE)
             else:
                 proc = subprocess.Popen(
                         gitCmd,
-                        stdout = subprocess.PIPE,
                         stderr = subprocess.PIPE)
-            (outMsg, errMsg) = proc.communicate()
-            print outMsg
+            errMsg = proc.communicate()[1]
             if errMsg != '':
                 print errMsg
             returnCode = proc.wait()
