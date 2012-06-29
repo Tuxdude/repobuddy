@@ -20,7 +20,7 @@
 
 import subprocess
 
-class GitWrapperError:
+class GitWrapperError(Exception):
     def __init__(self, errorStr):
         self._errorStr = errorStr
         return

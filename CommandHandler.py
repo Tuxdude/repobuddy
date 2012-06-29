@@ -21,7 +21,7 @@
 import os
 from GitWrapper import GitWrapper
 
-class CommandHandlerError:
+class CommandHandlerError(Exception):
     def __init__(self, errorStr):
         self._errorStr = errorStr
         return

@@ -21,7 +21,7 @@
 import copy
 import xml.sax
 
-class RepoConfigParserError:
+class RepoConfigParserError(Exception):
     def __init__(self, errorStr):
         self._errorStr = errorStr
         return
