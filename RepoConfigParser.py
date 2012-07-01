@@ -1,7 +1,7 @@
 #
 #   Copyright (C) 2012 Ash (Tuxdude) <tuxdude.github@gmail.com>
 #
-#   This file is part of repodude.
+#   This file is part of repobuddy.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU Lesser General Public License as
@@ -100,7 +100,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         return
 
     def startElement(self, name, attrs):
-        if name == 'RepoDudeConfig':
+        if name == 'RepoBuddyConfig':
             try:
                 self._config.defaultClientSpec = \
                     copy.deepcopy(str(attrs.getValue('defaultClientSpec')))

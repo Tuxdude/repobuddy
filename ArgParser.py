@@ -1,7 +1,7 @@
 #
 #   Copyright (C) 2012 Ash (Tuxdude) <tuxdude.github@gmail.com>
 #
-#   This file is part of repodude.
+#   This file is part of repobuddy.
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ class ArgParser(object):
         # Top level parser
         self._masterParser = _MasterParser(
                 description = 'Multi-repo manager for Git',
-                prog        = 'repodude')
+                prog        = 'repobuddy')
         self._masterParser.add_argument(
                 '-v',
                 '--version',
