@@ -4,7 +4,7 @@ repobuddy
 Multi-repository management tool for GIT
 
 An easy alternative to git sub-modules, to configure and maintain multiple
-repositories.
+Git repositories.
 
 Features (planned)
 ------------------
@@ -15,5 +15,5 @@ Features (planned)
 -   Sync up the latest config file, and update the local set of repos.
 -   Switch between different configs seamlessly in the same local copy.
 
-Inspired by Google's Android repo tool, this tool provides a much simpler
-way to managing multiple GIT repos in a project.
+Inspired by Google's Android repo tool, but much simpler to configure,
+customize and manage a project with multiple Git repositories.
