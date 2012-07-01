@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- XML repo config used by repodude -->
-<RepoDudeConfig defaultClientSpec="Spec1">
+<!-- XML repo config used by repobuddy -->
+<RepoBuddyConfig defaultClientSpec="Spec1">
     <ClientSpec name="Spec1">
         <Repo>
             <Url>github:Tuxdude/delphinus.git</Url>
@@ -8,9 +8,9 @@
             <Destination>testing-ground/delphinus</Destination>
         </Repo>
         <Repo>
-            <Url>github:Tuxdude/repodude.git</Url>
+            <Url>github:Tuxdude/repobuddy.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/repodude</Destination>
+            <Destination>testing-ground/repobuddy</Destination>
         </Repo>
     </ClientSpec>
     <ClientSpec name="Spec2">
@@ -20,9 +20,9 @@
             <Destination>testing-ground/delphinus</Destination>
         </Repo>
         <Repo>
-            <Url>github:Tuxdude/repodude.git</Url>
+            <Url>github:Tuxdude/repobuddy.git</Url>
             <Branch>dev</Branch>
-            <Destination>testing-ground/repodude</Destination>
+            <Destination>testing-ground/repobuddy</Destination>
         </Repo>
     </ClientSpec>
-</RepoDudeConfig>
+</RepoBuddyConfig>
