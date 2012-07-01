@@ -20,6 +20,7 @@
 
 import os
 from GitWrapper import GitWrapper, GitWrapperError
+from RepoBuddyUtils import FileLock, FileLockError
 
 class CommandHandlerError(Exception):
     def __init__(self, errorStr):
@@ -45,6 +46,7 @@ class CommandHandler(object):
         return handlers
 
     def initCommandHandler(self, args):
+        # Retrieve the client spec corresponding to the command-line argument
         foundClientSpec = False
         clientSpec = None
         for spec in self._xmlConfig.clientSpecList:
@@ -55,13 +57,40 @@ class CommandHandler(object):
             raise CommandHandlerError(
                     'Unable to find the Client Spec: \'' +
                     args.clientSpec + '\'')
+
         currentDir = os.getcwd()
-        for repo in clientSpec.repoList:
-            git = GitWrapper(currentDir)
+        repoBuddyDir = os.path.join(currentDir, '.repobuddy')
+        # Check if there is already a .repobuddy
+        if not os.path.isdir(repoBuddyDir):
+            # Create the .repobuddy directory if it does not exist already
             try:
-                git.clone(repo.url, repo.branch, repo.destination)
-            except GitWrapperError as err:
-                raise CommandHandlerError('Error: Git said => ' + str(err))
+                os.mkdir(repoBuddyDir)
+            except OSError as err:
+                raise CommandHandlerError('Error: ' + str(err))
+        else:
+            print 'Found an existing .repobuddy directory...'
+
+        try:
+            lockFile = os.path.join(repoBuddyDir, 'lock')
+            # Acquire the lock before doing anything else
+            with FileLock(lockFile) as lock:
+                print 'Lock \'' + lockFile + '\' acquired'
+                # Process each repo in the Client Spec
+                for repo in clientSpec.repoList:
+                    git = GitWrapper(currentDir)
+                    git.clone(repo.url, repo.branch, repo.destination)
+        except FileLockError as err:
+            # If it is a timeout error, it could be one of the following:
+            # *** another instance of repobuddy is running
+            # *** repobuddy was killed earlier without releasing the lock file
+            if err.isTimeOut:
+                raise CommandHandlerError(
+                        'Error: Lock file ' + lockFile + ' already exists\n' +
+                        'Is another instance of repobuddy running ?')
+            else:
+                raise CommandHandlerError('Error: ' + str(err))
+        except GitWrapperError as err:
+            raise CommandHandlerError('Error: Git said => ' + str(err))
         return
 
     def statusCommandHandler(self, args):

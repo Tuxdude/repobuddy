@@ -25,4 +25,21 @@
             <Destination>testing-ground/repobuddy</Destination>
         </Repo>
     </ClientSpec>
+    <ClientSpec name="Spec3">
+        <Repo>
+            <Url>github:Tuxdude/delphinus.git</Url>
+            <Branch>master</Branch>
+            <Destination>testing-ground/delphinus</Destination>
+        </Repo>
+        <Repo>
+            <Url>github:Tuxdude/repobuddy.git</Url>
+            <Branch>dev</Branch>
+            <Destination>testing-ground/repobuddy</Destination>
+        </Repo>
+        <Repo>
+            <Url>github:Tuxdude/linux.git</Url>
+            <Branch>master</Branch>
+            <Destination>testing-ground/linux</Destination>
+        </Repo>
+    </ClientSpec>
 </RepoBuddyConfig>
