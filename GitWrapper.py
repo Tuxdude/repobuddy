@@ -47,8 +47,8 @@ class GitWrapper(object):
                         gitCmd,
                         stderr = subprocess.PIPE)
             errMsg = proc.communicate()[1]
-            if errMsg != '':
-                print errMsg
+#            if errMsg != '':
+#                print errMsg
             returnCode = proc.wait()
             if returnCode != 0:
                 raise GitWrapperError(str(errMsg))

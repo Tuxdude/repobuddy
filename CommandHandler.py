@@ -19,7 +19,7 @@
 #
 
 import os
-from GitWrapper import GitWrapper
+from GitWrapper import GitWrapper, GitWrapperError
 
 class CommandHandlerError(Exception):
     def __init__(self, errorStr):
@@ -58,7 +58,10 @@ class CommandHandler(object):
         currentDir = os.getcwd()
         for repo in clientSpec.repoList:
             git = GitWrapper(currentDir)
-            git.clone(repo.url, repo.branch, repo.destination)
+            try:
+                git.clone(repo.url, repo.branch, repo.destination)
+            except GitWrapperError as err:
+                raise CommandHandlerError('Error: Git said => ' + str(err))
         return
 
     def statusCommandHandler(self, args):
