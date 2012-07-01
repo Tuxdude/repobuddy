@@ -1,5 +1,5 @@
-repobuddy
-========
+Repo Buddy
+==========
 
 Multi-repository management tool for GIT
 
@@ -17,3 +17,18 @@ Features (planned)
 
 Inspired by Google's Android repo tool, but much simpler to configure,
 customize and manage a project with multiple Git repositories.
+
+Bug Reports and Feature Requests
+--------------------------------
+Please file any and all bugs at https://github.com/Tuxdude/repobuddy/issues
+Do go through the TODO.md to make sure the feature request is already not
+part of it.
+
+Contact Info
+------------
+Ash (Tuxdude) <tuxdude.github@gmail.com>
+
+License
+-------
+Repo Buddy sources are released under GNU LGPL v3 license. Feel free to
+redistribute and/or modify under the same or equivalent license.
