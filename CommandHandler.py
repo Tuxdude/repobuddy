@@ -21,6 +21,7 @@
 import os
 from GitWrapper import GitWrapper, GitWrapperError
 from RepoBuddyUtils import FileLock, FileLockError
+from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 
 class CommandHandlerError(Exception):
     def __init__(self, errorStr):
@@ -34,6 +35,19 @@ class CommandHandlerError(Exception):
         return repr(self._errorStr)
 
 class CommandHandler(object):
+    def _getXmlConfig(self):
+        config = 'config/repoconfig-example.xml'
+
+        # Parse the config file
+        repoConfigParser = RepoConfigParser()
+        try:
+            repoConfigParser.parse(config)
+        except RepoConfigParserError as err:
+            raise CommandHandlerError(str(err))
+
+        self._xmlConfig = repoConfigParser.getConfig()
+        return
+
     # Retrieve the client spec corresponding to the command-line argument
     def _getClientSpec(self, clientSpecName):
         foundClientSpec = False
@@ -44,19 +58,19 @@ class CommandHandler(object):
                 break
         if clientSpec == None:
             raise CommandHandlerError(
-                    'Unable to find the Client Spec: \'' +
+                    'Error: Unable to find the Client Spec: \'' +
                     args.clientSpec + '\'')
         return clientSpec
 
     # Calls execMethod while holding the .repobuddy/lock
     def _execWithLock(self, execMethod, *methodArgs):
-        repoBuddyDir = os.path.join(self._currentDir, '.repobuddy')
-        lockFile = os.path.join(repoBuddyDir, 'lock')
+        self._repoBuddyDir = os.path.join(self._currentDir, '.repobuddy')
+        lockFile = os.path.join(self._repoBuddyDir, 'lock')
 
-        if not os.path.isdir(repoBuddyDir):
+        if not os.path.isdir(self._repoBuddyDir):
             # Create the .repobuddy directory if it does not exist already
             try:
-                os.mkdir(repoBuddyDir)
+                os.mkdir(self._repoBuddyDir)
             except OSError as err:
                 raise CommandHandlerError('Error: ' + str(err))
         else:
@@ -76,22 +90,28 @@ class CommandHandler(object):
                         'Error: Lock file ' + lockFile + ' already exists\n' +
                         'Is another instance of repobuddy running ?')
             else:
-                raise CommandHandlerError('Error: ' + str(err))
+                raise CommandHandlerError(str(err))
         except GitWrapperError as err:
             raise CommandHandlerError('Error: Git said => ' + str(err))
 
         return
 
     # Init command which runs after acquiring the Lock
-    def _execInit(self, clientSpec):
+    def _execInit(self, args):
+        # Download the XML config file
+        self._getXmlConfig()
+
+        # Get the Client Spec corresponding to the Command line argument
+        clientSpec = self._getClientSpec(args.clientSpec)
+
         # Process each repo in the Client Spec
         for repo in clientSpec.repoList:
             git = GitWrapper(self._currentDir)
             git.clone(repo.url, repo.branch, repo.destination)
+
         return
 
-    def __init__(self, xmlConfig):
-        self._xmlConfig = xmlConfig
+    def __init__(self):
         self._currentDir = os.getcwd()
         return
 
@@ -103,8 +123,7 @@ class CommandHandler(object):
         return handlers
 
     def initCommandHandler(self, args):
-        clientSpec = self._getClientSpec(args.clientSpec)
-        self._execWithLock(self._execInit, clientSpec)
+        self._execWithLock(self._execInit, args)
         return
 
     def statusCommandHandler(self, args):

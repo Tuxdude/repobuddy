@@ -21,28 +21,17 @@
 
 import sys
 from ArgParser import ArgParser
-from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 from CommandHandler import CommandHandler, CommandHandlerError
 
 if __name__ != '__main__':
     print 'Error: This file cannot be included directly from another source'
     sys.exit(1)
 
-config = 'config/repoconfig-example.xml'
-
-# Parse the config file
-repoConfigParser = RepoConfigParser()
-try:
-    repoConfigParser.parse(config)
-except RepoConfigParserError as err:
-    print err
-    sys.exit(1)
-xmlConfig = repoConfigParser.getConfig()
-
-commandHandler = CommandHandler(xmlConfig)
+# Initialize the Command Handler core
+commandHandler = CommandHandler()
 handlers = commandHandler.getHandlers()
 
-# Now parse the command line arguments
+# Parse the command line arguments and invoke the handler
 argParser = ArgParser(handlers)
 try:
     argParser.parse(sys.argv[1:])

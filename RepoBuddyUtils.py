@@ -67,9 +67,13 @@ class FileLock(object):
                 break
             except OSError as err:
                 if err.errno != errno.EEXIST:
-                    raise FileLockError('Unable to create the lock file: ' + self._lockFile)
+                    raise FileLockError(
+                            'Error: Unable to create the lock file: ' +
+                            self._lockFile)
                 if (time.time() - begin) >= self._timeout:
-                    raise FileLockError('Timeout', isTimeOut = True)
+                    raise FileLockError(
+                            'Timeout',
+                            isTimeOut = True)
             time.sleep(self._delay)
         self._isLocked = True
         return
