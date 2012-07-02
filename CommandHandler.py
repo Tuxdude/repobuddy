@@ -34,33 +34,25 @@ class CommandHandlerError(Exception):
         return repr(self._errorStr)
 
 class CommandHandler(object):
-    def __init__(self, xmlConfig):
-        self._xmlConfig = xmlConfig
-        return
-
-    def getHandlers(self):
-        handlers = { }
-        handlers['init'] = self.initCommandHandler
-        handlers['status'] = self.statusCommandHandler
-        handlers['help'] = self.helpCommandHandler
-        return handlers
-
-    def initCommandHandler(self, args):
-        # Retrieve the client spec corresponding to the command-line argument
+    # Retrieve the client spec corresponding to the command-line argument
+    def _getClientSpec(self, clientSpecName):
         foundClientSpec = False
         clientSpec = None
         for spec in self._xmlConfig.clientSpecList:
-            if spec.name == args.clientSpec:
+            if spec.name == clientSpecName:
                 clientSpec = spec
                 break
         if clientSpec == None:
             raise CommandHandlerError(
                     'Unable to find the Client Spec: \'' +
                     args.clientSpec + '\'')
+        return clientSpec
 
-        currentDir = os.getcwd()
-        repoBuddyDir = os.path.join(currentDir, '.repobuddy')
-        # Check if there is already a .repobuddy
+    # Calls execMethod while holding the .repobuddy/lock
+    def _execWithLock(self, execMethod, *methodArgs):
+        repoBuddyDir = os.path.join(self._currentDir, '.repobuddy')
+        lockFile = os.path.join(repoBuddyDir, 'lock')
+
         if not os.path.isdir(repoBuddyDir):
             # Create the .repobuddy directory if it does not exist already
             try:
@@ -71,14 +63,10 @@ class CommandHandler(object):
             print 'Found an existing .repobuddy directory...'
 
         try:
-            lockFile = os.path.join(repoBuddyDir, 'lock')
             # Acquire the lock before doing anything else
             with FileLock(lockFile) as lock:
                 print 'Lock \'' + lockFile + '\' acquired'
-                # Process each repo in the Client Spec
-                for repo in clientSpec.repoList:
-                    git = GitWrapper(currentDir)
-                    git.clone(repo.url, repo.branch, repo.destination)
+                execMethod(*methodArgs)
         except FileLockError as err:
             # If it is a timeout error, it could be one of the following:
             # *** another instance of repobuddy is running
@@ -91,6 +79,32 @@ class CommandHandler(object):
                 raise CommandHandlerError('Error: ' + str(err))
         except GitWrapperError as err:
             raise CommandHandlerError('Error: Git said => ' + str(err))
+
+        return
+
+    # Init command which runs after acquiring the Lock
+    def _execInit(self, clientSpec):
+        # Process each repo in the Client Spec
+        for repo in clientSpec.repoList:
+            git = GitWrapper(self._currentDir)
+            git.clone(repo.url, repo.branch, repo.destination)
+        return
+
+    def __init__(self, xmlConfig):
+        self._xmlConfig = xmlConfig
+        self._currentDir = os.getcwd()
+        return
+
+    def getHandlers(self):
+        handlers = { }
+        handlers['init'] = self.initCommandHandler
+        handlers['status'] = self.statusCommandHandler
+        handlers['help'] = self.helpCommandHandler
+        return handlers
+
+    def initCommandHandler(self, args):
+        clientSpec = self._getClientSpec(args.clientSpec)
+        self._execWithLock(self._execInit, clientSpec)
         return
 
     def statusCommandHandler(self, args):
