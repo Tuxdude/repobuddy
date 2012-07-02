@@ -19,6 +19,7 @@
 #
 
 import os
+import shutil
 from GitWrapper import GitWrapper, GitWrapperError
 from RepoBuddyUtils import FileLock, FileLockError
 from RepoConfigParser import RepoConfigParser, RepoConfigParserError
@@ -36,7 +37,17 @@ class CommandHandlerError(Exception):
 
 class CommandHandler(object):
     def _getXmlConfig(self):
-        config = 'config/repoconfig-example.xml'
+        # FIXME: Support various protcols for fetching the config XML file
+        inputConfig = os.path.join(
+                self._currentDir,
+                'config/repoconfig-example.xml')
+        config = os.path.join(self._repoBuddyDir, 'config.xml')
+
+        # Copy the xml config file to .repobuddy dir
+        try:
+            shutil.copyfile(inputConfig, config)
+        except IOError as err:
+            raise CommandHandlerError('Error: ' + str(err))
 
         # Parse the config file
         repoConfigParser = RepoConfigParser()
@@ -61,6 +72,10 @@ class CommandHandler(object):
                     'Error: Unable to find the Client Spec: \'' +
                     args.clientSpec + '\'')
         return clientSpec
+
+    def _storeClientInfo(self, clientSpecName):
+        # TODO: Write the client info to a 'client' file
+        return
 
     # Calls execMethod while holding the .repobuddy/lock
     def _execWithLock(self, execMethod, *methodArgs):
@@ -108,6 +123,11 @@ class CommandHandler(object):
         for repo in clientSpec.repoList:
             git = GitWrapper(self._currentDir)
             git.clone(repo.url, repo.branch, repo.destination)
+
+        # Create the client file, writing the following
+        # The config file name
+        # The client spec chosen
+        self._storeClientInfo(args.clientSpec)
 
         return
 
