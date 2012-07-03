@@ -26,22 +26,39 @@ from RepoBuddyUtils import Logger
 # An argparse Action class
 # XXX: not currently used
 class _ArgParserAction(argparse.Action):
-    def __call__(self, parser, namespace, values, optionString=None):
+    def __call__(self, parser, namespace, values, optionString = None):
         setattr(namespace, self.dest, values)
         return
 
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
 class _MasterParser(argparse.ArgumentParser):
-    # Method overriden from argparse.ArgumentParser
+    # Overriden from ArgumentParser
+    # Uses Logger API to print the messages
+    def _print_message(self, message, file = None):
+        if message:
+            if file is None:
+                Logger.Error('Writing to stderr - file is None')
+            Logger.Msg(message)
+        return
+
+    # Overriden from ArgumentParser
+    # Raises ArgParserError instead of directly bailing out
+    def exit(self, status = 0, message = None):
+        if not message is None:
+            Logger.Error(message)
+        if status is 0:
+            raise ArgParserExitNoError()
+        else:
+            raise ArgParserError()
+
     def error(self, message):
         errMsg = self.prog + ': Error: ' + message + '\n'
         errMsg += self.format_help()
         raise ArgParserError(errMsg)
-        return
 
 class ArgParserError(Exception):
-    def __init__(self, errorStr):
+    def __init__(self, errorStr = None):
         self._errorStr = errorStr
         return
 
@@ -50,6 +67,10 @@ class ArgParserError(Exception):
 
     def __repr__(self):
         return repr(self._errorStr)
+
+class ArgParserExitNoError(Exception):
+    def __init__(self):
+        return
 
 # Class to configures all the argparse parsers
 class ArgParser(object):
@@ -124,5 +145,4 @@ class ArgParser(object):
         self._args = self._masterParser.parse_args(args)
         self._args.func(self._args)
         return
-
 

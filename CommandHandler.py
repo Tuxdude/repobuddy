@@ -71,7 +71,7 @@ class CommandHandler(object):
         if clientSpec == None:
             raise CommandHandlerError(
                     'Error: Unable to find the Client Spec: \'' +
-                    args.clientSpec + '\'')
+                    clientSpecName + '\'')
         return clientSpec
 
     def _storeClientInfo(self, clientSpecName):

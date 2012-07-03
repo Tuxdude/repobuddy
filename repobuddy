@@ -37,7 +37,11 @@ argParser = ArgParser(handlers)
 try:
     argParser.parse(sys.argv[1:])
 except (CommandHandlerError, ArgParserError) as err:
-    Logger.Error(str(err))
+    errMsg = str(err)
+    if not errMsg is 'None':
+        Logger.Error(errMsg)
     sys.exit(1)
+except ArgParserExitNoError:
+    pass
 
 sys.exit(0)
