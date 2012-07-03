@@ -36,7 +36,7 @@ argParser = ArgParser(handlers)
 try:
     argParser.parse(sys.argv[1:])
 except (CommandHandlerError, ArgParserError) as err:
-    print err
+    sys.stdout.write(str(err))
     sys.exit(1)
 
 sys.exit(0)

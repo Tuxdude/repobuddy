@@ -52,6 +52,26 @@ class ArgParserError(Exception):
 
 # Class to configures all the argparse parsers
 class ArgParser(object):
+    def _displayHelpInit(self):
+        sys.stdout.write(self._initCommandParser.format_help())
+        return
+
+    def _displayHelpStatus(self):
+        sys.stdout.write(self._statusCommandParser.format_help())
+        return
+
+    def _helpCommandHandler(self, args):
+        helpCommands = {
+                'init'      : self._displayHelpInit,
+                'status'    : self._displayHelpStatus }
+        try:
+            helpCommands[args.command]()
+        except KeyError:
+            raise ArgParserError(
+                    'Error: Unknown command \'' + args.command + '\'\n' +
+                    self._helpCommandParser.format_help())
+        return
+
     # Setup the master and the sub-parsers for each of the commands
     def _setupParsers(self, handlers):
         # Top level parser
@@ -84,7 +104,7 @@ class ArgParser(object):
         self._helpCommandParser.add_argument(
                 'command',
                 help = HelpStrings.HelpCommandArg)
-        self._helpCommandParser.set_defaults(func = handlers['help'])
+        self._helpCommandParser.set_defaults(func = self._helpCommandHandler)
 
         # status command sub-parser
         self._statusCommandParser = self._subParsers.add_parser(

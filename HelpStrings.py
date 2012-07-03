@@ -25,8 +25,7 @@ class HelpStrings:
     MasterParserArgHelp     = 'Command to invoke'
     MasterParserArgTitle    = 'Available Commands'
     InitCommandHelp         = 'Init the current directory to set up the repos'
-    InitClientSpecArg       = 'The client Spec to use for this client'
+    InitClientSpecArg       = 'The Client Spec to use for this client'
     HelpCommandHelp         = 'Show usage details for a command'
     HelpCommandArg          = 'Command to see the help message for'
     StatusCommand           = 'Show status of the current client config'
-    

@@ -154,7 +154,6 @@ class CommandHandler(object):
         handlers = { }
         handlers['init'] = self.initCommandHandler
         handlers['status'] = self.statusCommandHandler
-        handlers['help'] = self.helpCommandHandler
         return handlers
 
     def initCommandHandler(self, args):
@@ -163,8 +162,4 @@ class CommandHandler(object):
 
     def statusCommandHandler(self, args):
         print 'status command'
-        return
-
-    def helpCommandHandler(self, args):
-        print 'help ' + args.command
         return
