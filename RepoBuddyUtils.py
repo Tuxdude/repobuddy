@@ -18,10 +18,10 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import errno
-import os
-import sys
-import time
+import errno as _errno
+import os as _os
+import sys as _sys
+import time as _time
 
 class FileLockError(Exception):
     def __init__(self, errorStr, isTimeOut = False):
@@ -41,7 +41,7 @@ class FileLockError(Exception):
 class FileLock(object):
     def __init__(self, fileName, timeout = 1, delay = .1):
         self._isLocked = False
-        self._lockFile = os.path.join(fileName)
+        self._lockFile = _os.path.join(fileName)
         self._timeout = timeout
         self._delay = delay
         return
@@ -61,28 +61,28 @@ class FileLock(object):
         return
 
     def lock(self):
-        begin = time.time()
+        begin = _time.time()
         while True:
             try:
-                self._fd = os.open(self._lockFile, os.O_CREAT | os.O_EXCL | os.O_RDWR)
+                self._fd = _os.open(self._lockFile, _os.O_CREAT | _os.O_EXCL | _os.O_RDWR)
                 break
             except OSError as err:
-                if err.errno != errno.EEXIST:
+                if err.errno != _errno.EEXIST:
                     raise FileLockError(
                             'Error: Unable to create the lock file: ' +
                             self._lockFile)
-                if (time.time() - begin) >= self._timeout:
+                if (_time.time() - begin) >= self._timeout:
                     raise FileLockError(
                             'Timeout',
                             isTimeOut = True)
-            time.sleep(self._delay)
+            _time.sleep(self._delay)
         self._isLocked = True
         return
 
     def unlock(self):
         if self._isLocked:
-            os.close(self._fd)
-            os.unlink(self._lockFile)
+            _os.close(self._fd)
+            _os.unlink(self._lockFile)
             self._isLocked = False
         return
 
@@ -90,25 +90,25 @@ class Logger:
     @classmethod
     def Msg(cls, msg, appendNewLine = True):
         if appendNewLine:
-            sys.stdout.write(msg + '\n')
+            _sys.stdout.write(msg + '\n')
         else:
-            sys.stdout.write(msg)
+            _sys.stdout.write(msg)
         return
 
     # TODO: Add a way to turn on/off the debug outputs
     @classmethod
     def Debug(cls, msg, appendNewLine = True):
         if appendNewLine:
-            sys.stdout.write(msg + '\n')
+            _sys.stdout.write(msg + '\n')
         else:
-            sys.stdout.write(msg)
+            _sys.stdout.write(msg)
         return
 
     @classmethod
     def Error(cls, msg, appendNewLine = True):
         if appendNewLine:
-            sys.stdout.write(msg + '\n')
+            _sys.stdout.write(msg + '\n')
         else:
-            sys.stdout.write(msg)
+            _sys.stdout.write(msg)
         return
 

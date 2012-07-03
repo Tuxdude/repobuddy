@@ -18,7 +18,7 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import subprocess
+import subprocess as _subprocess
 from RepoBuddyUtils import Logger
 
 class GitWrapperError(Exception):
@@ -39,14 +39,14 @@ class GitWrapper(object):
         Logger.Debug('Exec: ' + ' '.join(gitCmd))
         try:
             if not dontChangeDir:
-                proc = subprocess.Popen(
+                proc = _subprocess.Popen(
                         gitCmd,
                         cwd = self._baseDir,
-                        stderr = subprocess.PIPE)
+                        stderr = _subprocess.PIPE)
             else:
-                proc = subprocess.Popen(
+                proc = _subprocess.Popen(
                         gitCmd,
-                        stderr = subprocess.PIPE)
+                        stderr = _subprocess.PIPE)
             errMsg = proc.communicate()[1]
 #            if errMsg != '':
 #                print errMsg

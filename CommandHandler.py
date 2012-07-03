@@ -18,8 +18,8 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import os
-import shutil
+import os as _os
+import shutil as _shutil
 from GitWrapper import GitWrapper, GitWrapperError
 from RepoBuddyUtils import FileLock, FileLockError, Logger
 from RepoConfigParser import RepoConfigParser, RepoConfigParserError
@@ -39,14 +39,14 @@ class CommandHandlerError(Exception):
 class CommandHandler(object):
     def _getXmlConfig(self):
         # FIXME: Support various protcols for fetching the config XML file
-        inputConfig = os.path.join(
+        inputConfig = _os.path.join(
                 self._currentDir,
                 'config/repoconfig-example.xml')
-        config = os.path.join(self._repoBuddyDir, 'config.xml')
+        config = _os.path.join(self._repoBuddyDir, 'config.xml')
 
         # Copy the xml config file to .repobuddy dir
         try:
-            shutil.copyfile(inputConfig, config)
+            _shutil.copyfile(inputConfig, config)
         except IOError as err:
             raise CommandHandlerError('Error: ' + str(err))
 
@@ -80,24 +80,24 @@ class CommandHandler(object):
         try:
             clientInfo.setClientSpec(clientSpecName)
             clientInfo.setXmlConfig('config.xml')
-            clientInfo.write(os.path.join(self._repoBuddyDir, 'client.config'))
+            clientInfo.write(_os.path.join(self._repoBuddyDir, 'client.config'))
         except ClientInfoError as err:
             raise CommandHandlerError(str(err))
         return
 
     def _isClientInitialized(self):
-        return os.path.isfile(
-                os.path.join(self._repoBuddyDir, 'client.config'))
+        return _os.path.isfile(
+                _os.path.join(self._repoBuddyDir, 'client.config'))
 
     # Calls execMethod while holding the .repobuddy/lock
     def _execWithLock(self, execMethod, *methodArgs):
-        self._repoBuddyDir = os.path.join(self._currentDir, '.repobuddy')
-        lockFile = os.path.join(self._repoBuddyDir, 'lock')
+        self._repoBuddyDir = _os.path.join(self._currentDir, '.repobuddy')
+        lockFile = _os.path.join(self._repoBuddyDir, 'lock')
 
-        if not os.path.isdir(self._repoBuddyDir):
+        if not _os.path.isdir(self._repoBuddyDir):
             # Create the .repobuddy directory if it does not exist already
             try:
-                os.mkdir(self._repoBuddyDir)
+                _os.mkdir(self._repoBuddyDir)
             except OSError as err:
                 raise CommandHandlerError('Error: ' + str(err))
         else:
@@ -147,7 +147,7 @@ class CommandHandler(object):
         return
 
     def __init__(self):
-        self._currentDir = os.getcwd()
+        self._currentDir = _os.getcwd()
         return
 
     def getHandlers(self):

@@ -18,7 +18,7 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import ConfigParser
+import ConfigParser as _ConfigParser
 
 class ClientInfoError(Exception):
     def __init__(self, errorStr):
@@ -39,14 +39,14 @@ class ClientInfo(object):
     def _getConfig(self, section, option):
         try:
             return self._config.get(section, option)
-        except ConfigParser.NoOptionError as err:
+        except _ConfigParser.NoOptionError as err:
             raise ClientInfoError('Error: ' + str(err))
         return
 
     def _setConfig(self, section, option, value):
         try:
             self._config.set(section, option, value)
-        except ConfigParser.NoSectionError as err:
+        except _ConfigParser.NoSectionError as err:
             raise ClientInfoError('Error: ' + str(err))
         return
 
@@ -57,10 +57,10 @@ class ClientInfo(object):
             except IOError as err:
                 raise ClientInfoError('Error: ' + str(err))
 
-            self._config = ConfigParser.RawConfigParser()
+            self._config = _ConfigParser.RawConfigParser()
             try:
                 self._config.readfp(fd)
-            except ConfigParser.ParsingError as err:
+            except _ConfigParser.ParsingError as err:
                 raise ClientInfoError('Error: Parsing config failed => ' + str(err))
             finally:
                 fd.close()
@@ -68,7 +68,7 @@ class ClientInfo(object):
             self._validateConfig()
             self._configFileName = configFileName
         else:
-            self._config = ConfigParser.RawConfigParser()
+            self._config = _ConfigParser.RawConfigParser()
             self._config.add_section('RepoBuddyConfig')
             self._configFileName = None
 

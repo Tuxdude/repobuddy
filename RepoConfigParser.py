@@ -18,8 +18,8 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import copy
-import xml.sax
+import copy as _copy
+import xml.sax as _sax
 
 class RepoConfigParserError(Exception):
     def __init__(self, errorStr):
@@ -59,7 +59,7 @@ class RepoConfig(object):
 # Each client Spec - a list of repos
 # Each repo - a dict with following keys { Url, Branch, Destination }
 
-class _XmlContentHandler(xml.sax.ContentHandler):
+class _XmlContentHandler(_sax.ContentHandler):
     def _validateConfig(self):
         # Verify that defaultClientSpec is set
         if self._config.defaultClientSpec == '':
@@ -87,10 +87,10 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         return
 
     def __init__(self):
-        xml.sax.ContentHandler.__init__(self)
+        _sax.ContentHandler.__init__(self)
         return
 
-    # Overriden methods of xml.sax.ContentHandler
+    # Overriden methods of _sax.ContentHandler
     def startDocument(self):
         self._config = RepoConfig()
         return
@@ -103,7 +103,7 @@ class _XmlContentHandler(xml.sax.ContentHandler):
         if name == 'RepoBuddyConfig':
             try:
                 self._config.defaultClientSpec = \
-                    copy.deepcopy(str(attrs.getValue('defaultClientSpec')))
+                    _copy.deepcopy(str(attrs.getValue('defaultClientSpec')))
             except KeyError:
                 raise RepoConfigParserError('Error: No defaultClientSpec found')
         elif name == 'ClientSpec':
@@ -153,8 +153,8 @@ class RepoConfigParser(object):
         repoConfigXmlFile = open(fileName)
         xmlParser = _XmlContentHandler()
         try:
-            xml.sax.parse(repoConfigXmlFile, xmlParser)
-        except xml.sax.SAXParseException as err:
+            _sax.parse(repoConfigXmlFile, xmlParser)
+        except _sax.SAXParseException as err:
             raise RepoConfigParserError(
                     'Unable to parse the RepoConfig Xml file: ' + str(err))
         finally:

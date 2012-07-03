@@ -18,21 +18,20 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import sys
-import argparse
+import argparse as _argparse
 from HelpStrings import HelpStrings
 from RepoBuddyUtils import Logger
 
 # An argparse Action class
 # XXX: not currently used
-class _ArgParserAction(argparse.Action):
+class _ArgParserAction(_argparse.Action):
     def __call__(self, parser, namespace, values, optionString = None):
         setattr(namespace, self.dest, values)
         return
 
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
-class _MasterParser(argparse.ArgumentParser):
+class _MasterParser(_argparse.ArgumentParser):
     # Overriden from ArgumentParser
     # Uses Logger API to print the messages
     def _print_message(self, message, file = None):
