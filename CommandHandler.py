@@ -23,6 +23,7 @@ import shutil
 from GitWrapper import GitWrapper, GitWrapperError
 from RepoBuddyUtils import FileLock, FileLockError
 from RepoConfigParser import RepoConfigParser, RepoConfigParserError
+from ClientInfo import ClientInfo, ClientInfoError
 
 class CommandHandlerError(Exception):
     def __init__(self, errorStr):
@@ -75,7 +76,18 @@ class CommandHandler(object):
 
     def _storeClientInfo(self, clientSpecName):
         # TODO: Write the client info to a 'client' file
+        clientInfo = ClientInfo()
+        try:
+            clientInfo.setClientSpec(clientSpecName)
+            clientInfo.setXmlConfig('config.xml')
+            clientInfo.write(os.path.join(self._repoBuddyDir, 'client.config'))
+        except ClientInfoError as err:
+            raise CommandHandlerError(str(err))
         return
+
+    def _isClientInitialized(self):
+        return os.path.isfile(
+                os.path.join(self._repoBuddyDir, 'client.config'))
 
     # Calls execMethod while holding the .repobuddy/lock
     def _execWithLock(self, execMethod, *methodArgs):
@@ -113,6 +125,9 @@ class CommandHandler(object):
 
     # Init command which runs after acquiring the Lock
     def _execInit(self, args):
+        if self._isClientInitialized():
+            raise CommandHandlerError('Error: Client is already initialized')
+
         # Download the XML config file
         self._getXmlConfig()
 
