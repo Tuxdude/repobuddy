@@ -34,7 +34,7 @@ class CommandHandlerError(Exception):
         return str(self._errorStr)
 
     def __repr__(self):
-        return repr(self._errorStr)
+        return str(self._errorStr)
 
 class CommandHandler(object):
     def _getXmlConfig(self):

@@ -65,7 +65,7 @@ class ArgParserError(Exception):
         return str(self._errorStr)
 
     def __repr__(self):
-        return repr(self._errorStr)
+        return str(self._errorStr)
 
 class ArgParserExitNoError(Exception):
     def __init__(self):

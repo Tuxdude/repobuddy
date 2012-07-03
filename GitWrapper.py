@@ -30,7 +30,7 @@ class GitWrapperError(Exception):
         return str(self._errorStr)
 
     def __repr__(self):
-        return repr(self._errorStr)
+        return str(self._errorStr)
 
 class GitWrapper(object):
     def _execGit(self, command, dontChangeDir = False):

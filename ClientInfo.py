@@ -29,7 +29,7 @@ class ClientInfoError(Exception):
         return str(self._errorStr)
 
     def __repr__(self):
-        return repr(self._errorStr)
+        return str(self._errorStr)
 
 class ClientInfo(object):
     def _validateConfig(self):
