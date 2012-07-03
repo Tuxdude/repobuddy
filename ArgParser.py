@@ -33,10 +33,21 @@ class _ArgParserAction(argparse.Action):
 class _MasterParser(argparse.ArgumentParser):
     # Method overriden from argparse.ArgumentParser
     def error(self, message):
-        print self.prog + ': Error: ' + message + '\n'
-        self.print_help()
-        self.exit(2)
+        errMsg = self.prog + ': Error: ' + message + '\n'
+        errMsg += self.format_help()
+        raise ArgParserError(errMsg)
         return
+
+class ArgParserError(Exception):
+    def __init__(self, errorStr):
+        self._errorStr = errorStr
+        return
+
+    def __str__(self):
+        return str(self._errorStr)
+
+    def __repr__(self):
+        return repr(self._errorStr)
 
 # Class to configures all the argparse parsers
 class ArgParser(object):

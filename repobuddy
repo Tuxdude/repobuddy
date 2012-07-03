@@ -20,7 +20,7 @@
 #
 
 import sys
-from ArgParser import ArgParser
+from ArgParser import ArgParser, ArgParserError
 from CommandHandler import CommandHandler, CommandHandlerError
 
 if __name__ != '__main__':
@@ -35,7 +35,7 @@ handlers = commandHandler.getHandlers()
 argParser = ArgParser(handlers)
 try:
     argParser.parse(sys.argv[1:])
-except CommandHandlerError as err:
+except (CommandHandlerError, ArgParserError) as err:
     print err
     sys.exit(1)
 
