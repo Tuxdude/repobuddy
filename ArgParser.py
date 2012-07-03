@@ -20,6 +20,7 @@
 
 import sys
 import argparse
+from HelpStrings import HelpStrings
 
 # An argparse Action class
 # XXX: not currently used
@@ -55,40 +56,40 @@ class ArgParser(object):
     def _setupParsers(self, handlers):
         # Top level parser
         self._masterParser = _MasterParser(
-                description = 'Multi-repo manager for Git',
-                prog        = 'repobuddy')
+                description = HelpStrings.ProgramDescription,
+                prog        = HelpStrings.ProgramName)
         self._masterParser.add_argument(
                 '-v',
                 '--version',
                 action  ='version',
-                version = '%(prog)s 0.1 alpha')
+                version = HelpStrings.ProgramVersion)
         self._subParsers = self._masterParser.add_subparsers(
                 dest  = 'command',
-                help  = 'Command to invoke',
-                title = 'Available Commands')
+                help  = HelpStrings.MasterParserArgHelp,
+                title = HelpStrings.MasterParserArgTitle)
 
         # init command sub-parser
         self._initCommandParser = self._subParsers.add_parser(
                 'init',
-                help = 'Init the current directory to set up the repos')
+                help = HelpStrings.InitCommandHelp)
         self._initCommandParser.add_argument(
                 'clientSpec',
-                help = 'Choose the client spec to use')
+                help = HelpStrings.InitClientSpecArg)
         self._initCommandParser.set_defaults(func = handlers['init'])
 
         # help command sub-parser
         self._helpCommandParser = self._subParsers.add_parser(
                 'help',
-                help = 'Show usage details for a particular command')
+                help = HelpStrings.HelpCommandHelp)
         self._helpCommandParser.add_argument(
                 'command',
-                help = 'Command to see the help message for')
+                help = HelpStrings.HelpCommandArg)
         self._helpCommandParser.set_defaults(func = handlers['help'])
 
         # status command sub-parser
         self._statusCommandParser = self._subParsers.add_parser(
                 'status',
-                help = 'Show status of the current repo config')
+                help = HelpStrings.StatusCommand)
         self._statusCommandParser.set_defaults(func = handlers['status'])
         return
 
