@@ -18,9 +18,10 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import os
-import time
 import errno
+import os
+import sys
+import time
 
 class FileLockError(Exception):
     def __init__(self, errorStr, isTimeOut = False):
@@ -83,5 +84,31 @@ class FileLock(object):
             os.close(self._fd)
             os.unlink(self._lockFile)
             self._isLocked = False
+        return
+
+class Logger:
+    @classmethod
+    def Msg(cls, msg, appendNewLine = True):
+        if appendNewLine:
+            sys.stdout.write(msg + '\n')
+        else:
+            sys.stdout.write(msg)
+        return
+
+    # TODO: Add a way to turn on/off the debug outputs
+    @classmethod
+    def Debug(cls, msg, appendNewLine = True):
+        if appendNewLine:
+            sys.stdout.write(msg + '\n')
+        else:
+            sys.stdout.write(msg)
+        return
+
+    @classmethod
+    def Error(cls, msg, appendNewLine = True):
+        if appendNewLine:
+            sys.stdout.write(msg + '\n')
+        else:
+            sys.stdout.write(msg)
         return
 

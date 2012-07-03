@@ -22,9 +22,10 @@
 import sys
 from ArgParser import ArgParser, ArgParserError
 from CommandHandler import CommandHandler, CommandHandlerError
+from RepoBuddyUtils import Logger
 
 if __name__ != '__main__':
-    print 'Error: This file cannot be included directly from another source'
+    Logger.Error('Error: This file cannot be included directly from another source')
     sys.exit(1)
 
 # Initialize the Command Handler core
@@ -36,7 +37,7 @@ argParser = ArgParser(handlers)
 try:
     argParser.parse(sys.argv[1:])
 except (CommandHandlerError, ArgParserError) as err:
-    sys.stdout.write(str(err))
+    Logger.Error(str(err))
     sys.exit(1)
 
 sys.exit(0)

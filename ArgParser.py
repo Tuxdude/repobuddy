@@ -21,6 +21,7 @@
 import sys
 import argparse
 from HelpStrings import HelpStrings
+from RepoBuddyUtils import Logger
 
 # An argparse Action class
 # XXX: not currently used
@@ -53,11 +54,11 @@ class ArgParserError(Exception):
 # Class to configures all the argparse parsers
 class ArgParser(object):
     def _displayHelpInit(self):
-        sys.stdout.write(self._initCommandParser.format_help())
+        Logger.Msg(self._initCommandParser.format_help())
         return
 
     def _displayHelpStatus(self):
-        sys.stdout.write(self._statusCommandParser.format_help())
+        Logger.msg(self._statusCommandParser.format_help())
         return
 
     def _helpCommandHandler(self, args):

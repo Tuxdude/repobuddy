@@ -21,7 +21,7 @@
 import os
 import shutil
 from GitWrapper import GitWrapper, GitWrapperError
-from RepoBuddyUtils import FileLock, FileLockError
+from RepoBuddyUtils import FileLock, FileLockError, Logger
 from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 from ClientInfo import ClientInfo, ClientInfoError
 
@@ -101,12 +101,12 @@ class CommandHandler(object):
             except OSError as err:
                 raise CommandHandlerError('Error: ' + str(err))
         else:
-            print 'Found an existing .repobuddy directory...'
+            Logger.Debug('Found an existing .repobuddy directory...')
 
         try:
             # Acquire the lock before doing anything else
             with FileLock(lockFile) as lock:
-                print 'Lock \'' + lockFile + '\' acquired'
+                Logger.Debug('Lock \'' + lockFile + '\' acquired')
                 execMethod(*methodArgs)
         except FileLockError as err:
             # If it is a timeout error, it could be one of the following:
@@ -161,5 +161,5 @@ class CommandHandler(object):
         return
 
     def statusCommandHandler(self, args):
-        print 'status command'
+        Logger.Debug('status command')
         return

@@ -19,6 +19,7 @@
 #
 
 import subprocess
+from RepoBuddyUtils import Logger
 
 class GitWrapperError(Exception):
     def __init__(self, errorStr):
@@ -35,7 +36,7 @@ class GitWrapper(object):
     def _execGit(self, command, dontChangeDir = False):
         gitCmd = command[:]
         gitCmd.insert(0, 'git')
-        print 'Exec: ' + ' '.join(gitCmd)
+        Logger.Debug('Exec: ' + ' '.join(gitCmd))
         try:
             if not dontChangeDir:
                 proc = subprocess.Popen(
