@@ -42,18 +42,19 @@ class CommandHandler(object):
         inputConfig = _os.path.join(
                 self._currentDir,
                 'config/repoconfig-example.xml')
-        config = _os.path.join(self._repoBuddyDir, 'config.xml')
 
         # Copy the xml config file to .repobuddy dir
         try:
-            _shutil.copyfile(inputConfig, config)
+            _shutil.copyfile(inputConfig, self._configFile)
         except IOError as err:
             raise CommandHandlerError('Error: ' + str(err))
+        return
 
+    def _parseXmlConfig(self):
         # Parse the config file
         repoConfigParser = RepoConfigParser()
         try:
-            repoConfigParser.parse(config)
+            repoConfigParser.parse(self._configFile)
         except RepoConfigParserError as err:
             raise CommandHandlerError(str(err))
 
@@ -75,12 +76,19 @@ class CommandHandler(object):
         return clientSpec
 
     def _storeClientInfo(self, clientSpecName):
-        # TODO: Write the client info to a 'client' file
-        clientInfo = ClientInfo()
         try:
+            clientInfo = ClientInfo()
             clientInfo.setClientSpec(clientSpecName)
             clientInfo.setXmlConfig('config.xml')
-            clientInfo.write(_os.path.join(self._repoBuddyDir, 'client.config'))
+            clientInfo.write(self._clientInfoFile)
+        except ClientInfoError as err:
+            raise CommandHandlerError(str(err))
+        return
+
+    def _getClientInfo(self):
+        try:
+            clientInfo = ClientInfo(self._clientInfoFile)
+            return clientInfo.getClientSpec()
         except ClientInfoError as err:
             raise CommandHandlerError(str(err))
         return
@@ -91,7 +99,6 @@ class CommandHandler(object):
 
     # Calls execMethod while holding the .repobuddy/lock
     def _execWithLock(self, execMethod, *methodArgs):
-        self._repoBuddyDir = _os.path.join(self._currentDir, '.repobuddy')
         lockFile = _os.path.join(self._repoBuddyDir, 'lock')
 
         if not _os.path.isdir(self._repoBuddyDir):
@@ -131,6 +138,9 @@ class CommandHandler(object):
         # Download the XML config file
         self._getXmlConfig()
 
+        # Parse the XML config file
+        self._parseXmlConfig()
+
         # Get the Client Spec corresponding to the Command line argument
         clientSpec = self._getClientSpec(args.clientSpec)
 
@@ -146,8 +156,61 @@ class CommandHandler(object):
 
         return
 
+    def _execStatus(self, args):
+        if not self._isClientInitialized():
+            raise CommandHandlerError(
+                    'Error: Uninitialized client, ' +
+                    'please run init to initialize the client first')
+
+        # Parse the XML config file
+        self._parseXmlConfig()
+
+        # Get the client spec name from client info
+        client = self._getClientSpec(self._getClientInfo())
+
+        # Process each repo in the Client Spec
+        for repo in client.repoList:
+            git = GitWrapper(_os.path.join(self._currentDir, repo.destination))
+            Logger.Msg('####################################################')
+            Logger.Msg('Repo: ' + repo.destination)
+            Logger.Msg('Remote URL: ' + repo.url)
+            currentBranch = git.getCurrentBranch()
+            dirty = False
+
+            if currentBranch is None:
+                currentBranch = 'Detached HEAD'
+
+            if currentBranch != repo.branch:
+                Logger.Msg('Original Branch: ' + repo.branch)
+                Logger.Msg('Current Branch: ' + currentBranch + '\n')
+            else:
+                Logger.Msg('Branch: ' + repo.branch + '\n')
+
+            untrackedFiles = git.getUntrackedFiles()
+            if not untrackedFiles is None:
+                Logger.Msg('Untracked Files: \n' + untrackedFiles + '\n')
+                dirty = True
+                
+            unstagedFiles = git.getUnstagedFiles()
+            if not unstagedFiles is None:
+                Logger.Msg('Unstaged Files: \n' + unstagedFiles + '\n')
+                dirty = True
+
+            uncommittedStagedFiles = git.getUncommittedStagedFiles()
+            if not uncommittedStagedFiles is None:
+                Logger.Msg('Uncommitted Changes: \n' + uncommittedStagedFiles + '\n')
+                dirty = True
+
+            if not dirty:
+                Logger.Msg('No uncommitted changes')
+        Logger.Msg('####################################################')
+        return
+
     def __init__(self):
         self._currentDir = _os.getcwd()
+        self._repoBuddyDir = _os.path.join(self._currentDir, '.repobuddy')
+        self._configFile = _os.path.join(self._repoBuddyDir, 'config.xml')
+        self._clientInfoFile = _os.path.join(self._repoBuddyDir, 'client.config')
         return
 
     def getHandlers(self):
@@ -161,5 +224,5 @@ class CommandHandler(object):
         return
 
     def statusCommandHandler(self, args):
-        Logger.Debug('status command')
+        self._execWithLock(self._execStatus, args)
         return
