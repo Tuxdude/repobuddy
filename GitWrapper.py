@@ -93,20 +93,33 @@ class GitWrapper(object):
                 captureStdOut = False)
         return
 
-    def getUnstagedChanges(self):
+    def getUntrackedFiles(self):
+        try:
+            untrackedFiles = self._execGit(
+                    ['ls-files', '--error-unmatch', '--exclude-standard',
+                     '--others', '--']).rstrip()
+        except GitWrapperError as err:
+            if not err.isGitError:
+                raise err
+        if untrackedFiles is '':
+            return None
+        else:
+            return untrackedFiles
+
+    def getUnstagedFiles(self):
         try:
             self._execGit(
                     ['diff-files', '--quiet', '--ignore-submodules', '--'])
         except GitWrapperError as err:
             if not err.isGitError:
                 raise err
-            unstagedChanges = self._execGit(
+            unstagedFiles = self._execGit(
                     ['diff-files', '--name-status', '-r',
                      '--ignore-submodules', '--'])
-            return unstagedChanges
+            return unstagedFiles.rstrip()
         return
 
-    def getUncommittedIndexChanges(self):
+    def getUncommittedStagedFiles(self):
         try:
             self._execGit(
                     ['diff-index', '--cached', '--quiet', 'HEAD',
@@ -114,10 +127,10 @@ class GitWrapper(object):
         except GitWrapperError as err:
             if not err.isGitError:
                 raise err
-            uncommitedIndexChanges = self._execGit(
+            uncommitedStagedFiles = self._execGit(
                     ['diff-index', '--cached', '--name-status', '-r',
                      '--ignore-submodules', 'HEAD', '--'])
-            return uncommitedIndexChanges
+            return uncommitedStagedFiles.rstrip()
         return
 
     def getCurrentBranch(self):
@@ -130,7 +143,7 @@ class GitWrapper(object):
                 return None
         matchObj = _re.compile(r'^refs\/heads\/(.*)$').match(headRef)
         try:
-            return matchObj.group(1)
+            return matchObj.group(1).rstrip()
         except IndexError, AttributeError:
             raise GitWrapperError('Error: Unknown symbolic-ref for HEAD')
         return
