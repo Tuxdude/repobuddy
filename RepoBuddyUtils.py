@@ -98,6 +98,7 @@ class Logger:
     # TODO: Add a way to turn on/off the debug outputs
     @classmethod
     def Debug(cls, msg, appendNewLine = True):
+        return
         if appendNewLine:
             _sys.stdout.write(msg + '\n')
         else:
