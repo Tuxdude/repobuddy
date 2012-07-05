@@ -54,7 +54,7 @@ class GitWrapper(object):
                         stderr = _subprocess.PIPE)
             (outMsg, errMsg) = proc.communicate()
             returnCode = proc.wait()
-            if not returnCode is 0:
+            if returnCode != 0:
                 raise GitWrapperError(str(errMsg), isGitError = True)
             if captureStdOut:
                 return outMsg
@@ -101,7 +101,7 @@ class GitWrapper(object):
         except GitWrapperError as err:
             if not err.isGitError:
                 raise err
-        if untrackedFiles is '':
+        if untrackedFiles == '':
             return None
         else:
             return untrackedFiles

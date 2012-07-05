@@ -46,7 +46,7 @@ class _MasterParser(_argparse.ArgumentParser):
     def exit(self, status = 0, message = None):
         if not message is None:
             Logger.Error(message)
-        if status is 0:
+        if status == 0:
             raise ArgParserExitNoError()
         else:
             raise ArgParserError()
