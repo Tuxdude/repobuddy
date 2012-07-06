@@ -26,102 +26,102 @@ from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 from ClientInfo import ClientInfo, ClientInfoError
 
 class CommandHandlerError(Exception):
-    def __init__(self, errorStr):
-        self._errorStr = errorStr
+    def __init__(self, error_str):
+        super(CommandHandlerError, self).__init__(error_str)
+        self._error_str = error_str
         return
 
     def __str__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
     def __repr__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
 class CommandHandler(object):
-    def _getXmlConfig(self):
+    def _get_xml_config(self):
         # FIXME: Support various protcols for fetching the config XML file
-        inputConfig = _os.path.join(
-                self._currentDir,
+        input_config = _os.path.join(
+                self._current_dir,
                 'config/repoconfig-example.xml')
 
         # Copy the xml config file to .repobuddy dir
         try:
-            _shutil.copyfile(inputConfig, self._configFile)
+            _shutil.copyfile(input_config, self._config_file)
         except IOError as err:
             raise CommandHandlerError('Error: ' + str(err))
         return
 
-    def _parseXmlConfig(self):
+    def _parse_xml_config(self):
         # Parse the config file
-        repoConfigParser = RepoConfigParser()
+        repo_config_parser = RepoConfigParser()
         try:
-            repoConfigParser.parse(self._configFile)
+            repo_config_parser.parse(self._config_file)
         except RepoConfigParserError as err:
             raise CommandHandlerError(str(err))
 
-        self._xmlConfig = repoConfigParser.getConfig()
+        self._xml_config = repo_config_parser.get_config()
         return
 
     # Retrieve the client spec corresponding to the command-line argument
-    def _getClientSpec(self, clientSpecName):
-        foundClientSpec = False
-        clientSpec = None
-        for spec in self._xmlConfig.clientSpecList:
-            if spec.name == clientSpecName:
-                clientSpec = spec
+    def _get_client_spec(self, client_spec_name):
+        client_spec = None
+        for spec in self._xml_config.client_spec_list:
+            if spec.name == client_spec_name:
+                client_spec = spec
                 break
-        if clientSpec == None:
+        if client_spec == None:
             raise CommandHandlerError(
                     'Error: Unable to find the Client Spec: \'' +
-                    clientSpecName + '\'')
-        return clientSpec
+                    client_spec_name + '\'')
+        return client_spec
 
-    def _storeClientInfo(self, clientSpecName):
+    def _store_client_info(self, client_spec_name):
         try:
-            clientInfo = ClientInfo()
-            clientInfo.setClientSpec(clientSpecName)
-            clientInfo.setXmlConfig('config.xml')
-            clientInfo.write(self._clientInfoFile)
+            client_info = ClientInfo()
+            client_info.set_client_spec(client_spec_name)
+            client_info.set_xml_config('config.xml')
+            client_info.write(self._client_info_file)
         except ClientInfoError as err:
             raise CommandHandlerError(str(err))
         return
 
-    def _getClientInfo(self):
+    def _get_client_info(self):
         try:
-            clientInfo = ClientInfo(self._clientInfoFile)
-            return clientInfo.getClientSpec()
+            client_info = ClientInfo(self._client_info_file)
+            return client_info.get_client_spec()
         except ClientInfoError as err:
             raise CommandHandlerError(str(err))
         return
 
-    def _isClientInitialized(self):
+    def _is_client_initialized(self):
         return _os.path.isfile(
-                _os.path.join(self._repoBuddyDir, 'client.config'))
+                _os.path.join(self._repo_buddy_dir, 'client.config'))
 
-    # Calls execMethod while holding the .repobuddy/lock
-    def _execWithLock(self, execMethod, *methodArgs):
-        lockFile = _os.path.join(self._repoBuddyDir, 'lock')
+    # Calls exec_method while holding the .repobuddy/lock
+    def _exec_with_lock(self, exec_method, *method_args):
+        lock_file = _os.path.join(self._repo_buddy_dir, 'lock')
 
-        if not _os.path.isdir(self._repoBuddyDir):
+        if not _os.path.isdir(self._repo_buddy_dir):
             # Create the .repobuddy directory if it does not exist already
             try:
-                _os.mkdir(self._repoBuddyDir)
+                _os.mkdir(self._repo_buddy_dir)
             except OSError as err:
                 raise CommandHandlerError('Error: ' + str(err))
         else:
-            Logger.Debug('Found an existing .repobuddy directory...')
+            Logger.debug('Found an existing .repobuddy directory...')
 
         try:
             # Acquire the lock before doing anything else
-            with FileLock(lockFile) as lock:
-                Logger.Debug('Lock \'' + lockFile + '\' acquired')
-                execMethod(*methodArgs)
+            with FileLock(lock_file):
+                Logger.debug('Lock \'' + lock_file + '\' acquired')
+                exec_method(*method_args)
         except FileLockError as err:
             # If it is a timeout error, it could be one of the following:
             # *** another instance of repobuddy is running
             # *** repobuddy was killed earlier without releasing the lock file
             if err.isTimeOut:
                 raise CommandHandlerError(
-                        'Error: Lock file ' + lockFile + ' already exists\n' +
+                        'Error: Lock file ' + lock_file + ' already exists\n' +
                         'Is another instance of repobuddy running ?')
             else:
                 raise CommandHandlerError(str(err))
@@ -131,98 +131,103 @@ class CommandHandler(object):
         return
 
     # Init command which runs after acquiring the Lock
-    def _execInit(self, args):
-        if self._isClientInitialized():
+    def _exec_init(self, args):
+        if self._is_client_initialized():
             raise CommandHandlerError('Error: Client is already initialized')
 
         # Download the XML config file
-        self._getXmlConfig()
+        self._get_xml_config()
 
         # Parse the XML config file
-        self._parseXmlConfig()
+        self._parse_xml_config()
 
         # Get the Client Spec corresponding to the Command line argument
-        clientSpec = self._getClientSpec(args.clientSpec)
+        client_spec = self._get_client_spec(args.client_spec)
 
         # Process each repo in the Client Spec
-        for repo in clientSpec.repoList:
-            git = GitWrapper(self._currentDir)
+        for repo in client_spec.repo_list:
+            git = GitWrapper(self._current_dir)
             git.clone(repo.url, repo.branch, repo.destination)
 
         # Create the client file, writing the following
         # The config file name
         # The client spec chosen
-        self._storeClientInfo(args.clientSpec)
+        self._store_client_info(args.client_spec)
 
         return
 
-    def _execStatus(self, args):
-        if not self._isClientInitialized():
+    def _exec_status(self):
+        if not self._is_client_initialized():
             raise CommandHandlerError(
                     'Error: Uninitialized client, ' +
                     'please run init to initialize the client first')
 
         # Parse the XML config file
-        self._parseXmlConfig()
+        self._parse_xml_config()
 
         # Get the client spec name from client info
-        client = self._getClientSpec(self._getClientInfo())
+        client = self._get_client_spec(self._get_client_info())
 
         # Process each repo in the Client Spec
-        for repo in client.repoList:
-            git = GitWrapper(_os.path.join(self._currentDir, repo.destination))
-            Logger.Msg('####################################################')
-            Logger.Msg('Repo: ' + repo.destination)
-            Logger.Msg('Remote URL: ' + repo.url)
-            currentBranch = git.getCurrentBranch()
+        for repo in client.repo_list:
+            git = GitWrapper(_os.path.join(self._current_dir, repo.destination))
+            Logger.msg('####################################################')
+            Logger.msg('Repo: ' + repo.destination)
+            Logger.msg('Remote URL: ' + repo.url)
+            git.update_index()
+            current_branch = git.get_current_branch()
             dirty = False
 
-            if currentBranch is None:
-                currentBranch = 'Detached HEAD'
+            if current_branch is None:
+                current_branch = 'Detached HEAD'
 
-            if currentBranch != repo.branch:
-                Logger.Msg('Original Branch: ' + repo.branch)
-                Logger.Msg('Current Branch: ' + currentBranch + '\n')
+            if current_branch != repo.branch:
+                Logger.msg('Original Branch: ' + repo.branch)
+                Logger.msg('Current Branch: ' + current_branch + '\n')
             else:
-                Logger.Msg('Branch: ' + repo.branch + '\n')
+                Logger.msg('Branch: ' + repo.branch + '\n')
 
-            untrackedFiles = git.getUntrackedFiles()
-            if not untrackedFiles is None:
-                Logger.Msg('Untracked Files: \n' + untrackedFiles + '\n')
+            untracked_files = git.get_untracked_files()
+            if not untracked_files is None:
+                Logger.msg('Untracked Files: \n' + untracked_files + '\n')
                 dirty = True
                 
-            unstagedFiles = git.getUnstagedFiles()
-            if not unstagedFiles is None:
-                Logger.Msg('Unstaged Files: \n' + unstagedFiles + '\n')
+            unstaged_files = git.get_unstaged_files()
+            if not unstaged_files is None:
+                Logger.msg('Unstaged Files: \n' + unstaged_files + '\n')
                 dirty = True
 
-            uncommittedStagedFiles = git.getUncommittedStagedFiles()
-            if not uncommittedStagedFiles is None:
-                Logger.Msg('Uncommitted Changes: \n' + uncommittedStagedFiles + '\n')
+            uncommitted_staged_files = git.get_uncommitted_staged_files()
+            if not uncommitted_staged_files is None:
+                Logger.msg('Uncommitted Changes: \n' +
+                           uncommitted_staged_files + '\n')
                 dirty = True
 
             if not dirty:
-                Logger.Msg('No uncommitted changes')
-        Logger.Msg('####################################################')
+                Logger.msg('No uncommitted changes')
+        Logger.msg('####################################################')
         return
 
     def __init__(self):
-        self._currentDir = _os.getcwd()
-        self._repoBuddyDir = _os.path.join(self._currentDir, '.repobuddy')
-        self._configFile = _os.path.join(self._repoBuddyDir, 'config.xml')
-        self._clientInfoFile = _os.path.join(self._repoBuddyDir, 'client.config')
+        self._xml_config = None
+        self._current_dir = _os.getcwd()
+        self._repo_buddy_dir = _os.path.join(self._current_dir, '.repobuddy')
+        self._config_file = _os.path.join(self._repo_buddy_dir, 'config.xml')
+        self._client_info_file = _os.path.join(
+                self._repo_buddy_dir,
+                'client.config')
         return
 
-    def getHandlers(self):
+    def get_handlers(self):
         handlers = { }
-        handlers['init'] = self.initCommandHandler
-        handlers['status'] = self.statusCommandHandler
+        handlers['init'] = self.init_command_handler
+        handlers['status'] = self.status_command_handler
         return handlers
 
-    def initCommandHandler(self, args):
-        self._execWithLock(self._execInit, args)
+    def init_command_handler(self, args):
+        self._exec_with_lock(self._exec_init, args)
         return
 
-    def statusCommandHandler(self, args):
-        self._execWithLock(self._execStatus, args)
+    def status_command_handler(self, _args):
+        self._exec_with_lock(self._exec_status)
         return

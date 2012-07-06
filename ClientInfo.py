@@ -21,88 +21,90 @@
 import ConfigParser as _ConfigParser
 
 class ClientInfoError(Exception):
-    def __init__(self, errorStr):
-        self._errorStr = errorStr
+    def __init__(self, error_str):
+        super(ClientInfoError, self).__init__(error_str)
+        self._error_str = error_str
         return
 
     def __str__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
     def __repr__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
 class ClientInfo(object):
-    def _validateConfig(self):
+    def _validate_config(self):
         # Verify clientSpec and configXml sections exist
         return
 
-    def _getConfig(self, section, option):
+    def _get_config(self, section, option):
         try:
             return self._config.get(section, option)
         except _ConfigParser.NoOptionError as err:
             raise ClientInfoError('Error: ' + str(err))
         return
 
-    def _setConfig(self, section, option, value):
+    def _set_config(self, section, option, value):
         try:
             self._config.set(section, option, value)
         except _ConfigParser.NoSectionError as err:
             raise ClientInfoError('Error: ' + str(err))
         return
 
-    def __init__(self, configFileName = None):
-        if not configFileName is None:
+    def __init__(self, config_file_name=None):
+        if not config_file_name is None:
             try:
-                fd = open(configFileName, 'r')
+                file_handle = open(config_file_name, 'r')
             except IOError as err:
                 raise ClientInfoError('Error: ' + str(err))
 
             self._config = _ConfigParser.RawConfigParser()
             try:
-                self._config.readfp(fd)
+                self._config.readfp(file_handle)
             except _ConfigParser.ParsingError as err:
-                raise ClientInfoError('Error: Parsing config failed => ' + str(err))
+                raise ClientInfoError(
+                        'Error: Parsing config failed => ' + str(err))
             finally:
-                fd.close()
+                file_handle.close()
 
-            self._validateConfig()
-            self._configFileName = configFileName
+            self._validate_config()
+            self._config_file_name = config_file_name
         else:
             self._config = _ConfigParser.RawConfigParser()
             self._config.add_section('RepoBuddyConfig')
-            self._configFileName = None
+            self._config_file_name = None
 
         return
 
-    def setClientSpec(self, clientSpecName):
-        self._setConfig('RepoBuddyConfig', 'clientSpec', clientSpecName)
+    def set_client_spec(self, client_spec_name):
+        self._set_config('RepoBuddyConfig', 'clientSpec', client_spec_name)
         return
 
-    def setXmlConfig(self, xmlConfig):
-        self._setConfig('RepoBuddyConfig', 'xmlConfig', xmlConfig)
+    def set_xml_config(self, xml_config):
+        self._set_config('RepoBuddyConfig', 'xml_config', xml_config)
         return
 
-    def getClientSpec(self):
-        return self._getConfig('RepoBuddyConfig', 'clientSpec')
+    def get_client_spec(self):
+        return self._get_config('RepoBuddyConfig', 'clientSpec')
 
-    def getXmlConfig(self):
-        return self._getConfig('RepoBuddyConfig', 'xmlConfig')
+    def get_xml_config(self):
+        return self._get_config('RepoBuddyConfig', 'xml_config')
 
-    def write(self, fileName = None):
-        outputFileName = fileName
+    def write(self, file_name=None):
+        output_file_name = file_name
 
-        # If fileName parameter is empty, check if the file name was
+        # If file_name parameter is empty, check if the file name was
         # specified in the constructor
-        if outputFileName is None:
-            if self._configFileName is None:
+        if output_file_name is None:
+            if self._config_file_name is None:
                 raise ClientInfoError(
-                        'Error: fileName parameter cannot be empty')
+                        'Error: file_name parameter cannot be empty')
             else:
-                outputFileName = self._configFileName
+                output_file_name = self._config_file_name
 
         try:
-            with open(outputFileName, 'wb') as configFile:
-                self._config.write(configFile)
+            with open(output_file_name, 'wb') as config_file:
+                self._config.write(config_file)
         except IOError as err:
             raise ClientInfoError('Error: ' + str(err))
         return

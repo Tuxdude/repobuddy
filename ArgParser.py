@@ -22,126 +22,129 @@ import argparse as _argparse
 from HelpStrings import HelpStrings
 from RepoBuddyUtils import Logger
 
-# An argparse Action class
-# XXX: not currently used
-class _ArgParserAction(_argparse.Action):
-    def __call__(self, parser, namespace, values, optionString = None):
-        setattr(namespace, self.dest, values)
-        return
-
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
 class _MasterParser(_argparse.ArgumentParser):
     # Overriden from ArgumentParser
     # Uses Logger API to print the messages
-    def _print_message(self, message, file = None):
+    def _print_message(self, message, file_handle=None):
         if message:
-            if file is None:
-                Logger.Error('Writing to stderr - file is None')
-            Logger.Msg(message)
+            if file_handle is None:
+                Logger.error('Writing to stderr - file is None')
+            Logger.msg(message)
         return
 
     # Overriden from ArgumentParser
     # Raises ArgParserError instead of directly bailing out
-    def exit(self, status = 0, message = None):
+    def exit(self, status=0, message=None):
         if not message is None:
-            Logger.Error(message)
+            Logger.error(message)
         if status == 0:
             raise ArgParserExitNoError()
         else:
             raise ArgParserError()
 
+    # Overriden from ArgumentParser
+    # Stores the error message in ArgParserError instead of printing directly
     def error(self, message):
-        errMsg = self.prog + ': Error: ' + message + '\n'
-        errMsg += self.format_help()
-        raise ArgParserError(errMsg)
+        err_msg = self.prog + ': Error: ' + message + '\n'
+        err_msg += self.format_help()
+        raise ArgParserError(err_msg)
 
 class ArgParserError(Exception):
-    def __init__(self, errorStr = None):
-        self._errorStr = errorStr
+    def __init__(self, error_str=None):
+        super(ArgParserError, self).__init__(error_str)
+        self._error_str = error_str
         return
 
     def __str__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
     def __repr__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
 class ArgParserExitNoError(Exception):
     def __init__(self):
+        super(ArgParserExitNoError, self).__init__('')
         return
 
 # Class to configures all the argparse parsers
 class ArgParser(object):
-    def _displayHelpInit(self):
-        Logger.Msg(self._initCommandParser.format_help())
+    def _display_help_init(self):
+        Logger.msg(self._init_command_parser.format_help())
         return
 
-    def _displayHelpStatus(self):
-        Logger.msg(self._statusCommandParser.format_help())
+    def _display_help_status(self):
+        Logger.msg(self._status_command_parser.format_help())
         return
 
-    def _helpCommandHandler(self, args):
-        helpCommands = {
-                'init'      : self._displayHelpInit,
-                'status'    : self._displayHelpStatus }
+    def _help_command_handler(self, args):
+        help_commands = {
+                'init'      : self._display_help_init,
+                'status'    : self._display_help_status }
         try:
-            helpCommands[args.command]()
+            help_commands[args.command]()
         except KeyError:
             raise ArgParserError(
                     'Error: Unknown command \'' + args.command + '\'\n' +
-                    self._helpCommandParser.format_help())
+                    self._help_command_parser.format_help())
         return
 
     # Setup the master and the sub-parsers for each of the commands
-    def _setupParsers(self, handlers):
+    def _setup_parsers(self, handlers):
         # Top level parser
-        self._masterParser = _MasterParser(
-                description = HelpStrings.ProgramDescription,
-                prog        = HelpStrings.ProgramName)
-        self._masterParser.add_argument(
+        self._master_parser = _MasterParser(
+                description=HelpStrings.PROGRAM_DESCRIPTION,
+                prog=HelpStrings.PROGRAM_NAME)
+        self._master_parser.add_argument(
                 '-v',
                 '--version',
-                action  ='version',
-                version = HelpStrings.ProgramVersion)
-        self._subParsers = self._masterParser.add_subparsers(
-                dest  = 'command',
-                help  = HelpStrings.MasterParserArgHelp,
-                title = HelpStrings.MasterParserArgTitle)
+                action='version',
+                version=HelpStrings.PROGRAM_VERSION)
+        self._sub_parsers = self._master_parser.add_subparsers(
+                dest='command',
+                help=HelpStrings.MASTER_PARSER_ARG_HELP,
+                title=HelpStrings.MASTER_PARSER_ARG_TITLE)
 
         # init command sub-parser
-        self._initCommandParser = self._subParsers.add_parser(
+        self._init_command_parser = self._sub_parsers.add_parser(
                 'init',
-                help = HelpStrings.InitCommandHelp)
-        self._initCommandParser.add_argument(
-                'clientSpec',
-                help = HelpStrings.InitClientSpecArg)
-        self._initCommandParser.set_defaults(func = handlers['init'])
+                help=HelpStrings.INIT_COMMAND_HELP)
+        self._init_command_parser.add_argument(
+                'client_spec',
+                help=HelpStrings.INIT_CLIENT_SPEC_ARG)
+        self._init_command_parser.set_defaults(func=handlers['init'])
 
         # help command sub-parser
-        self._helpCommandParser = self._subParsers.add_parser(
+        self._help_command_parser = self._sub_parsers.add_parser(
                 'help',
-                help = HelpStrings.HelpCommandHelp)
-        self._helpCommandParser.add_argument(
+                help=HelpStrings.HELP_COMMAND_HELP)
+        self._help_command_parser.add_argument(
                 'command',
-                help = HelpStrings.HelpCommandArg)
-        self._helpCommandParser.set_defaults(func = self._helpCommandHandler)
+                help=HelpStrings.HELP_COMMAND_ARG)
+        self._help_command_parser.set_defaults(func=self._help_command_handler)
 
         # status command sub-parser
-        self._statusCommandParser = self._subParsers.add_parser(
+        self._status_command_parser = self._sub_parsers.add_parser(
                 'status',
-                help = HelpStrings.StatusCommand)
-        self._statusCommandParser.set_defaults(func = handlers['status'])
+                help=HelpStrings.STATUS_COMMAND)
+        self._status_command_parser.set_defaults(func = handlers['status'])
         return
 
     # Constructor
     def __init__(self, handlers):
-        self._setupParsers(handlers)
+        self._master_parser = None
+        self._sub_parsers = None
+        self._init_command_parser = None
+        self._status_command_parser = None
+        self._help_command_parser = None
+        self._args = None
+        self._setup_parsers(handlers)
         return
 
     # Parse
     def parse(self, args):
-        self._args = self._masterParser.parse_args(args)
+        self._args = self._master_parser.parse_args(args)
         self._args.func(self._args)
         return
 

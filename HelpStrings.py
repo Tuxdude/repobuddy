@@ -18,14 +18,29 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+class HelpStringsError(Exception):
+    def __init__(self, error_str):
+        super(HelpStringsError, self).__init__(error_str)
+        self._error_str = error_str
+        return
+
+    def __str__(self):
+        return str(self._error_str)
+
+    def __repr__(self):
+        return str(self._error_str)
+
 class HelpStrings:
-    ProgramDescription      = 'Multi-repo manager for Git'
-    ProgramName             = 'repobuddy'
-    ProgramVersion          = '%(prog)s 0.1 alpha'
-    MasterParserArgHelp     = 'Command to invoke'
-    MasterParserArgTitle    = 'Available Commands'
-    InitCommandHelp         = 'Init the current directory to set up the repos'
-    InitClientSpecArg       = 'The Client Spec to use for this client'
-    HelpCommandHelp         = 'Show usage details for a command'
-    HelpCommandArg          = 'Command to see the help message for'
-    StatusCommand           = 'Show status of the current client config'
+    PROGRAM_DESCRIPTION = 'Multi-repo manager for Git'
+    PROGRAM_NAME = 'repobuddy'
+    PROGRAM_VERSION = '%(prog)s 0.1 alpha'
+    MASTER_PARSER_ARG_HELP = 'Command to invoke'
+    MASTER_PARSER_ARG_TITLE = 'Available Commands'
+    INIT_COMMAND_HELP = 'Init the current directory to set up the repos'
+    INIT_CLIENT_SPEC_ARG = 'The Client Spec to use for this client'
+    HELP_COMMAND_HELP = 'Show usage details for a command'
+    HELP_COMMAND_ARG = 'Command to see the help message for'
+    STATUS_COMMAND = 'Show status of the current client config'
+
+    def __new__(cls):
+        raise HelpStringsError('This class should not be instantiated')

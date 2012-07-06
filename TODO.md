@@ -9,6 +9,8 @@ Command TODOs
 
 General TODOs
 -------------
+-   Means to specify the URL for xml config during init
+-   Add a pylint config file
 -   Add unit tests for both function-level coverage and feature/use-case
     level coverage
 -   Use python logging module support to replace all prints in the code

@@ -24,126 +24,127 @@ import subprocess as _subprocess
 from RepoBuddyUtils import Logger
 
 class GitWrapperError(Exception):
-    def __init__(self, errorStr, isGitError):
-        self._errorStr = errorStr
-        self.isGitError = isGitError
+    def __init__(self, error_str, is_git_error):
+        super(GitWrapperError, self).__init__(error_str)
+        self._error_str = error_str
+        self.is_git_error = is_git_error
         return
 
     def __str__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
     def __repr__(self):
-        return str(self._errorStr)
+        return str(self._error_str)
 
 class GitWrapper(object):
-    def _execGit(self, command, captureStdOut = True):
-        gitCmd = command[:]
-        gitCmd.insert(0, 'git')
-        Logger.Debug('Exec: ' + ' '.join(gitCmd))
+    def _exec_git(self, command, capture_std_out=True):
+        git_cmd = command[:]
+        git_cmd.insert(0, 'git')
+        Logger.debug('Exec: ' + ' '.join(git_cmd))
         try:
-            if not captureStdOut:
+            if not capture_std_out:
                 proc = _subprocess.Popen(
-                        gitCmd,
-                        cwd = self._baseDir,
+                        git_cmd,
+                        cwd = self._base_dir,
                         stderr = _subprocess.PIPE)
             else:
                 proc = _subprocess.Popen(
-                        gitCmd,
-                        cwd = self._baseDir,
+                        git_cmd,
+                        cwd = self._base_dir,
                         stdout = _subprocess.PIPE,
                         stderr = _subprocess.PIPE)
-            (outMsg, errMsg) = proc.communicate()
-            returnCode = proc.wait()
-            if returnCode != 0:
-                raise GitWrapperError(str(errMsg), isGitError = True)
-            if captureStdOut:
-                return outMsg
+            (out_msg, err_msg) = proc.communicate()
+            return_code = proc.wait()
+            if return_code != 0:
+                raise GitWrapperError(str(err_msg), is_git_error=True)
+            if capture_std_out:
+                return out_msg
         except OSError as err:
-            raise GitWrapperError(str(err), isGitError = False)
+            raise GitWrapperError(str(err), is_git_error=False)
         return
 
     # Constructor
-    # baseDir - is the base directory of the git repo
-    def __init__(self, baseDir):
-        if not _os.path.isabs(baseDir):
+    # base_dir - is the base directory of the git repo
+    def __init__(self, base_dir):
+        if not _os.path.isabs(base_dir):
             raise GitWrapperError(
-            'Error: baseDir \'' + baseDir + '\' needs to be an absolute path')
-        self._baseDir = baseDir
+            'Error: base_dir \'' + base_dir + '\' needs to be an absolute path')
+        self._base_dir = base_dir
         return
 
     def __del__(self):
         return
 
-    # Clone the git repo at remoteUrl checking out branch
-    # Equivalent of git clone -b branch remoteUrl
-    # It also changes the current Dir to destDir
-    def clone(self, remoteUrl, branch, destDir):
-        self._execGit(
-                ['clone', '-b', branch, remoteUrl, destDir],
-                captureStdOut = False)
-        if _os.path.isabs(destDir):
-            self._baseDir = destDir
+    # Clone the git repo at remote_url checking out branch
+    # Equivalent of git clone -b branch remote_url
+    # It also changes the current Dir to dest_dir
+    def clone(self, remote_url, branch, dest_dir):
+        self._exec_git(
+                ['clone', '-b', branch, remote_url, dest_dir],
+                capture_std_out=False)
+        if _os.path.isabs(dest_dir):
+            self._base_dir = dest_dir
         else:
-            self._baseDir = _os.path.join(self._baseDir, destDir)
+            self._base_dir = _os.path.join(self._base_dir, dest_dir)
         return
 
-    def updateIndex(self):
-        self._execGit(
+    def update_index(self):
+        self._exec_git(
                 ['update-index', '-q', '--ignore-submodules', '--refresh'],
-                captureStdOut = False)
+                capture_std_out=False)
         return
 
-    def getUntrackedFiles(self):
+    def get_untracked_files(self):
         try:
-            untrackedFiles = self._execGit(
+            untracked_files = self._exec_git(
                     ['ls-files', '--error-unmatch', '--exclude-standard',
                      '--others', '--']).rstrip()
         except GitWrapperError as err:
-            if not err.isGitError:
+            if not err.is_git_error:
                 raise err
-        if untrackedFiles == '':
+        if untracked_files == '':
             return None
         else:
-            return untrackedFiles
+            return untracked_files
 
-    def getUnstagedFiles(self):
+    def get_unstaged_files(self):
         try:
-            self._execGit(
+            self._exec_git(
                     ['diff-files', '--quiet', '--ignore-submodules', '--'])
         except GitWrapperError as err:
-            if not err.isGitError:
+            if not err.is_git_error:
                 raise err
-            unstagedFiles = self._execGit(
+            unstaged_files = self._exec_git(
                     ['diff-files', '--name-status', '-r',
                      '--ignore-submodules', '--'])
-            return unstagedFiles.rstrip()
+            return unstaged_files.rstrip()
         return
 
-    def getUncommittedStagedFiles(self):
+    def get_uncommitted_staged_files(self):
         try:
-            self._execGit(
+            self._exec_git(
                     ['diff-index', '--cached', '--quiet', 'HEAD',
                      '--ignore-submodules', '--'])
         except GitWrapperError as err:
-            if not err.isGitError:
+            if not err.is_git_error:
                 raise err
-            uncommitedStagedFiles = self._execGit(
+            uncommited_staged_files = self._exec_git(
                     ['diff-index', '--cached', '--name-status', '-r',
                      '--ignore-submodules', 'HEAD', '--'])
-            return uncommitedStagedFiles.rstrip()
+            return uncommited_staged_files.rstrip()
         return
 
-    def getCurrentBranch(self):
+    def get_current_branch(self):
         try:
-            headRef = self._execGit(['symbolic-ref', 'HEAD'])
+            head_ref = self._exec_git(['symbolic-ref', 'HEAD'])
         except GitWrapperError as err:
-            if not err.isGitError:
+            if not err.is_git_error:
                 raise err
             else:
                 return None
-        matchObj = _re.compile(r'^refs\/heads\/(.*)$').match(headRef)
+        match_obj = _re.compile(r'^refs\/heads\/(.*)$').match(head_ref)
         try:
-            return matchObj.group(1).rstrip()
-        except IndexError, AttributeError:
+            return match_obj.group(1).rstrip()
+        except (IndexError, AttributeError):
             raise GitWrapperError('Error: Unknown symbolic-ref for HEAD')
         return
