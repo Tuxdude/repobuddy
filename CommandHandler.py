@@ -25,6 +25,7 @@ from RepoBuddyUtils import FileLock, FileLockError, Logger
 from RepoConfigParser import RepoConfigParser, RepoConfigParserError
 from ClientInfo import ClientInfo, ClientInfoError
 
+
 class CommandHandlerError(Exception):
     def __init__(self, error_str):
         super(CommandHandlerError, self).__init__(error_str)
@@ -37,12 +38,12 @@ class CommandHandlerError(Exception):
     def __repr__(self):
         return str(self._error_str)
 
+
 class CommandHandler(object):
     def _get_xml_config(self):
         # FIXME: Support various protcols for fetching the config XML file
-        input_config = _os.path.join(
-                self._current_dir,
-                'config/repoconfig-example.xml')
+        input_config = _os.path.join(self._current_dir,
+                                     'config/repoconfig-example.xml')
 
         # Copy the xml config file to .repobuddy dir
         try:
@@ -69,10 +70,10 @@ class CommandHandler(object):
             if spec.name == client_spec_name:
                 client_spec = spec
                 break
-        if client_spec == None:
+        if client_spec is None:
             raise CommandHandlerError(
-                    'Error: Unable to find the Client Spec: \'' +
-                    client_spec_name + '\'')
+                'Error: Unable to find the Client Spec: \'' +
+                client_spec_name + '\'')
         return client_spec
 
     def _store_client_info(self, client_spec_name):
@@ -95,7 +96,7 @@ class CommandHandler(object):
 
     def _is_client_initialized(self):
         return _os.path.isfile(
-                _os.path.join(self._repo_buddy_dir, 'client.config'))
+            _os.path.join(self._repo_buddy_dir, 'client.config'))
 
     # Calls exec_method while holding the .repobuddy/lock
     def _exec_with_lock(self, exec_method, *method_args):
@@ -121,8 +122,8 @@ class CommandHandler(object):
             # *** repobuddy was killed earlier without releasing the lock file
             if err.isTimeOut:
                 raise CommandHandlerError(
-                        'Error: Lock file ' + lock_file + ' already exists\n' +
-                        'Is another instance of repobuddy running ?')
+                    'Error: Lock file ' + lock_file + ' already exists\n' +
+                    'Is another instance of repobuddy running ?')
             else:
                 raise CommandHandlerError(str(err))
         except GitWrapperError as err:
@@ -159,8 +160,8 @@ class CommandHandler(object):
     def _exec_status(self):
         if not self._is_client_initialized():
             raise CommandHandlerError(
-                    'Error: Uninitialized client, ' +
-                    'please run init to initialize the client first')
+                'Error: Uninitialized client, ' +
+                'please run init to initialize the client first')
 
         # Parse the XML config file
         self._parse_xml_config()
@@ -170,7 +171,9 @@ class CommandHandler(object):
 
         # Process each repo in the Client Spec
         for repo in client.repo_list:
-            git = GitWrapper(_os.path.join(self._current_dir, repo.destination))
+            git = GitWrapper(
+                _os.path.join(self._current_dir,
+                              repo.destination))
             Logger.msg('####################################################')
             Logger.msg('Repo: ' + repo.destination)
             Logger.msg('Remote URL: ' + repo.url)
@@ -191,7 +194,7 @@ class CommandHandler(object):
             if not untracked_files is None:
                 Logger.msg('Untracked Files: \n' + untracked_files + '\n')
                 dirty = True
-                
+
             unstaged_files = git.get_unstaged_files()
             if not unstaged_files is None:
                 Logger.msg('Unstaged Files: \n' + unstaged_files + '\n')
@@ -214,12 +217,12 @@ class CommandHandler(object):
         self._repo_buddy_dir = _os.path.join(self._current_dir, '.repobuddy')
         self._config_file = _os.path.join(self._repo_buddy_dir, 'config.xml')
         self._client_info_file = _os.path.join(
-                self._repo_buddy_dir,
-                'client.config')
+            self._repo_buddy_dir,
+            'client.config')
         return
 
     def get_handlers(self):
-        handlers = { }
+        handlers = {}
         handlers['init'] = self.init_command_handler
         handlers['status'] = self.status_command_handler
         return handlers

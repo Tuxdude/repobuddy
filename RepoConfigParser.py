@@ -21,6 +21,7 @@
 import copy as _copy
 import xml.sax as _sax
 
+
 class RepoConfigParserError(Exception):
     def __init__(self, error_str):
         super(RepoConfigParserError, self).__init__(error_str)
@@ -45,31 +46,30 @@ class Repo(object):
 class ClientSpec(object):
     def __init__(self):
         self.name = ''
-        self.repo_list = [ ]
+        self.repo_list = []
         return
 
 
 class RepoConfig(object):
     def __init__(self):
         self.default_client_spec = ''
-        self.client_spec_list = [ ]
+        self.client_spec_list = []
         return
 
 
 # config - a list of client specs
 # Each client Spec - a list of repos
 # Each repo - a dict with following keys { Url, Branch, Destination }
-
 class _XmlContentHandler(_sax.ContentHandler):
     def _validate_config(self):
         # Verify that default_client_spec is set
         if self._config.default_client_spec == '':
             raise RepoConfigParserError(
-                    'Error: default_client_spec cannot be empty')
+                'Error: default_client_spec cannot be empty')
         # Verify that there is at least one element in the client_spec_list
         if len(self._config.client_spec_list) == 0:
             raise RepoConfigParserError(
-                    'Error: There should be at least one valid Client Spec')
+                'Error: There should be at least one valid Client Spec')
         # Verify default_client_spec is part of client_spec_list
         # Check for duplicate names
         found_default_client_spec = False
@@ -79,14 +79,14 @@ class _XmlContentHandler(_sax.ContentHandler):
                 found_default_client_spec = True
             if client_spec.name in found_client_specs:
                 raise RepoConfigParserError(
-                        'Error: Duplicate Client Spec \'' +
-                        client_spec.name + '\' found')
+                    'Error: Duplicate Client Spec \'' +
+                    client_spec.name + '\' found')
             found_client_specs.add(client_spec.name)
         if not found_default_client_spec:
             raise RepoConfigParserError(
-                    'Error: Unable to find the Client Spec \'' +
-                    self._config.default_client_spec +
-                    '\' in the list of Repos')
+                'Error: Unable to find the Client Spec \'' +
+                self._config.default_client_spec +
+                '\' in the list of Repos')
         return
 
     def __init__(self):
@@ -113,14 +113,14 @@ class _XmlContentHandler(_sax.ContentHandler):
                     _copy.deepcopy(str(attrs.getValue('default_client_spec')))
             except KeyError:
                 raise RepoConfigParserError(
-                        'Error: No default_client_spec found')
+                    'Error: No default_client_spec found')
         elif name == 'ClientSpec':
             self._last_client_spec = ClientSpec()
             try:
                 self._last_client_spec.name = attrs.getValue('name')
             except KeyError:
                 raise RepoConfigParserError(
-                        'Error: No name specified for ClientSpec')
+                    'Error: No name specified for ClientSpec')
         elif name == 'Repo':
             self._last_repo = Repo()
 
@@ -165,7 +165,7 @@ class RepoConfigParser(object):
             _sax.parse(repo_config_xml_file, xml_parser)
         except _sax.SAXParseException as err:
             raise RepoConfigParserError(
-                    'Unable to parse the RepoConfig Xml file: ' + str(err))
+                'Unable to parse the RepoConfig Xml file: ' + str(err))
         finally:
             repo_config_xml_file.close()
         self._config = xml_parser.get_config()

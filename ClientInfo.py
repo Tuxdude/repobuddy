@@ -20,6 +20,7 @@
 
 import ConfigParser as _ConfigParser
 
+
 class ClientInfoError(Exception):
     def __init__(self, error_str):
         super(ClientInfoError, self).__init__(error_str)
@@ -31,6 +32,7 @@ class ClientInfoError(Exception):
 
     def __repr__(self):
         return str(self._error_str)
+
 
 class ClientInfo(object):
     def _validate_config(self):
@@ -63,7 +65,7 @@ class ClientInfo(object):
                 self._config.readfp(file_handle)
             except _ConfigParser.ParsingError as err:
                 raise ClientInfoError(
-                        'Error: Parsing config failed => ' + str(err))
+                    'Error: Parsing config failed => ' + str(err))
             finally:
                 file_handle.close()
 
@@ -98,7 +100,7 @@ class ClientInfo(object):
         if output_file_name is None:
             if self._config_file_name is None:
                 raise ClientInfoError(
-                        'Error: file_name parameter cannot be empty')
+                    'Error: file_name parameter cannot be empty')
             else:
                 output_file_name = self._config_file_name
 

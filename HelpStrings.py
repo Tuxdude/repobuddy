@@ -18,6 +18,7 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+
 class HelpStringsError(Exception):
     def __init__(self, error_str):
         super(HelpStringsError, self).__init__(error_str)
@@ -29,6 +30,7 @@ class HelpStringsError(Exception):
 
     def __repr__(self):
         return str(self._error_str)
+
 
 class HelpStrings:
     PROGRAM_DESCRIPTION = 'Multi-repo manager for Git'

@@ -23,6 +23,7 @@ import os as _os
 import sys as _sys
 import time as _time
 
+
 class FileLockError(Exception):
     def __init__(self, error_str, is_time_out=False):
         super(FileLockError, self).__init__(error_str)
@@ -36,9 +37,9 @@ class FileLockError(Exception):
     def __repr__(self):
         return str(self._error_str)
 
+
 # Credits to Evan for the FileLock code
-# http://www.evanfosmark.com/2009/01/
-#   cross-platform-file-locking-support-in-python/
+# http://www.evanfosmark.com/2009/01/cross-platform-file-locking-support-in-python/
 # Have made minor changes to the original version
 class FileLock(object):
     def __init__(self, file_name, timeout=1, delay=.1):
@@ -68,18 +69,18 @@ class FileLock(object):
         while True:
             try:
                 self._fd = _os.open(
-                        self._lock_file,
-                        _os.O_CREAT | _os.O_EXCL | _os.O_RDWR)
+                    self._lock_file,
+                    _os.O_CREAT | _os.O_EXCL | _os.O_RDWR)
                 break
             except OSError as err:
                 if err.errno != _errno.EEXIST:
                     raise FileLockError(
-                            'Error: Unable to create the lock file: ' +
-                            self._lock_file)
+                        'Error: Unable to create the lock file: ' +
+                        self._lock_file)
                 if (_time.time() - begin) >= self._timeout:
                     raise FileLockError(
-                            'Timeout',
-                            is_time_out=True)
+                        'Timeout',
+                        is_time_out=True)
             _time.sleep(self._delay)
         self._is_locked = True
         return
@@ -90,6 +91,7 @@ class FileLock(object):
             _os.unlink(self._lock_file)
             self._is_locked = False
         return
+
 
 class LoggerError(Exception):
     def __init__(self, error_str):
@@ -102,6 +104,7 @@ class LoggerError(Exception):
 
     def __repr__(self):
         return str(self._error_str)
+
 
 class Logger:
     _disable_debug = True
@@ -133,4 +136,3 @@ class Logger:
         else:
             _sys.stdout.write(msg)
         return
-

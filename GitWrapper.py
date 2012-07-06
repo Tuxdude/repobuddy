@@ -23,6 +23,7 @@ import re as _re
 import subprocess as _subprocess
 from RepoBuddyUtils import Logger
 
+
 class GitWrapperError(Exception):
     def __init__(self, error_str, is_git_error):
         super(GitWrapperError, self).__init__(error_str)
@@ -36,6 +37,7 @@ class GitWrapperError(Exception):
     def __repr__(self):
         return str(self._error_str)
 
+
 class GitWrapper(object):
     def _exec_git(self, command, capture_std_out=True):
         git_cmd = command[:]
@@ -44,15 +46,15 @@ class GitWrapper(object):
         try:
             if not capture_std_out:
                 proc = _subprocess.Popen(
-                        git_cmd,
-                        cwd = self._base_dir,
-                        stderr = _subprocess.PIPE)
+                    git_cmd,
+                    cwd=self._base_dir,
+                    stderr=_subprocess.PIPE)
             else:
                 proc = _subprocess.Popen(
-                        git_cmd,
-                        cwd = self._base_dir,
-                        stdout = _subprocess.PIPE,
-                        stderr = _subprocess.PIPE)
+                    git_cmd,
+                    cwd=self._base_dir,
+                    stdout=_subprocess.PIPE,
+                    stderr=_subprocess.PIPE)
             (out_msg, err_msg) = proc.communicate()
             return_code = proc.wait()
             if return_code != 0:
@@ -68,7 +70,8 @@ class GitWrapper(object):
     def __init__(self, base_dir):
         if not _os.path.isabs(base_dir):
             raise GitWrapperError(
-            'Error: base_dir \'' + base_dir + '\' needs to be an absolute path')
+                'Error: base_dir \'' + base_dir +
+                '\' needs to be an absolute path')
         self._base_dir = base_dir
         return
 
@@ -80,8 +83,8 @@ class GitWrapper(object):
     # It also changes the current Dir to dest_dir
     def clone(self, remote_url, branch, dest_dir):
         self._exec_git(
-                ['clone', '-b', branch, remote_url, dest_dir],
-                capture_std_out=False)
+            ['clone', '-b', branch, remote_url, dest_dir],
+            capture_std_out=False)
         if _os.path.isabs(dest_dir):
             self._base_dir = dest_dir
         else:
@@ -90,15 +93,15 @@ class GitWrapper(object):
 
     def update_index(self):
         self._exec_git(
-                ['update-index', '-q', '--ignore-submodules', '--refresh'],
-                capture_std_out=False)
+            ['update-index', '-q', '--ignore-submodules', '--refresh'],
+            capture_std_out=False)
         return
 
     def get_untracked_files(self):
         try:
             untracked_files = self._exec_git(
-                    ['ls-files', '--error-unmatch', '--exclude-standard',
-                     '--others', '--']).rstrip()
+                ['ls-files', '--error-unmatch', '--exclude-standard',
+                 '--others', '--']).rstrip()
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
@@ -110,27 +113,27 @@ class GitWrapper(object):
     def get_unstaged_files(self):
         try:
             self._exec_git(
-                    ['diff-files', '--quiet', '--ignore-submodules', '--'])
+                ['diff-files', '--quiet', '--ignore-submodules', '--'])
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
             unstaged_files = self._exec_git(
-                    ['diff-files', '--name-status', '-r',
-                     '--ignore-submodules', '--'])
+                ['diff-files', '--name-status', '-r',
+                 '--ignore-submodules', '--'])
             return unstaged_files.rstrip()
         return
 
     def get_uncommitted_staged_files(self):
         try:
             self._exec_git(
-                    ['diff-index', '--cached', '--quiet', 'HEAD',
-                     '--ignore-submodules', '--'])
+                ['diff-index', '--cached', '--quiet', 'HEAD',
+                 '--ignore-submodules', '--'])
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
             uncommited_staged_files = self._exec_git(
-                    ['diff-index', '--cached', '--name-status', '-r',
-                     '--ignore-submodules', 'HEAD', '--'])
+                ['diff-index', '--cached', '--name-status', '-r',
+                 '--ignore-submodules', 'HEAD', '--'])
             return uncommited_staged_files.rstrip()
         return
 

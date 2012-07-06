@@ -26,7 +26,7 @@ from RepoBuddyUtils import Logger
 
 if __name__ != '__main__':
     Logger.error(
-            'Error: This file cannot be included directly from another source')
+        'Error: This file cannot be included directly from another source')
     sys.exit(1)
 
 # Initialize the Command Handler core

@@ -22,6 +22,7 @@ import argparse as _argparse
 from HelpStrings import HelpStrings
 from RepoBuddyUtils import Logger
 
+
 # Class derived from argparse.ArgumentParser just to override the error method
 # and display the help message on errors
 class _MasterParser(_argparse.ArgumentParser):
@@ -51,6 +52,7 @@ class _MasterParser(_argparse.ArgumentParser):
         err_msg += self.format_help()
         raise ArgParserError(err_msg)
 
+
 class ArgParserError(Exception):
     def __init__(self, error_str=None):
         super(ArgParserError, self).__init__(error_str)
@@ -63,10 +65,12 @@ class ArgParserError(Exception):
     def __repr__(self):
         return str(self._error_str)
 
+
 class ArgParserExitNoError(Exception):
     def __init__(self):
         super(ArgParserExitNoError, self).__init__('')
         return
+
 
 # Class to configures all the argparse parsers
 class ArgParser(object):
@@ -79,56 +83,55 @@ class ArgParser(object):
         return
 
     def _help_command_handler(self, args):
-        help_commands = {
-                'init'      : self._display_help_init,
-                'status'    : self._display_help_status }
+        help_commands = {'init': self._display_help_init,
+                         'status': self._display_help_status}
         try:
             help_commands[args.command]()
         except KeyError:
             raise ArgParserError(
-                    'Error: Unknown command \'' + args.command + '\'\n' +
-                    self._help_command_parser.format_help())
+                'Error: Unknown command \'' + args.command + '\'\n' +
+                self._help_command_parser.format_help())
         return
 
     # Setup the master and the sub-parsers for each of the commands
     def _setup_parsers(self, handlers):
         # Top level parser
         self._master_parser = _MasterParser(
-                description=HelpStrings.PROGRAM_DESCRIPTION,
-                prog=HelpStrings.PROGRAM_NAME)
+            description=HelpStrings.PROGRAM_DESCRIPTION,
+            prog=HelpStrings.PROGRAM_NAME)
         self._master_parser.add_argument(
-                '-v',
-                '--version',
-                action='version',
-                version=HelpStrings.PROGRAM_VERSION)
+            '-v',
+            '--version',
+            action='version',
+            version=HelpStrings.PROGRAM_VERSION)
         self._sub_parsers = self._master_parser.add_subparsers(
-                dest='command',
-                help=HelpStrings.MASTER_PARSER_ARG_HELP,
-                title=HelpStrings.MASTER_PARSER_ARG_TITLE)
+            dest='command',
+            help=HelpStrings.MASTER_PARSER_ARG_HELP,
+            title=HelpStrings.MASTER_PARSER_ARG_TITLE)
 
         # init command sub-parser
         self._init_command_parser = self._sub_parsers.add_parser(
-                'init',
-                help=HelpStrings.INIT_COMMAND_HELP)
+            'init',
+            help=HelpStrings.INIT_COMMAND_HELP)
         self._init_command_parser.add_argument(
-                'client_spec',
-                help=HelpStrings.INIT_CLIENT_SPEC_ARG)
+            'client_spec',
+            help=HelpStrings.INIT_CLIENT_SPEC_ARG)
         self._init_command_parser.set_defaults(func=handlers['init'])
 
         # help command sub-parser
         self._help_command_parser = self._sub_parsers.add_parser(
-                'help',
-                help=HelpStrings.HELP_COMMAND_HELP)
+            'help',
+            help=HelpStrings.HELP_COMMAND_HELP)
         self._help_command_parser.add_argument(
-                'command',
-                help=HelpStrings.HELP_COMMAND_ARG)
+            'command',
+            help=HelpStrings.HELP_COMMAND_ARG)
         self._help_command_parser.set_defaults(func=self._help_command_handler)
 
         # status command sub-parser
         self._status_command_parser = self._sub_parsers.add_parser(
-                'status',
-                help=HelpStrings.STATUS_COMMAND)
-        self._status_command_parser.set_defaults(func = handlers['status'])
+            'status',
+            help=HelpStrings.STATUS_COMMAND)
+        self._status_command_parser.set_defaults(func=handlers['status'])
         return
 
     # Constructor
@@ -147,4 +150,3 @@ class ArgParser(object):
         self._args = self._master_parser.parse_args(args)
         self._args.func(self._args)
         return
-
