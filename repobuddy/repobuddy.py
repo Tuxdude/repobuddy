@@ -19,6 +19,26 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import repobuddy.repobuddy as _repobuddy
+import sys as _sys
+from arg_parser import ArgParser, ArgParserError, ArgParserExitNoError
+from command_handler import CommandHandler, CommandHandlerError
+from utils import Logger
 
-_repobuddy.main()
+def main():
+    # Initialize the Command Handler core
+    command_handler = CommandHandler()
+    handlers = command_handler.get_handlers()
+
+    # Parse the command line arguments and invoke the handler
+    arg_parser = ArgParser(handlers)
+    try:
+        arg_parser.parse(_sys.argv[1:])
+    except (CommandHandlerError, ArgParserError) as err:
+        err_msg = str(err)
+        if not err_msg is 'None':
+            Logger.error(err_msg)
+        _sys.exit(1)
+    except ArgParserExitNoError:
+        pass
+
+    _sys.exit(0)
