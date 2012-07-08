@@ -19,7 +19,7 @@
 #
 
 import argparse as _argparse
-from HelpStrings import HelpStrings
+from Globals import HelpStrings
 from RepoBuddyUtils import Logger
 
 
