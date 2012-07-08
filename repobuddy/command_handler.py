@@ -20,10 +20,10 @@
 
 import os as _os
 import shutil as _shutil
-from GitWrapper import GitWrapper, GitWrapperError
-from RepoBuddyUtils import FileLock, FileLockError, Logger
-from RepoManifestParser import RepoManifestParser, RepoManifestParserError
-from ClientInfo import ClientInfo, ClientInfoError
+from git_wrapper import GitWrapper, GitWrapperError
+from utils import FileLock, FileLockError, Logger
+from manifest_parser import RepoManifestParser, RepoManifestParserError
+from client_info import ClientInfo, ClientInfoError
 
 
 class CommandHandlerError(Exception):

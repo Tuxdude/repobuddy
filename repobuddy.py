@@ -20,9 +20,9 @@
 #
 
 import sys
-from ArgParser import ArgParser, ArgParserError, ArgParserExitNoError
-from CommandHandler import CommandHandler, CommandHandlerError
-from RepoBuddyUtils import Logger
+from repobuddy.arg_parser import ArgParser, ArgParserError, ArgParserExitNoError
+from repobuddy.command_handler import CommandHandler, CommandHandlerError
+from repobuddy.utils import Logger
 
 if __name__ != '__main__':
     Logger.error(
