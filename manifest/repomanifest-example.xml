@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- XML repo config used by repobuddy -->
-<RepoBuddyConfig default_client_spec="Spec1">
+<RepoBuddyManifest default_client_spec="Spec1">
     <ClientSpec name="Spec1">
         <Repo>
-            <Url>github:Tuxdude/delphinus.git</Url>
+            <Url>github:Tuxdude/git-scripts.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/delphinus</Destination>
+            <Destination>testing-ground/git-scripts</Destination>
         </Repo>
         <Repo>
             <Url>github:Tuxdude/repobuddy.git</Url>
@@ -15,9 +15,9 @@
     </ClientSpec>
     <ClientSpec name="Spec2">
         <Repo>
-            <Url>github:Tuxdude/delphinus.git</Url>
+            <Url>github:Tuxdude/git-scripts.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/delphinus</Destination>
+            <Destination>testing-ground/git-scripts</Destination>
         </Repo>
         <Repo>
             <Url>github:Tuxdude/repobuddy.git</Url>
@@ -27,9 +27,9 @@
     </ClientSpec>
     <ClientSpec name="Spec3">
         <Repo>
-            <Url>github:Tuxdude/delphinus.git</Url>
+            <Url>github:Tuxdude/git-scripts.git</Url>
             <Branch>master</Branch>
-            <Destination>testing-ground/delphinus</Destination>
+            <Destination>testing-ground/git-scripts</Destination>
         </Repo>
         <Repo>
             <Url>github:Tuxdude/repobuddy.git</Url>
@@ -42,4 +42,4 @@
             <Destination>testing-ground/linux</Destination>
         </Repo>
     </ClientSpec>
-</RepoBuddyConfig>
+</RepoBuddyManifest>

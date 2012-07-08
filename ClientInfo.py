@@ -73,24 +73,24 @@ class ClientInfo(object):
             self._config_file_name = config_file_name
         else:
             self._config = _ConfigParser.RawConfigParser()
-            self._config.add_section('RepoBuddyConfig')
+            self._config.add_section('RepoBuddyManifest')
             self._config_file_name = None
 
         return
 
     def set_client_spec(self, client_spec_name):
-        self._set_config('RepoBuddyConfig', 'clientSpec', client_spec_name)
+        self._set_config('RepoBuddyManifest', 'clientSpec', client_spec_name)
         return
 
-    def set_xml_config(self, xml_config):
-        self._set_config('RepoBuddyConfig', 'xml_config', xml_config)
+    def set_manifest_xml(self, manifest_xml):
+        self._set_config('RepoBuddyManifest', 'manifest_xml', manifest_xml)
         return
 
     def get_client_spec(self):
-        return self._get_config('RepoBuddyConfig', 'clientSpec')
+        return self._get_config('RepoBuddyManifest', 'clientSpec')
 
-    def get_xml_config(self):
-        return self._get_config('RepoBuddyConfig', 'xml_config')
+    def get_manifest_xml(self):
+        return self._get_config('RepoBuddyManifest', 'manifest_xml')
 
     def write(self, file_name=None):
         output_file_name = file_name

@@ -22,7 +22,7 @@ import os as _os
 import shutil as _shutil
 from GitWrapper import GitWrapper, GitWrapperError
 from RepoBuddyUtils import FileLock, FileLockError, Logger
-from RepoConfigParser import RepoConfigParser, RepoConfigParserError
+from RepoManifestParser import RepoManifestParser, RepoManifestParserError
 from ClientInfo import ClientInfo, ClientInfoError
 
 
@@ -40,33 +40,33 @@ class CommandHandlerError(Exception):
 
 
 class CommandHandler(object):
-    def _get_xml_config(self):
-        # FIXME: Support various protcols for fetching the config XML file
-        input_config = _os.path.join(self._current_dir,
-                                     'config/repoconfig-example.xml')
+    def _get_manifest_xml(self):
+        # FIXME: Support various protcols for fetching the manifest XML file
+        input_manifest = _os.path.join(self._current_dir,
+                                     'manifest/repomanifest-example.xml')
 
-        # Copy the xml config file to .repobuddy dir
+        # Copy the manifest xml file to .repobuddy dir
         try:
-            _shutil.copyfile(input_config, self._config_file)
+            _shutil.copyfile(input_manifest, self._manifest_file)
         except IOError as err:
             raise CommandHandlerError('Error: ' + str(err))
         return
 
-    def _parse_xml_config(self):
-        # Parse the config file
-        repo_config_parser = RepoConfigParser()
+    def _parse_manifest_xml(self):
+        # Parse the manifest file
+        repo_manifest_parser = RepoManifestParser()
         try:
-            repo_config_parser.parse(self._config_file)
-        except RepoConfigParserError as err:
+            repo_manifest_parser.parse(self._manifest_file)
+        except RepoManifestParserError as err:
             raise CommandHandlerError(str(err))
 
-        self._xml_config = repo_config_parser.get_config()
+        self._manifest_xml = repo_manifest_parser.get_manifest()
         return
 
     # Retrieve the client spec corresponding to the command-line argument
     def _get_client_spec(self, client_spec_name):
         client_spec = None
-        for spec in self._xml_config.client_spec_list:
+        for spec in self._manifest_xml.client_spec_list:
             if spec.name == client_spec_name:
                 client_spec = spec
                 break
@@ -80,7 +80,7 @@ class CommandHandler(object):
         try:
             client_info = ClientInfo()
             client_info.set_client_spec(client_spec_name)
-            client_info.set_xml_config('config.xml')
+            client_info.set_manifest_xml('manifest.xml')
             client_info.write(self._client_info_file)
         except ClientInfoError as err:
             raise CommandHandlerError(str(err))
@@ -136,11 +136,11 @@ class CommandHandler(object):
         if self._is_client_initialized():
             raise CommandHandlerError('Error: Client is already initialized')
 
-        # Download the XML config file
-        self._get_xml_config()
+        # Download the manifest XML
+        self._get_manifest_xml()
 
-        # Parse the XML config file
-        self._parse_xml_config()
+        # Parse the manifest XML
+        self._parse_manifest_xml()
 
         # Get the Client Spec corresponding to the Command line argument
         client_spec = self._get_client_spec(args.client_spec)
@@ -151,7 +151,7 @@ class CommandHandler(object):
             git.clone(repo.url, repo.branch, repo.destination)
 
         # Create the client file, writing the following
-        # The config file name
+        # The manifest file name
         # The client spec chosen
         self._store_client_info(args.client_spec)
 
@@ -163,8 +163,8 @@ class CommandHandler(object):
                 'Error: Uninitialized client, ' +
                 'please run init to initialize the client first')
 
-        # Parse the XML config file
-        self._parse_xml_config()
+        # Parse the manifest XML
+        self._parse_manifest_xml()
 
         # Get the client spec name from client info
         client = self._get_client_spec(self._get_client_info())
@@ -212,10 +212,10 @@ class CommandHandler(object):
         return
 
     def __init__(self):
-        self._xml_config = None
+        self._manifest_xml = None
         self._current_dir = _os.getcwd()
         self._repo_buddy_dir = _os.path.join(self._current_dir, '.repobuddy')
-        self._config_file = _os.path.join(self._repo_buddy_dir, 'config.xml')
+        self._manifest_file = _os.path.join(self._repo_buddy_dir, 'manifest.xml')
         self._client_info_file = _os.path.join(
             self._repo_buddy_dir,
             'client.config')
