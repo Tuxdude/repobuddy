@@ -19,15 +19,16 @@
 #
 
 from setuptools import setup, find_packages
+
 setup(
-    name="RepoBuddy",
-    version="0.1alpha",
-    author="Ash",
-    author_email="tuxdude.github@gmail.com",
-    description="Multi-repository manager for GIT based projects",
-    license="LGPL v3",
-    keywords="git repo multi-repo",
-    url="https://github.com/Tuxdude/repobuddy",
+    name='RepoBuddy',
+    version='0.1alpha',
+    author='Ash',
+    author_email='tuxdude.github@gmail.com',
+    description='Multi-repository manager for GIT based projects',
+    license='LGPL v3',
+    keywords='git repo multi-repo',
+    url='https://github.com/Tuxdude/repobuddy',
     packages=find_packages(),
     entry_points={
         'console_scripts' : [
