@@ -1,0 +1,71 @@
+TEST-LIST
+=========
+
+Unit test
+----------
+
+General
+-------
+1. No write permissions in the current dir
+2. 2nd instance of repobuddy while the lock is taken
+
+Arg Parse:
+1. Help Command
+2. Version Command
+
+Fetching Repo Manifest
+----------------------
+1. Fetch repo manifest from file
+2. Fetch repo manifest from GIT
+3. Fetch repo manifest from HTTP
+4. Fetch repo manifest from HTTPS
+5. Fetch repo manifest from SSH
+
+GitWrapper
+----------
+1. Clone a repo
+2. Clone an invalid repo URL
+3. Clone a valid repo URL but invalid branch
+4. Clone a valid repo but into a directory with no write permissions
+5. Update index on a valid GIT repo
+6. Update index on an invalid GIT repo
+7. Get Untracked files when there are none
+8. Get Untracked files with 2 untracked files
+9. Get Unstaged files when there are none
+10. Get Unstaged files with 2 unstaged files
+11. Get Uncommitted staged files when there are none
+12. Get Uncommitted staged files with 2 such files.
+13. Get the current branch on an invalid GIT repo
+14. Get the current branch on a valid repo
+15. Get the current branch on a detached HEAD
+16. Get the current branch on a signed TAG
+17. Get the current branch on an unsigned TAG
+18. Get the current branch on an unannotated TAG
+19. Get the current branch on an annotated TAG
+
+Client Info
+-----------
+1. Parse an invalid client info file
+2. Parse a valid client info file
+3. Parse a valid client info, 
+
+Commands
+--------
+
+init
+----
+1. Initialize a client with a valid Spec
+2. Initialize a client with an invalid Spec
+3. Re-initialize a client
+4. Initialize a client from an invalid repo manifest
+
+status
+------
+1. Uninitialized client
+2. No changes in any of the repos
+3. No changes, but on a different branch in one of the repo
+4. No changes, but on different branches in all of the 2 repos
+5. Uncommitted staged change in one repo, Unstaged change in another repo
+6. Committed changes and ahead of origin, but in same branch
+7. Committed changes and ahead of origin, but in a different branch
+8. Moved to a different branch, and deleted the branch in the SPEC
