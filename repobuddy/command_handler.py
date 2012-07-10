@@ -20,23 +20,19 @@
 
 import os as _os
 import shutil as _shutil
-from .git_wrapper import GitWrapper, GitWrapperError
-from .utils import FileLock, FileLockError, Logger
-from .manifest_parser import RepoManifestParser, RepoManifestParserError
-from .client_info import ClientInfo, ClientInfoError
+
+from repobuddy.git_wrapper import GitWrapper, GitWrapperError
+from repobuddy.utils import FileLock, FileLockError, Logger, \
+    RepoBuddyBaseException
+from repobuddy.manifest_parser import RepoManifestParser, \
+    RepoManifestParserError
+from repobuddy.client_info import ClientInfo, ClientInfoError
 
 
-class CommandHandlerError(Exception):
+class CommandHandlerError(RepoBuddyBaseException):
     def __init__(self, error_str):
         super(CommandHandlerError, self).__init__(error_str)
-        self._error_str = error_str
         return
-
-    def __str__(self):
-        return str(self._error_str)
-
-    def __repr__(self):
-        return str(self._error_str)
 
 
 class CommandHandler(object):

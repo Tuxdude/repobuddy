@@ -32,5 +32,5 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'repobuddy = repobuddy.repobuddy:main']}
+            'repobuddy = repobuddy.main:main']}
 )

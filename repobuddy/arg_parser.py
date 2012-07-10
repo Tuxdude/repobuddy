@@ -19,8 +19,21 @@
 #
 
 import argparse as _argparse
-from .globals import HelpStrings
-from .utils import Logger
+
+from repobuddy.globals import HelpStrings
+from repobuddy.utils import Logger, RepoBuddyBaseException
+
+
+class ArgParserError(RepoBuddyBaseException):
+    def __init__(self, error_str=None):
+        super(ArgParserError, self).__init__(error_str)
+        return
+
+
+class ArgParserExitNoError(RepoBuddyBaseException):
+    def __init__(self):
+        super(ArgParserExitNoError, self).__init__('')
+        return
 
 
 # Class derived from argparse.ArgumentParser just to override the error method
@@ -51,25 +64,6 @@ class _MasterParser(_argparse.ArgumentParser):
         err_msg = self.prog + ': Error: ' + message + '\n'
         err_msg += self.format_help()
         raise ArgParserError(err_msg)
-
-
-class ArgParserError(Exception):
-    def __init__(self, error_str=None):
-        super(ArgParserError, self).__init__(error_str)
-        self._error_str = error_str
-        return
-
-    def __str__(self):
-        return str(self._error_str)
-
-    def __repr__(self):
-        return str(self._error_str)
-
-
-class ArgParserExitNoError(Exception):
-    def __init__(self):
-        super(ArgParserExitNoError, self).__init__('')
-        return
 
 
 # Class to configures all the argparse parsers

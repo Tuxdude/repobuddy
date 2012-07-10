@@ -20,18 +20,13 @@
 
 import ConfigParser as _ConfigParser
 
+from repobuddy.utils import RepoBuddyBaseException
 
-class ClientInfoError(Exception):
+
+class ClientInfoError(RepoBuddyBaseException):
     def __init__(self, error_str):
         super(ClientInfoError, self).__init__(error_str)
-        self._error_str = error_str
         return
-
-    def __str__(self):
-        return str(self._error_str)
-
-    def __repr__(self):
-        return str(self._error_str)
 
 
 class ClientInfo(object):

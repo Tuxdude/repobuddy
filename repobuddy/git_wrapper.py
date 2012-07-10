@@ -21,21 +21,15 @@
 import os as _os
 import re as _re
 import subprocess as _subprocess
-from .utils import Logger
+
+from repobuddy.utils import Logger, RepoBuddyBaseException
 
 
-class GitWrapperError(Exception):
+class GitWrapperError(RepoBuddyBaseException):
     def __init__(self, error_str, is_git_error):
         super(GitWrapperError, self).__init__(error_str)
-        self._error_str = error_str
         self.is_git_error = is_git_error
         return
-
-    def __str__(self):
-        return str(self._error_str)
-
-    def __repr__(self):
-        return str(self._error_str)
 
 
 class GitWrapper(object):

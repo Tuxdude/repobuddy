@@ -24,18 +24,24 @@ import sys as _sys
 import time as _time
 
 
-class FileLockError(Exception):
-    def __init__(self, error_str, is_time_out=False):
-        super(FileLockError, self).__init__(error_str)
-        self._error_str = error_str
-        self.is_time_out = is_time_out
+class RepoBuddyBaseException(Exception):
+    def __init__(self, error_str):
+        super(RepoBuddyBaseException, self).__init__(error_str)
+        self._error_str = str(error_str)
         return
 
     def __str__(self):
-        return str(self._error_str)
+        return self._error_str
 
     def __repr__(self):
-        return str(self._error_str)
+        return self._error_str
+
+
+class FileLockError(RepoBuddyBaseException):
+    def __init__(self, error_str, is_time_out=False):
+        super(FileLockError, self).__init__(error_str)
+        self.is_time_out = is_time_out
+        return
 
 
 # Credits to Evan for the FileLock code
