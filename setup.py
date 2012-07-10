@@ -31,8 +31,6 @@ setup(
     url='https://github.com/Tuxdude/repobuddy',
     packages=find_packages(),
     entry_points={
-        'console_scripts' : [
-            'repobuddy = repobuddy.repobuddy:main'
-            ]
-        }
+        'console_scripts': [
+            'repobuddy = repobuddy.repobuddy:main']}
 )

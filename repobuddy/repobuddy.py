@@ -20,9 +20,10 @@
 #
 
 import sys as _sys
-from arg_parser import ArgParser, ArgParserError, ArgParserExitNoError
-from command_handler import CommandHandler, CommandHandlerError
-from utils import Logger
+from .arg_parser import ArgParser, ArgParserError, ArgParserExitNoError
+from .command_handler import CommandHandler, CommandHandlerError
+from .utils import Logger
+
 
 def main():
     # Initialize the Command Handler core

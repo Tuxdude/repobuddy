@@ -21,7 +21,7 @@
 import os as _os
 import re as _re
 import subprocess as _subprocess
-from utils import Logger
+from .utils import Logger
 
 
 class GitWrapperError(Exception):

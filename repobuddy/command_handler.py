@@ -20,10 +20,10 @@
 
 import os as _os
 import shutil as _shutil
-from git_wrapper import GitWrapper, GitWrapperError
-from utils import FileLock, FileLockError, Logger
-from manifest_parser import RepoManifestParser, RepoManifestParserError
-from client_info import ClientInfo, ClientInfoError
+from .git_wrapper import GitWrapper, GitWrapperError
+from .utils import FileLock, FileLockError, Logger
+from .manifest_parser import RepoManifestParser, RepoManifestParserError
+from .client_info import ClientInfo, ClientInfoError
 
 
 class CommandHandlerError(Exception):
@@ -43,7 +43,7 @@ class CommandHandler(object):
     def _get_manifest_xml(self):
         # FIXME: Support various protcols for fetching the manifest XML file
         input_manifest = _os.path.join(self._current_dir,
-                                     'manifest/repomanifest-example.xml')
+                                       'manifest/repomanifest-example.xml')
 
         # Copy the manifest xml file to .repobuddy dir
         try:
@@ -215,7 +215,8 @@ class CommandHandler(object):
         self._manifest_xml = None
         self._current_dir = _os.getcwd()
         self._repo_buddy_dir = _os.path.join(self._current_dir, '.repobuddy')
-        self._manifest_file = _os.path.join(self._repo_buddy_dir, 'manifest.xml')
+        self._manifest_file = _os.path.join(self._repo_buddy_dir,
+                                            'manifest.xml')
         self._client_info_file = _os.path.join(
             self._repo_buddy_dir,
             'client.config')

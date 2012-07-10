@@ -19,8 +19,8 @@
 #
 
 import argparse as _argparse
-from globals import HelpStrings
-from utils import Logger
+from .globals import HelpStrings
+from .utils import Logger
 
 
 # Class derived from argparse.ArgumentParser just to override the error method
