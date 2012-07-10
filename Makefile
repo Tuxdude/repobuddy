@@ -1,17 +1,30 @@
-PYTHON := python
-PYLINT := pylint
-PEP8   := pep8
-SRCS   := $(shell find . -path ./build -prune -o -name '*.py' -print)
+PYTHON   := python
+PYLINT   := pylint
+PEP8     := pep8
+SRCS     := $(shell find . -path ./build -prune -o -name '*.py' -print)
+CLEANUP_FILES := \
+            $$HOME/.local/bin/repobuddy \
+            $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
+            *.egg-info \
+            build \
+            dist
 
-develop:
+dev-install:
 	@$(PYTHON) setup.py develop
 
+dev-uninstall:
+	@$(PYTHON) setup.py develop --uninstall
+	$(MAKE) clean
+
 sdist:
-	$(PYTHON) setup.py sdist
+	@$(PYTHON) setup.py sdist
+
+install:
+	@$(PYTHON) setup.py install
 
 clean:
-	$(PYTHON) setup.py develop --uninstall
-	@rm -rf *.egg-info dist
+	@rm -rf $(CLEANUP_FILES)
+	@rm -rf *.egg-info build dist
 
 pep8:
 	@$(PEP8) $(SRCS)
