@@ -4,16 +4,6 @@ TEST-LIST
 Unit tests
 ----------
 
-General
--------
-1.  No write permissions in the current dir
-2.  2nd instance of repobuddy while the lock is taken
-
-Arg Parse
----------
-1.  Help Command
-2.  Version Command
-
 Fetching Repo Manifest
 ----------------------
 1.  From file
@@ -69,24 +59,49 @@ Client Info
 5.  Create a new client info, and invoke all the getters
 6.  Create a new client info, and write to a file, change a setting, and
     write to a second file
+7.  Create a new client info, and write to a file with no modifications 
 
-Commands
---------
+Utils
+-----
+1.  Create a lock file, and try to acquire the lock file in a second instance
+2.  Create a lock file in one thread, and try to acquire the lock file in a
+    second instance, while the first instance releases the lock.
+3.  Create a lock file, and check if the file is created. Release the lock and
+    check if the file is removed.
+4.  Create a lock file in one thread, try to delete the file in another thread.
+5.  Create a lock file in a directory with no write permission.
 
-init
-----
+Arg Parser
+----------
+1.  Invoke -h and --help
+2.  Invoke init -h, init --help and help init
+3.  Invoke status -h, status --help and help status
+4.  Invoke help -h, help --help and help help
+5.  Invoke -v and --version
+
+Command Handlers
+----------------
+
+init command
+------------
 1.  Initialize a client with a valid Spec
 2.  Initialize a client with an invalid Spec
 3.  Re-initialize a client
 4.  Initialize a client from an invalid repo manifest
 
-status
-------
+status command
+--------------
 1.  Uninitialized client
 2.  No changes in any of the repos
 3.  No changes, but on a different branch in one of the repo
-4.  No changes, but on different branches in all of the 2 repos
-5.  Uncommitted staged change in one repo, Unstaged change in another repo
+4.  No changes, but on different branches in 2 repos
+5.  3 repos - 1 with untracked change, 1 with tracked but uncommitted and
+    third with staged change
 6.  Committed changes and ahead of origin, but in same branch
 7.  Committed changes and ahead of origin, but in a different branch
 8.  Local copy in a different branch, and deleted the branch in the SPEC
+
+General
+-------
+1.  No write permissions in the current dir
+2.  2nd instance of repobuddy while the lock is taken
