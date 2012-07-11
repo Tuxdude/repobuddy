@@ -41,8 +41,7 @@ class GitWrapper(object):
             if not capture_std_out:
                 proc = _subprocess.Popen(
                     git_cmd,
-                    cwd=self._base_dir,
-                    stderr=_subprocess.PIPE)
+                    cwd=self._base_dir)
             else:
                 proc = _subprocess.Popen(
                     git_cmd,
@@ -52,7 +51,8 @@ class GitWrapper(object):
             (out_msg, err_msg) = proc.communicate()
             return_code = proc.wait()
             if return_code != 0:
-                raise GitWrapperError(str(err_msg), is_git_error=True)
+                raise GitWrapperError('Command \'%s\' failed' % cmd,
+                                      is_git_error=True)
             if capture_std_out:
                 return out_msg
         except OSError as err:
