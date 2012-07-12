@@ -48,10 +48,10 @@ class GitWrapper(object):
                     cwd=self._base_dir,
                     stdout=_subprocess.PIPE,
                     stderr=_subprocess.PIPE)
-            (out_msg, err_msg) = proc.communicate()
+            out_msg = proc.communicate()[0]
             return_code = proc.wait()
             if return_code != 0:
-                raise GitWrapperError('Command \'%s\' failed' % cmd,
+                raise GitWrapperError('Command \'%s\' failed' % command,
                                       is_git_error=True)
             if capture_std_out:
                 return out_msg
