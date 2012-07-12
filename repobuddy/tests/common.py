@@ -84,8 +84,8 @@ class ShellHelper:
 
 
 class TestCommon(object):
-    def __init__(self):
-        return
+#    def __init__(self):
+#        return
 
     def git_append_add_commit(self, text, filename, commit_log, exec_dir):
         ShellHelper.append_text_to_file(text, filename, exec_dir)

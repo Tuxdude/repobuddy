@@ -62,10 +62,12 @@ class GitWrapperTestSuite():
         tests = ['test_clone']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
+
 def setUpModule():
     Logger.msg('%s %s' % (__name__,
                           _inspect.stack()[0][3]))
     return
+
 
 def tearDownModule():
     Logger.msg('%s %s' % (__name__,
