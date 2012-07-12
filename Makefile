@@ -30,9 +30,9 @@ pep8:
 	@$(PEP8) $(SRCS)
 
 pylint:
-	@$(PYLINT) -r n -d C0111 $(SRCS)
+	@$(PYLINT) -r n -i y -d C0111 $(SRCS)
 
 pylint-report:
-	@$(PYLINT) -r y -d C0111 $(SRCS)
+	@$(PYLINT) -r y -i y -d C0111 $(SRCS)
 
 .PHONY: develop sdist clean pep8 pylint pylint-report
