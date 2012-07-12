@@ -103,9 +103,9 @@ class TestCommon(object):
         ShellHelper.make_dir(base_dir)
 
         # Set up the origin and clone repo paths
-        origin_repo_url = _os.path.join(base_dir, 'testing-repo-origin')
-        clone_repo1 = _os.path.join(base_dir, 'testing-repo-clone1')
-        clone_repo2 = _os.path.join(base_dir, 'testing-repo-clone2')
+        origin_repo_url = _os.path.join(base_dir, 'repo-origin')
+        clone_repo1 = _os.path.join(base_dir, 'clone1')
+        clone_repo2 = _os.path.join(base_dir, 'clone2')
 
         # Set up the origin as a bare repo
         ShellHelper.make_dir(origin_repo_url)
@@ -113,7 +113,7 @@ class TestCommon(object):
             _shlex.split('git init --bare'),
             origin_repo_url)
 
-        # Clone1 from the origin
+        # Create Clone1 from the origin
         ShellHelper.exec_command(
             _shlex.split('git clone %s %s' % (origin_repo_url, clone_repo1)),
             base_dir)
@@ -151,5 +151,82 @@ class TestCommon(object):
             'dummy2',
             'Creating dummy2.',
             clone_repo1)
+
+        # Create clone2 from the origin
+        ShellHelper.exec_command(
+            _shlex.split('git clone %s %s' % (origin_repo_url, clone_repo2)),
+            base_dir)
+
+        # Add and commit changes in clone2
+        self.git_append_add_commit(
+            'Another line...\n',
+            'dummy',
+            'One more to dummy.',
+            clone_repo2)
+        self.git_append_add_commit(
+            'More dummy...\n',
+            'dummy',
+            'More dummy.',
+            clone_repo2)
+
+        # Create a new branch in clone2
+        ShellHelper.exec_command(
+            _shlex.split('git branch new-branch'),
+            clone_repo2)
+        ShellHelper.exec_command(
+            _shlex.split('git checkout new-branch'),
+            clone_repo2)
+
+        # Add some more changes in clone2's new-branch
+        self.git_append_add_commit(
+            'More lines...\n',
+            'dummy',
+            'Another line to dummy.',
+            clone_repo2)
+        self.git_append_add_commit(
+            'Just keep it coming...\n',
+            'dummy',
+            'Again :D',
+            clone_repo2)
+
+        # Switch back to master in clone2
+        ShellHelper.exec_command(
+            _shlex.split('git checkout master'),
+            clone_repo2)
+
+        # Push all branches to origin
+        ShellHelper.exec_command(
+            _shlex.split('git push origin --all'),
+            clone_repo2)
+
+        # Pull changes from origin into clone1
+        ShellHelper.exec_command(
+            _shlex.split('git fetch origin'),
+            clone_repo1)
+        ShellHelper.exec_command(
+            _shlex.split(
+                'git merge --commit -m "Merge origin into clone1" ' +
+                'origin/master'),
+            clone_repo1)
+
+        # Now push the merges back to origin
+        ShellHelper.exec_command(
+            _shlex.split('git push origin master'),
+            clone_repo1)
+
+        # Get the changes from origin into clone2
+        ShellHelper.exec_command(
+            _shlex.split('git fetch origin'),
+            clone_repo2)
+        ShellHelper.exec_command(
+            _shlex.split(
+                'git merge --commit -m "Merge origin into clone2" ' +
+                'origin/master'),
+            clone_repo2)
+
+        # Now push the merges back to origin
+        ShellHelper.exec_command(
+            _shlex.split('git push origin --all'),
+            clone_repo2)
 
         return
