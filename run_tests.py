@@ -24,7 +24,9 @@ import unittest as _unittest
 from repobuddy.tests.git_wrapper import GitWrapperTestSuite
 
 
-if __name__ == '__main__':
+def main():
     git_wrapper_tests = GitWrapperTestSuite().get_test_suite()
     _unittest.TextTestRunner(verbosity=2).run(git_wrapper_tests)
 
+if __name__ == '__main__':
+    main()
