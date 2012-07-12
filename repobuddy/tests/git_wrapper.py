@@ -18,44 +18,61 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import unittest as _unittest
 import inspect as _inspect
+import os as _os
+import unittest as _unittest
 
+from repobuddy.tests.common import TestCommon, ShellHelper
 from repobuddy.utils import Logger
+from repobuddy.git_wrapper import GitWrapper, GitWrapperError
 
 
 class GitWrapperTestCase(_unittest.TestCase):
+    _base_dir = None
+    _repos_dir = None
+    _skip_cleanup = True
+
+    @classmethod
+    def set_base_dir(cls, base_dir):
+        cls._base_dir = base_dir
+        return
+
     @classmethod
     def setUpClass(cls):
-        Logger.msg('%s %s' % (cls.__name__,
-                              _inspect.stack()[0][3]))
+        cls._repos_dir = _os.path.join(cls._base_dir, 'repos')
+        TestCommon.setup_test_repos(cls._repos_dir)
+        cls._origin_repo = _os.path.join(cls._repos_dir, 'repo-origin')
         return
 
     @classmethod
     def tearDownClass(cls):
-        Logger.msg('%s %s' % (cls.__name__,
-                              _inspect.stack()[0][3]))
+        if not cls._skip_cleanup:
+            ShellHelper.remove_dir(cls._repos_dir)
         return
 
     def setUp(self):
-        Logger.msg('%s %s' % (self.__class__.__name__,
-                              _inspect.stack()[0][3]))
+        # TODO: Bring the repo to a state with no untracked files,
+        # or any uncomitted changes. A simple clone should do it ;)
+#        self._test_clone = 
         return
 
     def tearDown(self):
-        Logger.msg('%s %s' % (self.__class__.__name__,
-                              _inspect.stack()[0][3]))
         return
 
     def test_clone(self):
-        Logger.msg('%s %s' % (self.__class__.__name__,
-                              _inspect.stack()[0][3]))
-        self.assertEqual(1, 1, 'Value mismtach')
+        git = GitWrapper(self.__class__._repos_dir)
+        git.clone(
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
         return
 
 
 class GitWrapperTestSuite():
-    def __init__(self):
+    def __init__(self, base_test_dir):
+        if not _os.path.isdir(base_test_dir):
+            ShellHelper.make_dir(base_test_dir)
+        GitWrapperTestCase.set_base_dir(base_test_dir)
         return
 
     def get_test_suite(self):
@@ -64,12 +81,8 @@ class GitWrapperTestSuite():
 
 
 def setUpModule():
-    Logger.msg('%s %s' % (__name__,
-                          _inspect.stack()[0][3]))
     return
 
 
 def tearDownModule():
-    Logger.msg('%s %s' % (__name__,
-                          _inspect.stack()[0][3]))
     return

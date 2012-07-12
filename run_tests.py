@@ -19,13 +19,15 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import os as _os
 import unittest as _unittest
 
 from repobuddy.tests.git_wrapper import GitWrapperTestSuite
 
 
 def main():
-    git_wrapper_tests = GitWrapperTestSuite().get_test_suite()
+    test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
+    git_wrapper_tests = GitWrapperTestSuite(test_dir).get_test_suite()
     _unittest.TextTestRunner(verbosity=2).run(git_wrapper_tests)
 
 if __name__ == '__main__':

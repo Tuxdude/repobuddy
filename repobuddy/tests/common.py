@@ -23,7 +23,7 @@ import subprocess as _subprocess
 import shlex as _shlex
 import shutil as _shutil
 
-from repobuddy.utils import RepoBuddyBaseException
+from repobuddy.utils import RepoBuddyBaseException, Logger
 
 
 class ShellError(RepoBuddyBaseException):
@@ -34,12 +34,20 @@ class ShellError(RepoBuddyBaseException):
 
 class ShellHelper:
     @classmethod
-    def exec_command(cls, cmd, base_dir):
-        print '>> ' + ' '.join(cmd)
+    def exec_command(cls, cmd, base_dir, debug_output=True):
+        Logger.msg('>> ' + ' '.join(cmd))
         try:
-            proc = _subprocess.Popen(
-                cmd,
-                cwd=base_dir)
+            if debug_output:
+                proc = _subprocess.Popen(
+                    cmd,
+                    cwd=base_dir)
+            else:
+                proc = _subprocess.Popen(
+                    cmd,
+                    cwd=base_dir,
+                    stdout=open(_os.devnull, 'w'),
+                    stderr=_subprocess.STDOUT)
+            proc.communicate()
             return_code = proc.wait()
             if return_code != 0:
                 raise ShellError('Command \'%s\' failed!' % cmd)
@@ -83,11 +91,10 @@ class ShellHelper:
         return
 
 
-class TestCommon(object):
-#    def __init__(self):
-#        return
+class TestCommon:
 
-    def git_append_add_commit(self, text, filename, commit_log, exec_dir):
+    @classmethod
+    def _git_append_add_commit(cls, text, filename, commit_log, exec_dir):
         ShellHelper.append_text_to_file(text, filename, exec_dir)
         ShellHelper.exec_command(
             _shlex.split('git add %s' % filename),
@@ -97,7 +104,8 @@ class TestCommon(object):
             exec_dir)
         return
 
-    def setup_test_repos(self, base_dir):
+    @classmethod
+    def setup_test_repos(cls, base_dir):
         # Cleanup and create an empty directory
         ShellHelper.remove_dir(base_dir)
         ShellHelper.make_dir(base_dir)
@@ -119,17 +127,17 @@ class TestCommon(object):
             base_dir)
 
         # Create some content in clone1
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'First content...\n',
             'README',
             'First commit.',
             clone_repo1)
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'Hardly useful...\n',
             'dummy',
             'Here we go.',
             clone_repo1)
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'More content...\n',
             'README',
             'Appending to README.',
@@ -141,12 +149,12 @@ class TestCommon(object):
             clone_repo1)
 
         # Make some more changes, but do not push yet
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'Another line...\n',
             'README',
             'One more to README.',
             clone_repo1)
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'Dummy2 in place...\n',
             'dummy2',
             'Creating dummy2.',
@@ -158,12 +166,12 @@ class TestCommon(object):
             base_dir)
 
         # Add and commit changes in clone2
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'Another line...\n',
             'dummy',
             'One more to dummy.',
             clone_repo2)
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'More dummy...\n',
             'dummy',
             'More dummy.',
@@ -178,12 +186,12 @@ class TestCommon(object):
             clone_repo2)
 
         # Add some more changes in clone2's new-branch
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'More lines...\n',
             'dummy',
             'Another line to dummy.',
             clone_repo2)
-        self.git_append_add_commit(
+        cls._git_append_add_commit(
             'Just keep it coming...\n',
             'dummy',
             'Again :D',
@@ -228,5 +236,9 @@ class TestCommon(object):
         ShellHelper.exec_command(
             _shlex.split('git push origin --all'),
             clone_repo2)
+
+        # Now get rid of the clone repos, we only need the origin
+        ShellHelper.remove_dir(clone_repo1)
+        ShellHelper.remove_dir(clone_repo2)
 
         return
