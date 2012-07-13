@@ -34,23 +34,23 @@ class ShellError(RepoBuddyBaseException):
 
 class ShellHelper:
     @classmethod
-    def exec_command(cls, cmd, base_dir, debug_output=True):
-        Logger.msg('>> ' + ' '.join(cmd))
+    def exec_command(cls, command, base_dir, debug_output=True):
+        Logger.msg('>> ' + ' '.join(command))
         try:
             if debug_output:
                 proc = _subprocess.Popen(
-                    cmd,
+                    command,
                     cwd=base_dir)
             else:
                 proc = _subprocess.Popen(
-                    cmd,
+                    command,
                     cwd=base_dir,
                     stdout=open(_os.devnull, 'w'),
                     stderr=_subprocess.STDOUT)
             proc.communicate()
             return_code = proc.wait()
             if return_code != 0:
-                raise ShellError('Command \'%s\' failed!' % cmd)
+                raise ShellError('Command \'%s\' failed!' % command)
         except (OSError, IOError) as err:
             raise ShellError(str(err))
         return
