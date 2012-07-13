@@ -50,21 +50,77 @@ class GitWrapperTestCase(_unittest.TestCase):
             ShellHelper.remove_dir(cls._repos_dir)
         return
 
+    def __init__(self, methodName='runTest'):
+        super(GitWrapperTestCase, self).__init__(methodName)
+        self._tear_down_cb = None
+        self._tear_down_cb_args = None
+        self._tear_down_cb_kwargs = None
+        return
+
     def setUp(self):
-        # TODO: Bring the repo to a state with no untracked files,
-        # or any uncomitted changes. A simple clone should do it ;)
-#        self._test_clone = 
         return
 
     def tearDown(self):
+        if not self._tear_down_cb is None:
+            self._tear_down_cb(*self._tear_down_cb_args,
+                                 **self._tear_down_cb_kwargs)
+            self._clear_tear_down_cb()
         return
 
-    def test_clone(self):
-        git = GitWrapper(self.__class__._repos_dir)
-        git.clone(
+    def _set_tear_down_cb(self, method, *args, **kwargs):
+        self._tear_down_cb = method
+        self._tear_down_cb_args = args
+        self._tear_down_cb_kwargs = kwargs
+        return
+
+    def _clear_tear_down_cb(self):
+        self._tear_down_cb = None
+        self._tear_down_cb_args = None
+        self._tear_down_cb_kwargs = None
+        return
+
+    def _clone_helper(self, base_dir, url, branch, destination):
+        clone_dir = _os.path.join(base_dir, destination)
+        self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
+
+        git = GitWrapper(base_dir)
+        git.clone(url, branch, destination)
+
+        ShellHelper.remove_dir(clone_dir)
+        return
+
+    def _clone_tear_down_cb(self, clone_dir):
+        ShellHelper.remove_dir(clone_dir)
+        return
+
+    def test_clone_valid_repo(self):
+        self._clone_helper(
+            self.__class__._repos_dir,
             self.__class__._origin_repo,
             'master',
             'test-clone')
+        return
+
+    def test_clone_invalid_url(self):
+        with self.assertRaisesRegexp(
+            GitWrapperError,
+            r'Command \'git clone -b .*\' failed'):
+            self._clone_helper(
+                self.__class__._repos_dir,
+                self.__class__._origin_repo + '-invalid-suffix',
+                'master',
+                'test-clone')
+        return
+
+    def test_clone_invalid_branch(self):
+        with self.assertRaisesRegexp(
+            GitWrapperError,
+            r'Command \'git clone -b .*\' failed'):
+            self._clone_helper(
+                self.__class__._repos_dir,
+                self.__class__._origin_repo,
+                'does-not-exist-branch',
+                'test-clone')
         return
 
 
@@ -76,7 +132,10 @@ class GitWrapperTestSuite():
         return
 
     def get_test_suite(self):
-        tests = ['test_clone']
+        tests = [
+            'test_clone_valid_repo',
+            'test_clone_invalid_url',
+            'test_clone_invalid_branch']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 
