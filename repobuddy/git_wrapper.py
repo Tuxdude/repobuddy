@@ -51,8 +51,9 @@ class GitWrapper(object):
             out_msg = proc.communicate()[0]
             return_code = proc.wait()
             if return_code != 0:
-                raise GitWrapperError('Command \'%s\' failed' % command,
-                                      is_git_error=True)
+                raise GitWrapperError(
+                    'Command \'git %s\' failed' % ' '.join(command),
+                    is_git_error=True)
             if capture_std_out:
                 return out_msg
         except OSError as err:
