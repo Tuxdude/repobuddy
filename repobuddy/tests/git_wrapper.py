@@ -20,6 +20,7 @@
 
 import inspect as _inspect
 import os as _os
+import stat as _stat
 import unittest as _unittest
 
 from repobuddy.tests.common import TestCommon, ShellHelper
@@ -79,9 +80,17 @@ class GitWrapperTestCase(_unittest.TestCase):
         self._tear_down_cb_kwargs = None
         return
 
-    def _clone_helper(self, base_dir, url, branch, destination):
+    def _clone_helper(self,
+                      base_dir,
+                      url,
+                      branch,
+                      destination,
+                      remove_base_dir=False):
         clone_dir = _os.path.join(base_dir, destination)
-        self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
+        if not remove_base_dir:
+            self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
+        else:
+            self._set_tear_down_cb(self._clone_tear_down_cb, base_dir)
 
         git = GitWrapper(base_dir)
         git.clone(url, branch, destination)
@@ -123,6 +132,23 @@ class GitWrapperTestCase(_unittest.TestCase):
                 'test-clone')
         return
 
+    def test_clone_no_write_permissions(self):
+        base_dir = _os.path.join(
+            self.__class__._repos_dir,
+            'test-no-write')
+        ShellHelper.make_dir(base_dir)
+        _os.chmod(base_dir, _os.stat(base_dir).st_mode & ~(_stat.S_IWUSR))
+        with self.assertRaisesRegexp(
+                GitWrapperError,
+                r'Command \'git clone -b .*\' failed'):
+            self._clone_helper(
+                base_dir,
+                self.__class__._origin_repo,
+                'master',
+                'test-clone',
+                remove_base_dir=True)
+        return
+
 
 class GitWrapperTestSuite():
     def __init__(self, base_test_dir):
@@ -135,7 +161,8 @@ class GitWrapperTestSuite():
         tests = [
             'test_clone_valid_repo',
             'test_clone_invalid_url',
-            'test_clone_invalid_branch']
+            'test_clone_invalid_branch',
+            'test_clone_no_write_permissions']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 
