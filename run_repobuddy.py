@@ -22,4 +22,4 @@
 import repobuddy.main as _repobuddy
 
 if __name__ == '__main__':
-    _repobuddy.main()
+    _repobuddy.run_repobuddy()

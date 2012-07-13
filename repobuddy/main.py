@@ -27,7 +27,7 @@ from repobuddy.command_handler import CommandHandler, CommandHandlerError
 from repobuddy.utils import Logger
 
 
-def main():
+def run_repobuddy():
     # Initialize the Command Handler core
     command_handler = CommandHandler()
     handlers = command_handler.get_handlers()
