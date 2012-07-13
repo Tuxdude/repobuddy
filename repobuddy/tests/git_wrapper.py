@@ -19,6 +19,7 @@
 #
 
 import os as _os
+import shlex as _shlex
 import stat as _stat
 import unittest as _unittest
 
@@ -78,30 +79,36 @@ class GitWrapperTestCase(_unittest.TestCase):
         self._tear_down_cb_kwargs = None
         return
 
-    def _test_clone_helper(self,
+    def _git_wrapper_clone_helper(self,
                            base_dir,
                            url,
                            branch,
-                           destination,
+                           dest,
                            remove_base_dir=False):
-        clone_dir = _os.path.join(base_dir, destination)
+        clone_dir = _os.path.join(base_dir, dest)
         if not remove_base_dir:
             self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
         else:
             self._set_tear_down_cb(self._clone_tear_down_cb, base_dir)
 
         git = GitWrapper(base_dir)
-        git.clone(url, branch, destination)
-
-        ShellHelper.remove_dir(clone_dir)
+        git.clone(url, branch, dest)
         return
 
     def _clone_tear_down_cb(self, clone_dir):
         ShellHelper.remove_dir(clone_dir)
         return
 
+    def _raw_git_clone(self, base_dir, url, branch, dest):
+        clone_dir = _os.path.join(base_dir, dest)
+        self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
+        ShellHelper.exec_command(
+            _shlex.split('git clone -b %s %s %s' % (branch, url, dest)),
+            base_dir)
+        return
+
     def test_clone_valid_repo(self):
-        self._test_clone_helper(
+        self._git_wrapper_clone_helper(
             self.__class__._repos_dir,
             self.__class__._origin_repo,
             'master',
@@ -112,7 +119,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         with self.assertRaisesRegexp(
                 GitWrapperError,
                 r'Command \'git clone -b .*\' failed'):
-            self._test_clone_helper(
+            self._git_wrapper_clone_helper(
                 self.__class__._repos_dir,
                 self.__class__._origin_repo + '-invalid-suffix',
                 'master',
@@ -123,7 +130,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         with self.assertRaisesRegexp(
                 GitWrapperError,
                 r'Command \'git clone -b .*\' failed'):
-            self._test_clone_helper(
+            self._git_wrapper_clone_helper(
                 self.__class__._repos_dir,
                 self.__class__._origin_repo,
                 'does-not-exist-branch',
@@ -136,10 +143,11 @@ class GitWrapperTestCase(_unittest.TestCase):
             'test-no-write')
         ShellHelper.make_dir(base_dir)
         _os.chmod(base_dir, _os.stat(base_dir).st_mode & ~(_stat.S_IWUSR))
+
         with self.assertRaisesRegexp(
                 GitWrapperError,
                 r'Command \'git clone -b .*\' failed'):
-            self._test_clone_helper(
+            self._git_wrapper_clone_helper(
                 base_dir,
                 self.__class__._origin_repo,
                 'master',
@@ -147,6 +155,35 @@ class GitWrapperTestCase(_unittest.TestCase):
                 remove_base_dir=True)
         return
 
+    def test_update_index_valid_repo(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        git.update_index()
+        return
+
+    def test_update_index_invalid_repo(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        git_dir = _os.path.join(base_dir, '.git')
+        ShellHelper.remove_dir(git_dir)
+
+        with self.assertRaisesRegexp(
+                GitWrapperError,
+                r'Command \'git update-index -q --ignore-submodules ' +
+                r'--refresh\' failed'):
+            git = GitWrapper(base_dir)
+            git.update_index()
+        return
 
 class GitWrapperTestSuite():
     def __init__(self, base_test_dir):
@@ -160,7 +197,9 @@ class GitWrapperTestSuite():
             'test_clone_valid_repo',
             'test_clone_invalid_url',
             'test_clone_invalid_branch',
-            'test_clone_no_write_permissions']
+            'test_clone_no_write_permissions',
+            'test_update_index_valid_repo',
+            'test_update_index_invalid_repo']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 

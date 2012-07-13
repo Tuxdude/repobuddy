@@ -29,7 +29,7 @@ Parsing Repo Manifest
 
 GitWrapper
 ----------
-1.  Clone a repo
+1.  Clone a repo - TODO: Needs proper validation
 2.  Clone an invalid repo URL
 3.  Clone a valid repo URL but invalid branch
 4.  Clone a valid repo but into a directory with no write permissions

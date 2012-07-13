@@ -20,6 +20,7 @@
 
 import os as _os
 import re as _re
+import shlex as _shlex
 import subprocess as _subprocess
 
 from repobuddy.utils import Logger, RepoBuddyBaseException
@@ -33,18 +34,21 @@ class GitWrapperError(RepoBuddyBaseException):
 
 
 class GitWrapper(object):
-    def _exec_git(self, command, capture_std_out=True):
-        git_cmd = command[:]
-        git_cmd.insert(0, 'git')
-        Logger.debug('Exec: ' + ' '.join(git_cmd))
+    def _exec_git(self, command, capture_std_out=True, is_clone=False):
+        if is_clone:
+            git_command = ['git'] + command
+        else:
+            git_command = \
+                _shlex.split('git --work-tree=. --git-dir=.git') + command
+        Logger.debug('Exec: ' + ' '.join(git_command))
         try:
             if not capture_std_out:
                 proc = _subprocess.Popen(
-                    git_cmd,
+                    git_command,
                     cwd=self._base_dir)
             else:
                 proc = _subprocess.Popen(
-                    git_cmd,
+                    git_command,
                     cwd=self._base_dir,
                     stdout=_subprocess.PIPE,
                     stderr=_subprocess.PIPE)
@@ -79,7 +83,8 @@ class GitWrapper(object):
     def clone(self, remote_url, branch, dest_dir):
         self._exec_git(
             ['clone', '-b', branch, remote_url, dest_dir],
-            capture_std_out=False)
+            capture_std_out=False,
+            is_clone=True)
         if _os.path.isabs(dest_dir):
             self._base_dir = dest_dir
         else:
