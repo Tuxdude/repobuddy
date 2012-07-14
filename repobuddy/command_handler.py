@@ -187,19 +187,21 @@ class CommandHandler(object):
                 Logger.msg('Branch: ' + repo.branch + '\n')
 
             untracked_files = git.get_untracked_files()
-            if not untracked_files is None:
-                Logger.msg('Untracked Files: \n' + untracked_files + '\n')
+            if len(untracked_files) != 0:
+                Logger.msg(
+                    'Untracked Files: \n' + '\n'.join(untracked_files) + '\n')
                 dirty = True
 
             unstaged_files = git.get_unstaged_files()
-            if not unstaged_files is None:
-                Logger.msg('Unstaged Files: \n' + unstaged_files + '\n')
+            if len(unstaged_files) != 0:
+                Logger.msg(
+                    'Unstaged Files: \n' + '\n'.join(unstaged_files) + '\n')
                 dirty = True
 
             uncommitted_staged_files = git.get_uncommitted_staged_files()
-            if not uncommitted_staged_files is None:
+            if len(uncommitted_staged_files) != 0:
                 Logger.msg('Uncommitted Changes: \n' +
-                           uncommitted_staged_files + '\n')
+                           '\n'.join(uncommitted_staged_files) + '\n')
                 dirty = True
 
             if not dirty:

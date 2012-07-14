@@ -106,9 +106,9 @@ class GitWrapper(object):
             if not err.is_git_error:
                 raise err
         if untracked_files == '':
-            return None
+            return []
         else:
-            return untracked_files
+            return untracked_files.split('\n')
 
     def get_unstaged_files(self):
         try:
@@ -120,8 +120,8 @@ class GitWrapper(object):
             unstaged_files = self._exec_git(
                 ['diff-files', '--name-status', '-r',
                  '--ignore-submodules', '--'])
-            return unstaged_files.rstrip()
-        return
+            return unstaged_files.rstrip().split('\n')
+        return []
 
     def get_uncommitted_staged_files(self):
         try:
@@ -134,8 +134,8 @@ class GitWrapper(object):
             uncommited_staged_files = self._exec_git(
                 ['diff-index', '--cached', '--name-status', '-r',
                  '--ignore-submodules', 'HEAD', '--'])
-            return uncommited_staged_files.rstrip()
-        return
+            return uncommited_staged_files.rstrip().split('\n')
+        return []
 
     def get_current_branch(self):
         try:
