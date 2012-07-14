@@ -118,7 +118,7 @@ class GitWrapperTestCase(_unittest.TestCase):
     def test_clone_invalid_url(self):
         with self.assertRaisesRegexp(
                 GitWrapperError,
-                r'Command \'git clone -b .*\' failed'):
+                r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
                 self.__class__._repos_dir,
                 self.__class__._origin_repo + '-invalid-suffix',
@@ -129,7 +129,7 @@ class GitWrapperTestCase(_unittest.TestCase):
     def test_clone_invalid_branch(self):
         with self.assertRaisesRegexp(
                 GitWrapperError,
-                r'Command \'git clone -b .*\' failed'):
+                r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
                 self.__class__._repos_dir,
                 self.__class__._origin_repo,
@@ -146,7 +146,7 @@ class GitWrapperTestCase(_unittest.TestCase):
 
         with self.assertRaisesRegexp(
                 GitWrapperError,
-                r'Command \'git clone -b .*\' failed'):
+                r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
                 base_dir,
                 self.__class__._origin_repo,
@@ -179,8 +179,8 @@ class GitWrapperTestCase(_unittest.TestCase):
 
         with self.assertRaisesRegexp(
                 GitWrapperError,
-                r'Command \'git update-index -q --ignore-submodules ' +
-                r'--refresh\' failed'):
+                r'^Command \'git update-index -q --ignore-submodules ' +
+                r'--refresh\' failed$'):
             git = GitWrapper(base_dir)
             git.update_index()
         return
@@ -307,7 +307,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         git = GitWrapper(base_dir)
         with self.assertRaisesRegexp(
                 GitWrapperError,
-                r'Command \'git symbolic-ref HEAD\' failed'):
+                r'^Command \'git symbolic-ref HEAD\' failed$'):
             git.get_current_branch()
         return
 
