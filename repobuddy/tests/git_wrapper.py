@@ -80,11 +80,11 @@ class GitWrapperTestCase(_unittest.TestCase):
         return
 
     def _git_wrapper_clone_helper(self,
-                           base_dir,
-                           url,
-                           branch,
-                           dest,
-                           remove_base_dir=False):
+                                  base_dir,
+                                  url,
+                                  branch,
+                                  dest,
+                                  remove_base_dir=False):
         clone_dir = _os.path.join(base_dir, dest)
         if not remove_base_dir:
             self._set_tear_down_cb(self._clone_tear_down_cb, clone_dir)
@@ -109,8 +109,8 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_clone_valid_repo(self):
         self._git_wrapper_clone_helper(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
         return
@@ -120,8 +120,8 @@ class GitWrapperTestCase(_unittest.TestCase):
                 GitWrapperError,
                 r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
-                self.__class__._repos_dir,
-                self.__class__._origin_repo + '-invalid-suffix',
+                type(self)._repos_dir,
+                type(self)._origin_repo + '-invalid-suffix',
                 'master',
                 'test-clone')
         return
@@ -131,15 +131,15 @@ class GitWrapperTestCase(_unittest.TestCase):
                 GitWrapperError,
                 r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
-                self.__class__._repos_dir,
-                self.__class__._origin_repo,
+                type(self)._repos_dir,
+                type(self)._origin_repo,
                 'does-not-exist-branch',
                 'test-clone')
         return
 
     def test_clone_no_write_permissions(self):
         base_dir = _os.path.join(
-            self.__class__._repos_dir,
+            type(self)._repos_dir,
             'test-no-write')
         ShellHelper.make_dir(base_dir)
         _os.chmod(base_dir, _os.stat(base_dir).st_mode & ~(_stat.S_IWUSR))
@@ -149,7 +149,7 @@ class GitWrapperTestCase(_unittest.TestCase):
                 r'^Command \'git clone -b .*\' failed$'):
             self._git_wrapper_clone_helper(
                 base_dir,
-                self.__class__._origin_repo,
+                type(self)._origin_repo,
                 'master',
                 'test-clone',
                 remove_base_dir=True)
@@ -157,11 +157,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_update_index_valid_repo(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
         git.update_index()
@@ -169,11 +169,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_update_index_invalid_repo(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         git_dir = _os.path.join(base_dir, '.git')
         ShellHelper.remove_dir(git_dir)
 
@@ -187,11 +187,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_untracked_no_files(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
         self.assertItemsEqual(git.get_untracked_files(), [])
@@ -199,11 +199,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_untracked_with_files(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         ShellHelper.append_text_to_file(
             'Untracked file here...',
             'untracked-test',
@@ -221,11 +221,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_unstaged_no_files(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
         self.assertItemsEqual(git.get_unstaged_files(), [])
@@ -233,11 +233,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_unstaged_with_files(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         ShellHelper.append_text_to_file(
             'Modifying existing file...',
             'README',
@@ -252,11 +252,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_uncommitted_no_changes(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
         self.assertItemsEqual(git.get_uncommitted_staged_files(), [])
@@ -264,11 +264,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_uncommitted_with_changes(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         ShellHelper.append_text_to_file(
             'Modifying existing file...',
             'README',
@@ -284,11 +284,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_current_branch_valid_repo(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
         self.assertEqual(git.get_current_branch(), 'master')
@@ -296,11 +296,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_current_branch_invalid_repo(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         git_dir = _os.path.join(base_dir, '.git')
         ShellHelper.remove_dir(git_dir)
 
@@ -313,11 +313,11 @@ class GitWrapperTestCase(_unittest.TestCase):
 
     def test_current_branch_detached_head(self):
         self._raw_git_clone(
-            self.__class__._repos_dir,
-            self.__class__._origin_repo,
+            type(self)._repos_dir,
+            type(self)._origin_repo,
             'master',
             'test-clone')
-        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
         ShellHelper.exec_command(_shlex.split('git checkout HEAD^'), base_dir)
 
         git = GitWrapper(base_dir)
