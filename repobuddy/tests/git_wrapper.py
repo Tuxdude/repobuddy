@@ -185,6 +185,96 @@ class GitWrapperTestCase(_unittest.TestCase):
             git.update_index()
         return
 
+    def test_untracked_no_files(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        self.assertListEqual(git.get_untracked_files(), [])
+        return
+
+    def test_untracked_with_files(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        ShellHelper.append_text_to_file(
+            'Untracked file here...',
+            'untracked-test',
+            base_dir)
+        ShellHelper.append_text_to_file(
+            'Untracked file here too...',
+            'untracked-test2',
+            base_dir)
+
+        git = GitWrapper(base_dir)
+        self.assertListEqual(
+            git.get_untracked_files(),
+            ['untracked-test', 'untracked-test2'])
+        return
+
+    def test_unstaged_no_files(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        self.assertListEqual(git.get_unstaged_files(), [])
+        return
+
+    def test_unstaged_with_files(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        ShellHelper.append_text_to_file(
+            'Modifying existing file...',
+            'README',
+            base_dir)
+        ShellHelper.remove_file(_os.path.join(base_dir, 'dummy'))
+
+        git = GitWrapper(base_dir)
+        self.assertListEqual(git.get_unstaged_files(),
+                             ['M\tREADME', 'D\tdummy'])
+
+        return
+
+    def test_uncommitted_no_changes(self):
+        return
+
+    def test_uncommitted_with_changes(self):
+        return
+
+    def test_current_branch_valid_repo(self):
+        return
+
+    def test_current_branch_invalid_repo(self):
+        return
+
+    def test_current_branch_detached_head(self):
+        return
+
+    def test_current_branch_lightweight_tag(self):
+        return
+
+    def test_current_branch_annotated_tag(self):
+        return
+
+    def test_current_branch_signed_tag(self):
+        return
+
+
 class GitWrapperTestSuite():
     def __init__(self, base_test_dir):
         if not _os.path.isdir(base_test_dir):
@@ -199,7 +289,11 @@ class GitWrapperTestSuite():
             'test_clone_invalid_branch',
             'test_clone_no_write_permissions',
             'test_update_index_valid_repo',
-            'test_update_index_invalid_repo']
+            'test_update_index_invalid_repo',
+            'test_untracked_no_files',
+            'test_untracked_with_files',
+            'test_unstaged_no_files',
+            'test_unstaged_with_files']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 
