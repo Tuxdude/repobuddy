@@ -1,6 +1,7 @@
 PYTHON   := python
 PYLINT   := pylint
 PEP8     := pep8
+COVERAGE := coverage
 SRCS     := $(shell find . -path ./build -prune -o -name '*.py' -print)
 CLEANUP_FILES := \
             $$HOME/.local/bin/repobuddy \
@@ -34,5 +35,10 @@ pylint:
 
 pylint-report:
 	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
+
+coverage:
+	@$(COVERAGE) erase
+	@$(COVERAGE) run ./run_tests.py
+	@$(COVERAGE) report
 
 .PHONY: develop sdist clean pep8 pylint pylint-report
