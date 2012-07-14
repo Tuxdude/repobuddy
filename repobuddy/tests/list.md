@@ -41,13 +41,12 @@ GitWrapper
 10. Get Unstaged files with 2 unstaged files
 11. Get Uncommitted staged files when there are none
 12. Get Uncommitted staged files with 2 such files.
-13. Get the current branch on an invalid GIT repo
-14. Get the current branch on a valid repo
+13. Get the current branch on a valid repo
+14. Get the current branch on an invalid GIT repo
 15. Get the current branch on a detached HEAD
-16. Get the current branch on a signed TAG
-17. Get the current branch on an unsigned TAG
-18. Get the current branch on an unannotated TAG
-19. Get the current branch on an annotated TAG
+16. Get the current branch on a lightweight TAG
+17. Get the current branch on an annotated TAG
+18. Get the current branch on a signed TAG
 
 Client Info
 -----------
