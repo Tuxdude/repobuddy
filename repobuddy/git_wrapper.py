@@ -65,7 +65,7 @@ class GitWrapper(object):
                     raise GitWrapperError(
                         'Command \'git %s\' failed' % ' '.join(command),
                         is_git_error=True,
-                        git_error_msg=err_msg)
+                        git_error_msg=err_msg.rstrip())
                 else:
                     raise GitWrapperError(
                         'Command \'git %s\' failed' % ' '.join(command),

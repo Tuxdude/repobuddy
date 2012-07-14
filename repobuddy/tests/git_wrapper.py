@@ -312,6 +312,16 @@ class GitWrapperTestCase(_unittest.TestCase):
         return
 
     def test_current_branch_detached_head(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        ShellHelper.exec_command(_shlex.split('git checkout HEAD^'), base_dir)
+
+        git = GitWrapper(base_dir)
+        self.assertIsNone(git.get_current_branch())
         return
 
     def test_current_branch_lightweight_tag(self):
@@ -346,7 +356,8 @@ class GitWrapperTestSuite():
             'test_uncommitted_no_changes',
             'test_uncommitted_with_changes',
             'test_current_branch_valid_repo',
-            'test_current_branch_invalid_repo']
+            'test_current_branch_invalid_repo',
+            'test_current_branch_detached_head']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 
