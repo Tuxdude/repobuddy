@@ -194,7 +194,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
-        self.assertListEqual(git.get_untracked_files(), [])
+        self.assertItemsEqual(git.get_untracked_files(), [])
         return
 
     def test_untracked_with_files(self):
@@ -214,7 +214,7 @@ class GitWrapperTestCase(_unittest.TestCase):
             base_dir)
 
         git = GitWrapper(base_dir)
-        self.assertListEqual(
+        self.assertItemsEqual(
             git.get_untracked_files(),
             ['untracked-test', 'untracked-test2'])
         return
@@ -228,7 +228,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
-        self.assertListEqual(git.get_unstaged_files(), [])
+        self.assertItemsEqual(git.get_unstaged_files(), [])
         return
 
     def test_unstaged_with_files(self):
@@ -245,21 +245,70 @@ class GitWrapperTestCase(_unittest.TestCase):
         ShellHelper.remove_file(_os.path.join(base_dir, 'dummy'))
 
         git = GitWrapper(base_dir)
-        self.assertListEqual(git.get_unstaged_files(),
-                             ['M\tREADME', 'D\tdummy'])
+        self.assertItemsEqual(git.get_unstaged_files(),
+                              ['M\tREADME', 'D\tdummy'])
 
         return
 
     def test_uncommitted_no_changes(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        self.assertItemsEqual(git.get_uncommitted_staged_files(), [])
         return
 
     def test_uncommitted_with_changes(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        ShellHelper.append_text_to_file(
+            'Modifying existing file...',
+            'README',
+            base_dir)
+        ShellHelper.remove_file(_os.path.join(base_dir, 'dummy'))
+        ShellHelper.exec_command(_shlex.split('git add README'), base_dir)
+        ShellHelper.exec_command(_shlex.split('git rm dummy'), base_dir)
+
+        git = GitWrapper(base_dir)
+        self.assertItemsEqual(git.get_uncommitted_staged_files(),
+                              ['M\tREADME', 'D\tdummy'])
         return
 
     def test_current_branch_valid_repo(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        self.assertEqual(git.get_current_branch(), 'master')
         return
 
     def test_current_branch_invalid_repo(self):
+        self._raw_git_clone(
+            self.__class__._repos_dir,
+            self.__class__._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(self.__class__._repos_dir, 'test-clone')
+        git_dir = _os.path.join(base_dir, '.git')
+        ShellHelper.remove_dir(git_dir)
+
+        git = GitWrapper(base_dir)
+        with self.assertRaisesRegexp(
+                GitWrapperError,
+                r'Command \'git symbolic-ref HEAD\' failed'):
+            git.get_current_branch()
         return
 
     def test_current_branch_detached_head(self):
@@ -293,7 +342,11 @@ class GitWrapperTestSuite():
             'test_untracked_no_files',
             'test_untracked_with_files',
             'test_unstaged_no_files',
-            'test_unstaged_with_files']
+            'test_unstaged_with_files',
+            'test_uncommitted_no_changes',
+            'test_uncommitted_with_changes',
+            'test_current_branch_valid_repo',
+            'test_current_branch_invalid_repo']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 

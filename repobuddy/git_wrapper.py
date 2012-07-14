@@ -27,14 +27,19 @@ from repobuddy.utils import Logger, RepoBuddyBaseException
 
 
 class GitWrapperError(RepoBuddyBaseException):
-    def __init__(self, error_str, is_git_error):
+    def __init__(self, error_str, is_git_error, git_error_msg=''):
         super(GitWrapperError, self).__init__(error_str)
         self.is_git_error = is_git_error
+        self.git_error_msg = git_error_msg
         return
 
 
 class GitWrapper(object):
-    def _exec_git(self, command, capture_std_out=True, is_clone=False):
+    def _exec_git(self,
+                  command,
+                  capture_std_out=False,
+                  capture_std_err=False,
+                  is_clone=False):
         if is_clone:
             git_command = ['git'] + command
         else:
@@ -42,24 +47,36 @@ class GitWrapper(object):
                 _shlex.split('git --work-tree=. --git-dir=.git') + command
         Logger.debug('Exec: ' + ' '.join(git_command))
         try:
-            if not capture_std_out:
-                proc = _subprocess.Popen(
-                    git_command,
-                    cwd=self._base_dir)
-            else:
-                proc = _subprocess.Popen(
-                    git_command,
-                    cwd=self._base_dir,
-                    stdout=_subprocess.PIPE,
-                    stderr=_subprocess.PIPE)
-            out_msg = proc.communicate()[0]
-            return_code = proc.wait()
-            if return_code != 0:
-                raise GitWrapperError(
-                    'Command \'git %s\' failed' % ' '.join(command),
-                    is_git_error=True)
+            kwargs = {}
             if capture_std_out:
+                kwargs['stdout'] = _subprocess.PIPE
+            if capture_std_err:
+                kwargs['stderr'] = _subprocess.PIPE
+
+            proc = _subprocess.Popen(
+                git_command,
+                cwd=self._base_dir,
+                **kwargs)
+            (out_msg, err_msg) = proc.communicate()
+            return_code = proc.wait()
+
+            if return_code != 0:
+                if capture_std_err:
+                    raise GitWrapperError(
+                        'Command \'git %s\' failed' % ' '.join(command),
+                        is_git_error=True,
+                        git_error_msg=err_msg)
+                else:
+                    raise GitWrapperError(
+                        'Command \'git %s\' failed' % ' '.join(command),
+                        is_git_error=True)
+
+            if capture_std_out and capture_std_err:
+                return (out_msg, err_msg)
+            elif capture_std_out:
                 return out_msg
+            elif capture_std_err:
+                return err_msg
         except OSError as err:
             raise GitWrapperError(str(err), is_git_error=False)
         return
@@ -83,7 +100,6 @@ class GitWrapper(object):
     def clone(self, remote_url, branch, dest_dir):
         self._exec_git(
             ['clone', '-b', branch, remote_url, dest_dir],
-            capture_std_out=False,
             is_clone=True)
         if _os.path.isabs(dest_dir):
             self._base_dir = dest_dir
@@ -93,59 +109,52 @@ class GitWrapper(object):
 
     def update_index(self):
         self._exec_git(
-            ['update-index', '-q', '--ignore-submodules', '--refresh'],
-            capture_std_out=False)
+            ['update-index', '-q', '--ignore-submodules', '--refresh'])
         return
 
     def get_untracked_files(self):
-        try:
-            untracked_files = self._exec_git(
-                ['ls-files', '--error-unmatch', '--exclude-standard',
-                 '--others', '--']).rstrip()
-        except GitWrapperError as err:
-            if not err.is_git_error:
-                raise err
+        untracked_files = self._exec_git(
+            ['ls-files', '--exclude-standard', '--others', '--'],
+            capture_std_out=True).rstrip()
         if untracked_files == '':
             return []
         else:
             return untracked_files.split('\n')
 
     def get_unstaged_files(self):
-        try:
-            self._exec_git(
-                ['diff-files', '--quiet', '--ignore-submodules', '--'])
-        except GitWrapperError as err:
-            if not err.is_git_error:
-                raise err
-            unstaged_files = self._exec_git(
-                ['diff-files', '--name-status', '-r',
-                 '--ignore-submodules', '--'])
+        unstaged_files = self._exec_git(
+            ['diff-files', '--name-status', '-r',
+             '--ignore-submodules', '--'],
+            capture_std_out=True)
+        if unstaged_files == '':
+            return []
+        else:
             return unstaged_files.rstrip().split('\n')
-        return []
 
     def get_uncommitted_staged_files(self):
-        try:
-            self._exec_git(
-                ['diff-index', '--cached', '--quiet', 'HEAD',
-                 '--ignore-submodules', '--'])
-        except GitWrapperError as err:
-            if not err.is_git_error:
-                raise err
-            uncommited_staged_files = self._exec_git(
-                ['diff-index', '--cached', '--name-status', '-r',
-                 '--ignore-submodules', 'HEAD', '--'])
+        uncommited_staged_files = self._exec_git(
+            ['diff-index', '--cached', '--name-status', '-r',
+             '--ignore-submodules', 'HEAD', '--'],
+            capture_std_out=True)
+        if uncommited_staged_files == '':
+            return []
+        else:
             return uncommited_staged_files.rstrip().split('\n')
-        return []
 
     def get_current_branch(self):
         try:
-            head_ref = self._exec_git(['symbolic-ref', 'HEAD'])
+            (out_msg, err_msg) = self._exec_git(['symbolic-ref', 'HEAD'],
+                                                capture_std_out=True,
+                                                capture_std_err=True)
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
-            else:
+            elif err.git_error_msg == 'fatal: ref HEAD is not a symbolic ref':
                 return None
-        match_obj = _re.compile(r'^refs\/heads\/(.*)$').match(head_ref)
+            else:
+                raise err
+
+        match_obj = _re.compile(r'^refs\/heads\/(.*)$').match(out_msg)
         try:
             return match_obj.group(1).rstrip()
         except (IndexError, AttributeError):
