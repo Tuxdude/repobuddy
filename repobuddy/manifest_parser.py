@@ -24,9 +24,9 @@ import xml.sax as _sax
 from repobuddy.utils import RepoBuddyBaseException
 
 
-class RepoManifestParserError(RepoBuddyBaseException):
+class ManifestParserError(RepoBuddyBaseException):
     def __init__(self, error_str):
-        super(RepoManifestParserError, self).__init__(error_str)
+        super(ManifestParserError, self).__init__(error_str)
         return
 
 
@@ -45,7 +45,7 @@ class ClientSpec(object):
         return
 
 
-class RepoManifest(object):
+class Manifest(object):
     def __init__(self):
         self.default_client_spec = ''
         self.client_spec_list = []
@@ -59,11 +59,11 @@ class _XmlContentHandler(_sax.ContentHandler):
     def _validate_manifest(self):
         # Verify that default_client_spec is set
         if self._manifest.default_client_spec == '':
-            raise RepoManifestParserError(
+            raise ManifestParserError(
                 'Error: default_client_spec cannot be empty')
         # Verify that there is at least one element in the client_spec_list
         if len(self._manifest.client_spec_list) == 0:
-            raise RepoManifestParserError(
+            raise ManifestParserError(
                 'Error: There should be at least one valid Client Spec')
         # Verify default_client_spec is part of client_spec_list
         # Check for duplicate names
@@ -73,12 +73,12 @@ class _XmlContentHandler(_sax.ContentHandler):
             if client_spec.name == self._manifest.default_client_spec:
                 found_default_client_spec = True
             if client_spec.name in found_client_specs:
-                raise RepoManifestParserError(
+                raise ManifestParserError(
                     'Error: Duplicate Client Spec \'' +
                     client_spec.name + '\' found')
             found_client_specs.add(client_spec.name)
         if not found_default_client_spec:
-            raise RepoManifestParserError(
+            raise ManifestParserError(
                 'Error: Unable to find the Client Spec \'' +
                 self._manifest.default_client_spec +
                 '\' in the list of Repos')
@@ -94,7 +94,7 @@ class _XmlContentHandler(_sax.ContentHandler):
 
     # Overriden methods of _sax.ContentHandler
     def startDocument(self):
-        self._manifest = RepoManifest()
+        self._manifest = Manifest()
         return
 
     def endDocument(self):
@@ -107,14 +107,14 @@ class _XmlContentHandler(_sax.ContentHandler):
                 self._manifest.default_client_spec = \
                     _copy.deepcopy(str(attrs.getValue('default_client_spec')))
             except KeyError:
-                raise RepoManifestParserError(
+                raise ManifestParserError(
                     'Error: No default_client_spec found')
         elif name == 'ClientSpec':
             self._last_client_spec = ClientSpec()
             try:
                 self._last_client_spec.name = attrs.getValue('name')
             except KeyError:
-                raise RepoManifestParserError(
+                raise ManifestParserError(
                     'Error: No name specified for ClientSpec')
         elif name == 'Repo':
             self._last_repo = Repo()
@@ -148,21 +148,21 @@ class _XmlContentHandler(_sax.ContentHandler):
         return self._manifest
 
 
-class RepoManifestParser(object):
+class ManifestParser(object):
     def __init__(self):
         self._manifest = None
         return
 
     def parse(self, file_name):
-        repo_manifest_xml_file = open(file_name)
+        manifest_xml_file = open(file_name)
         xml_parser = _XmlContentHandler()
         try:
-            _sax.parse(repo_manifest_xml_file, xml_parser)
+            _sax.parse(manifest_xml_file, xml_parser)
         except _sax.SAXParseException as err:
-            raise RepoManifestParserError(
-                'Unable to parse the RepoManifest Xml file: ' + str(err))
+            raise ManifestParserError(
+                'Unable to parse the Manifest Xml file: ' + str(err))
         finally:
-            repo_manifest_xml_file.close()
+            manifest_xml_file.close()
         self._manifest = xml_parser.get_manifest()
         return
 

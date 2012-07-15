@@ -74,18 +74,18 @@ class ClientInfo(object):
         return
 
     def set_client_spec(self, client_spec_name):
-        self._set_config('RepoBuddyManifest', 'clientSpec', client_spec_name)
+        self._set_config('RepoBuddyManifest', 'client_spec', client_spec_name)
         return
 
-    def set_manifest_xml(self, manifest_xml):
-        self._set_config('RepoBuddyManifest', 'manifest_xml', manifest_xml)
+    def set_manifest(self, manifest_xml):
+        self._set_config('RepoBuddyManifest', 'manifest', manifest_xml)
         return
 
     def get_client_spec(self):
-        return self._get_config('RepoBuddyManifest', 'clientSpec')
+        return self._get_config('RepoBuddyManifest', 'client_spec')
 
-    def get_manifest_xml(self):
-        return self._get_config('RepoBuddyManifest', 'manifest_xml')
+    def get_manifest(self):
+        return self._get_config('RepoBuddyManifest', 'manifest')
 
     def write(self, file_name=None):
         output_file_name = file_name
