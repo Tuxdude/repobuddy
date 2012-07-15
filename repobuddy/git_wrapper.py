@@ -143,9 +143,9 @@ class GitWrapper(object):
 
     def get_current_branch(self):
         try:
-            (out_msg, err_msg) = self._exec_git(['symbolic-ref', 'HEAD'],
-                                                capture_std_out=True,
-                                                capture_std_err=True)
+            out_msg = self._exec_git(['symbolic-ref', 'HEAD'],
+                                     capture_std_out=True,
+                                     capture_std_err=True)[0]
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
