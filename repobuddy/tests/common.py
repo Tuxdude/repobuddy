@@ -300,7 +300,9 @@ class TestSuiteManager(object):
 
     def show_results(self):
         Logger.msg('\n')
-        Logger.msg('#' * 80)
+        Logger.msg('#' * 80 + '\n')
+        Logger.msg('Test Results')
+        Logger.msg('-' * 70 + '\n')
         Logger.msg(self._output.getvalue())
         Logger.msg('#' * 80)
         return
