@@ -18,25 +18,17 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import cStringIO as _cStringIO
 import os as _os
-import unittest as _unittest
 
+from repobuddy.tests.common import TestSuiteManager
 from repobuddy.tests.git_wrapper import GitWrapperTestSuite
-from repobuddy.utils import Logger
 
 
 def run_tests():
     test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
+
     git_wrapper_tests = GitWrapperTestSuite(test_dir).get_test_suite()
-    test_output = _cStringIO.StringIO()
-
-    runner = _unittest.TextTestRunner(
-        stream=test_output,
-        verbosity=2)
-    runner.run(git_wrapper_tests)
-
-    Logger.msg('\n')
-    Logger.msg('#' * 80)
-    Logger.msg(test_output.getvalue())
-    Logger.msg('#' * 80)
+    tests = TestSuiteManager(test_dir)
+    tests.add_test_suite(git_wrapper_tests)
+    tests.run()
+    tests.show_results()

@@ -18,10 +18,12 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import cStringIO as _cStringIO
 import os as _os
 import subprocess as _subprocess
 import shlex as _shlex
 import shutil as _shutil
+import unittest as _unittest
 
 from repobuddy.utils import RepoBuddyBaseException, Logger
 
@@ -241,4 +243,64 @@ class TestCommon:
         ShellHelper.remove_dir(clone_repo1)
         ShellHelper.remove_dir(clone_repo2)
 
+        return
+
+
+class TestCaseBase(_unittest.TestCase):
+    def _set_tear_down_cb(self, method, *args, **kwargs):
+        self._tear_down_cb = method
+        self._tear_down_cb_args = args
+        self._tear_down_cb_kwargs = kwargs
+        return
+
+    def _clear_tear_down_cb(self):
+        self._tear_down_cb = None
+        self._tear_down_cb_args = None
+        self._tear_down_cb_kwargs = None
+        return
+
+    def __init__(self, methodName='runTest'):
+        super(TestCaseBase, self).__init__(methodName)
+        self._tear_down_cb = None
+        self._tear_down_cb_args = None
+        self._tear_down_cb_kwargs = None
+        return
+
+    def setUp(self):
+        return
+
+    def tearDown(self):
+        if not self._tear_down_cb is None:
+            self._tear_down_cb(*self._tear_down_cb_args,
+                               **self._tear_down_cb_kwargs)
+            self._clear_tear_down_cb()
+        return
+
+
+class TestSuiteManager(object):
+    def __init__(self, base_test_dir):
+        self._base_test_dir = base_test_dir
+        self._test_suite = None
+        self._output = _cStringIO.StringIO()
+        return
+
+    def add_test_suite(self, test_suite):
+        if self._test_suite is None:
+            self._test_suite = test_suite
+        else:
+            self._test_suite.addTest(test_suite)
+        return
+
+    def run(self):
+        runner = _unittest.TextTestRunner(
+            stream=self._output,
+            verbosity=2)
+        runner.run(self._test_suite)
+        return
+
+    def show_results(self):
+        Logger.msg('\n')
+        Logger.msg('#' * 80)
+        Logger.msg(self._output.getvalue())
+        Logger.msg('#' * 80)
         return

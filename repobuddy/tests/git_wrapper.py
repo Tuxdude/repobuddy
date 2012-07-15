@@ -23,61 +23,15 @@ import shlex as _shlex
 import stat as _stat
 import unittest as _unittest
 
-from repobuddy.tests.common import TestCommon, ShellHelper
+from repobuddy.tests.common import TestCommon, TestCaseBase, ShellHelper
 from repobuddy.git_wrapper import GitWrapper, GitWrapperError
 
 
-class GitWrapperTestCase(_unittest.TestCase):
+class GitWrapperTestCase(TestCaseBase):
     _base_dir = None
     _repos_dir = None
     _skip_cleanup = True
 
-    @classmethod
-    def set_base_dir(cls, base_dir):
-        cls._base_dir = base_dir
-        return
-
-    @classmethod
-    def setUpClass(cls):
-        cls._repos_dir = _os.path.join(cls._base_dir, 'repos')
-        TestCommon.setup_test_repos(cls._repos_dir)
-        cls._origin_repo = _os.path.join(cls._repos_dir, 'repo-origin')
-        return
-
-    @classmethod
-    def tearDownClass(cls):
-        if not cls._skip_cleanup:
-            ShellHelper.remove_dir(cls._repos_dir)
-        return
-
-    def __init__(self, methodName='runTest'):
-        super(GitWrapperTestCase, self).__init__(methodName)
-        self._tear_down_cb = None
-        self._tear_down_cb_args = None
-        self._tear_down_cb_kwargs = None
-        return
-
-    def setUp(self):
-        return
-
-    def tearDown(self):
-        if not self._tear_down_cb is None:
-            self._tear_down_cb(*self._tear_down_cb_args,
-                               **self._tear_down_cb_kwargs)
-            self._clear_tear_down_cb()
-        return
-
-    def _set_tear_down_cb(self, method, *args, **kwargs):
-        self._tear_down_cb = method
-        self._tear_down_cb_args = args
-        self._tear_down_cb_kwargs = kwargs
-        return
-
-    def _clear_tear_down_cb(self):
-        self._tear_down_cb = None
-        self._tear_down_cb_args = None
-        self._tear_down_cb_kwargs = None
-        return
 
     def _git_wrapper_clone_helper(self,
                                   base_dir,
@@ -105,6 +59,28 @@ class GitWrapperTestCase(_unittest.TestCase):
         ShellHelper.exec_command(
             _shlex.split('git clone -b %s %s %s' % (branch, url, dest)),
             base_dir)
+        return
+
+    @classmethod
+    def set_base_dir(cls, base_dir):
+        cls._base_dir = base_dir
+        return
+
+    @classmethod
+    def setUpClass(cls):
+        cls._repos_dir = _os.path.join(cls._base_dir, 'repos')
+        TestCommon.setup_test_repos(cls._repos_dir)
+        cls._origin_repo = _os.path.join(cls._repos_dir, 'repo-origin')
+        return
+
+    @classmethod
+    def tearDownClass(cls):
+        if not cls._skip_cleanup:
+            ShellHelper.remove_dir(cls._repos_dir)
+        return
+
+    def __init__(self, methodName='runTest'):
+        super(GitWrapperTestCase, self).__init__(methodName)
         return
 
     def test_clone_valid_repo(self):
@@ -365,7 +341,7 @@ class GitWrapperTestCase(_unittest.TestCase):
         return
 
 
-class GitWrapperTestSuite():
+class GitWrapperTestSuite(object):
     def __init__(self, base_test_dir):
         if not _os.path.isdir(base_test_dir):
             ShellHelper.make_dir(base_test_dir)
