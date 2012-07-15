@@ -41,11 +41,11 @@ class GitWrapper(object):
                   capture_std_err=False,
                   is_clone=False):
         if is_clone:
-            git_command = ['git'] + command
+            git_command = _shlex.split('git ' + command)
         else:
-            git_command = \
-                _shlex.split('git --work-tree=. --git-dir=.git') + command
-        Logger.debug('Exec: ' + ' '.join(git_command))
+            git_command = _shlex.split(
+                'git --work-tree=. --git-dir=.git ' + command)
+        Logger.debug('Exec: git %s' % command)
         try:
             kwargs = {}
             if capture_std_out:
@@ -63,12 +63,12 @@ class GitWrapper(object):
             if return_code != 0:
                 if capture_std_err:
                     raise GitWrapperError(
-                        'Command \'git %s\' failed' % ' '.join(command),
+                        'Command \'git %s\' failed' % command,
                         is_git_error=True,
                         git_error_msg=err_msg.rstrip())
                 else:
                     raise GitWrapperError(
-                        'Command \'git %s\' failed' % ' '.join(command),
+                        'Command \'git %s\' failed' % command,
                         is_git_error=True)
 
             if capture_std_out and capture_std_err:
@@ -98,9 +98,8 @@ class GitWrapper(object):
     # Equivalent of git clone -b branch remote_url
     # It also changes the current Dir to dest_dir
     def clone(self, remote_url, branch, dest_dir):
-        self._exec_git(
-            ['clone', '-b', branch, remote_url, dest_dir],
-            is_clone=True)
+        self._exec_git('clone -b %s %s %s' % (branch, remote_url, dest_dir),
+                       is_clone=True)
         if _os.path.isabs(dest_dir):
             self._base_dir = dest_dir
         else:
@@ -108,13 +107,12 @@ class GitWrapper(object):
         return
 
     def update_index(self):
-        self._exec_git(
-            ['update-index', '-q', '--ignore-submodules', '--refresh'])
+        self._exec_git('update-index -q --ignore-submodules --refresh')
         return
 
     def get_untracked_files(self):
         untracked_files = self._exec_git(
-            ['ls-files', '--exclude-standard', '--others', '--'],
+            'ls-files --exclude-standard --others --',
             capture_std_out=True).rstrip()
         if untracked_files == '':
             return []
@@ -123,8 +121,7 @@ class GitWrapper(object):
 
     def get_unstaged_files(self):
         unstaged_files = self._exec_git(
-            ['diff-files', '--name-status', '-r',
-             '--ignore-submodules', '--'],
+            'diff-files --name-status -r --ignore-submodules --',
             capture_std_out=True)
         if unstaged_files == '':
             return []
@@ -133,8 +130,7 @@ class GitWrapper(object):
 
     def get_uncommitted_staged_files(self):
         uncommited_staged_files = self._exec_git(
-            ['diff-index', '--cached', '--name-status', '-r',
-             '--ignore-submodules', 'HEAD', '--'],
+            'diff-index --cached --name-status -r --ignore-submodules HEAD --',
             capture_std_out=True)
         if uncommited_staged_files == '':
             return []
@@ -143,7 +139,7 @@ class GitWrapper(object):
 
     def get_current_branch(self):
         try:
-            out_msg = self._exec_git(['symbolic-ref', 'HEAD'],
+            out_msg = self._exec_git('symbolic-ref HEAD',
                                      capture_std_out=True,
                                      capture_std_err=True)[0]
         except GitWrapperError as err:
