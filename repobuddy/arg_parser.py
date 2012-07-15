@@ -17,6 +17,7 @@
 #   License along with this program.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
+from version import __version__
 
 import argparse as _argparse
 
@@ -97,7 +98,7 @@ class ArgParser(object):
             '-v',
             '--version',
             action='version',
-            version=HelpStrings.PROGRAM_VERSION)
+            version=__version__)
         self._sub_parsers = self._master_parser.add_subparsers(
             dest='command',
             help=HelpStrings.MASTER_PARSER_ARG_HELP,

@@ -18,6 +18,8 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+from version import __version__
+
 from repobuddy.utils import RepoBuddyBaseException
 
 
@@ -30,7 +32,7 @@ class HelpStringsError(RepoBuddyBaseException):
 class HelpStrings:
     PROGRAM_DESCRIPTION = 'Multi-repo manager for Git'
     PROGRAM_NAME = 'repobuddy'
-    PROGRAM_VERSION = '%(prog)s 0.1 alpha'
+    PROGRAM_VERSION = '%(prog)s ' + __version__
     MASTER_PARSER_ARG_HELP = 'Command to invoke'
     MASTER_PARSER_ARG_TITLE = 'Available Commands'
     INIT_COMMAND_HELP = 'Init the current directory to set up the repos'

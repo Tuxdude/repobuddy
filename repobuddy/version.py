@@ -18,24 +18,4 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import os as _os
-
-from setuptools import setup, find_packages
-
-# Get the version number
-execfile(_os.path.join('repobuddy', 'version.py'))
-
-setup(
-    name='RepoBuddy',
-    version=__version__,
-    author='Ash',
-    author_email='tuxdude.github@gmail.com',
-    description='Multi-repository manager for GIT based projects',
-    license='LGPL v3',
-    keywords='git repo multi-repo',
-    url='https://github.com/Tuxdude/repobuddy',
-    packages=find_packages(),
-    entry_points={
-        'console_scripts': [
-            'repobuddy = repobuddy.main:run_repobuddy']}
-)
+__version__='0.1'
