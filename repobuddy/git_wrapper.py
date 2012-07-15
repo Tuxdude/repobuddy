@@ -72,11 +72,11 @@ class GitWrapper(object):
                         is_git_error=True)
 
             if capture_std_out and capture_std_err:
-                return (out_msg, err_msg)
+                return (out_msg.rstrip(), err_msg.rstrip())
             elif capture_std_out:
-                return out_msg
+                return out_msg.rstrip()
             elif capture_std_err:
-                return err_msg
+                return err_msg.rstrip()
         except OSError as err:
             raise GitWrapperError(str(err), is_git_error=False)
         return
@@ -113,7 +113,7 @@ class GitWrapper(object):
     def get_untracked_files(self):
         untracked_files = self._exec_git(
             'ls-files --exclude-standard --others --',
-            capture_std_out=True).rstrip()
+            capture_std_out=True)
         if untracked_files == '':
             return []
         else:
@@ -126,7 +126,7 @@ class GitWrapper(object):
         if unstaged_files == '':
             return []
         else:
-            return unstaged_files.rstrip().split('\n')
+            return unstaged_files.split('\n')
 
     def get_uncommitted_staged_files(self):
         uncommited_staged_files = self._exec_git(
@@ -135,7 +135,7 @@ class GitWrapper(object):
         if uncommited_staged_files == '':
             return []
         else:
-            return uncommited_staged_files.rstrip().split('\n')
+            return uncommited_staged_files.split('\n')
 
     def get_current_branch(self):
         try:
@@ -150,9 +150,30 @@ class GitWrapper(object):
             else:
                 raise err
 
-        match_obj = _re.compile(r'^refs\/heads\/(.*)$').match(out_msg)
         try:
-            return match_obj.group(1).rstrip()
+            return _re.match(r'^refs\/heads\/(.*)$', out_msg).group(1)
         except (IndexError, AttributeError):
             raise GitWrapperError('Error: Unknown symbolic-ref for HEAD')
         return
+
+    def get_current_tag(self):
+        try:
+            out_msg = self._exec_git(
+                'name-rev --name-only --tags --no-undefined HEAD',
+                capture_std_out=True,
+                capture_std_err=True)[0]
+        except GitWrapperError as err:
+            if not err.is_git_error:
+                raise err
+            elif not _re.match(
+                    r'^fatal: cannot describe \'[0-9a-f]{40}\'$',
+                    err.git_error_msg) is None:
+                return None
+            else:
+                raise err
+
+        try:
+            tag = _re.match(r'^([^^~]+)(\^0){0,1}$', out_msg).group(1)
+        except (IndexError, AttributeError):
+            tag = None
+        return tag

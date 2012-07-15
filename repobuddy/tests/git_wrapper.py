@@ -324,13 +324,44 @@ class GitWrapperTestCase(_unittest.TestCase):
         self.assertIsNone(git.get_current_branch())
         return
 
-    def test_current_branch_lightweight_tag(self):
+    def test_current_tag_lightweight_tag(self):
+        self._raw_git_clone(
+            type(self)._repos_dir,
+            type(self)._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
+        ShellHelper.exec_command(_shlex.split('git tag tag-v1'), base_dir)
+
+        git = GitWrapper(base_dir)
+        self.assertEqual(git.get_current_tag(), 'tag-v1')
         return
 
-    def test_current_branch_annotated_tag(self):
+    def test_current_tag_annotated_tag(self):
+        self._raw_git_clone(
+            type(self)._repos_dir,
+            type(self)._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
+        ShellHelper.exec_command(
+            _shlex.split('git tag -a tag-v2 -m "Test annotated tags"'),
+            base_dir)
+
+        git = GitWrapper(base_dir)
+        self.assertEqual(git.get_current_tag(), 'tag-v2')
         return
 
-    def test_current_branch_signed_tag(self):
+    def test_current_tag_no_tag(self):
+        self._raw_git_clone(
+            type(self)._repos_dir,
+            type(self)._origin_repo,
+            'master',
+            'test-clone')
+        base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
+
+        git = GitWrapper(base_dir)
+        self.assertIsNone(git.get_current_tag())
         return
 
 
@@ -357,7 +388,10 @@ class GitWrapperTestSuite():
             'test_uncommitted_with_changes',
             'test_current_branch_valid_repo',
             'test_current_branch_invalid_repo',
-            'test_current_branch_detached_head']
+            'test_current_branch_detached_head',
+            'test_current_tag_lightweight_tag',
+            'test_current_tag_annotated_tag',
+            'test_current_tag_no_tag']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
 
 
