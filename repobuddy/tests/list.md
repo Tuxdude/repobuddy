@@ -26,6 +26,9 @@ Parsing Repo Manifest
 10. A clientspec with Repo containing empty branch body
 11. A clientspec with Repo containing no destination tags
 12. A clientspec with Repo containing empty destination body
+13. No default client spec
+14. Default client spec not part of list
+15. Duplicate client spec names
 
 GitWrapper
 ----------
