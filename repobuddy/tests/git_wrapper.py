@@ -311,6 +311,10 @@ class GitWrapperTestCase(TestCaseBase):
 
         git = GitWrapper(base_dir)
         self.assertEqual(git.get_current_tag(), 'tag-v1')
+
+        ShellHelper.exec_command(_shlex.split('git checkout HEAD^^^'),
+                                 base_dir)
+        self.assertIsNone(git.get_current_tag())
         return
 
     def test_current_tag_annotated_tag(self):
@@ -326,6 +330,10 @@ class GitWrapperTestCase(TestCaseBase):
 
         git = GitWrapper(base_dir)
         self.assertEqual(git.get_current_tag(), 'tag-v2')
+
+        ShellHelper.exec_command(_shlex.split('git checkout HEAD^^^'),
+                                 base_dir)
+        self.assertIsNone(git.get_current_tag())
         return
 
     def test_current_tag_no_tag(self):
