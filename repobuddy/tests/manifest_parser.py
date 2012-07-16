@@ -23,7 +23,7 @@ import unittest as _unittest
 
 from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
 from repobuddy.manifest_parser import ClientSpec, Manifest, Repo, \
-        ManifestParser, ManifestParserError
+    ManifestParser, ManifestParserError
 from repobuddy.utils import ResourceHelper
 
 
@@ -91,9 +91,6 @@ class ManifestParserTestCase(TestCaseBase):
                         Repo('https://github.com/github/gitignore.git',
                              'master',
                              'repos/gitignore')])])
-        repo = Repo('https://github.com/git/git.git',
-                    'master',
-                    'repos/git')
 
         self.assertEqual(manifest, expected_manifest)
         return
