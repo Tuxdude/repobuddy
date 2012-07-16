@@ -22,7 +22,8 @@ import os as _os
 import unittest as _unittest
 
 from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
-from repobuddy.manifest_parser import ManifestParser, ManifestParserError
+from repobuddy.manifest_parser import ClientSpec, Manifest, Repo, \
+        ManifestParser, ManifestParserError
 from repobuddy.utils import ResourceHelper
 
 
@@ -47,9 +48,52 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
     def test_valid_manifest(self):
-        file_handle = ResourceHelper.open_data_file(
+        manifest_stream = ResourceHelper.open_data_file(
             'repobuddy.tests.manifests',
             'manifest-valid.xml')
+        manifest_parser = ManifestParser()
+        manifest_parser.parse(manifest_stream)
+        manifest = manifest_parser.get_manifest()
+        print manifest
+
+        expected_manifest = Manifest(
+            'Spec1',
+            [
+                ClientSpec(
+                    'Spec1',
+                    [
+                        Repo('https://github.com/git/git.git',
+                             'master',
+                             'repos/git'),
+                        Repo('https://github.com/github/linguist.git',
+                             'master',
+                             'repos/linguist')]),
+                ClientSpec(
+                    'Spec2',
+                    [
+                        Repo('https://github.com/github/gitignore.git',
+                             'master',
+                             'gitignore'),
+                        Repo('git://github.com/github/linguist.git',
+                             'master',
+                             'linguist',)]),
+                ClientSpec(
+                    'Spec3',
+                    [
+                        Repo('git://github.com/jquery/jquery.git',
+                             'master',
+                             'repos/jquery'),
+                        Repo('git://github.com/Tuxdude/repobuddy.git',
+                             'dev',
+                             'repos/repobuddy'),
+                        Repo('https://github.com/github/gitignore.git',
+                             'master',
+                             'repos/gitignore')])])
+        repo = Repo('https://github.com/git/git.git',
+                    'master',
+                    'repos/git')
+
+        self.assertEqual(manifest, expected_manifest)
         return
 
 
