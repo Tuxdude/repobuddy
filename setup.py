@@ -35,7 +35,11 @@ setup(
     keywords='git repo multi-repo',
     url='https://github.com/Tuxdude/repobuddy',
     packages=find_packages(),
+    package_data={
+        # Include all the test manifest xml files
+        'repobuddy.tests.manifests': ['*.xml']},
     entry_points={
         'console_scripts': [
-            'repobuddy = repobuddy.main:run_repobuddy']}
+            'repobuddy = repobuddy.main:run_repobuddy',
+            'test_repobuddy = repobuddy.tests.main:run_tests']}
 )

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RepoBuddyManifest default_client_spec="Spec1">
+    <ClientSpec name="Spec1">
+        <Repo>
+            <Url>https://github.com/git/git.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/git</Destination>
+        </Repo>
+        <Repo>
+            <Url>https://github.com/github/linguist.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/linguist</Destination>
+        </Repo>
+    </ClientSpec>
+    <ClientSpec name="Spec2">
+        <Repo>
+            <Url>https://github.com/github/gitignore.git</Url>
+            <Branch>master</Branch>
+            <Destination>gitignore</Destination>
+        </Repo>
+        <Repo>
+            <Url>git://github.com/github/linguist.git</Url>
+            <Branch>master</Branch>
+            <Destination>linguist</Destination>
+        </Repo>
+    </ClientSpec>
+    <ClientSpec name="Spec3">
+        <Repo>
+            <Url>git://github.com/jquery/jquery.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/jquery</Destination>
+        </Repo>
+        <Repo>
+            <Url>git://github.com/Tuxdude/repobuddy.git</Url>
+            <Branch>dev</Branch>
+            <Destination>repos/repobuddy</Destination>
+        </Repo>
+        <Repo>
+            <Url>https://github.com/github/gitignore.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/gitignore</Destination>
+        </Repo>
+    </ClientSpec>
+</RepoBuddyManifest>
