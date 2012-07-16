@@ -30,6 +30,14 @@ from repobuddy.utils import ResourceHelper
 class ManifestParserTestCase(TestCaseBase):
     _base_dir = None
 
+    def _parse_manifest(self, manifest_file):
+        manifest_stream = ResourceHelper.open_data_file(
+            'repobuddy.tests.manifests',
+            manifest_file)
+        manifest_parser = ManifestParser()
+        manifest_parser.parse(manifest_stream)
+        return manifest_parser.get_manifest()
+
     @classmethod
     def set_base_dir(cls, base_dir):
         cls._base_dir = base_dir
@@ -48,13 +56,7 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
     def test_valid_manifest(self):
-        manifest_stream = ResourceHelper.open_data_file(
-            'repobuddy.tests.manifests',
-            'manifest-valid.xml')
-        manifest_parser = ManifestParser()
-        manifest_parser.parse(manifest_stream)
-        manifest = manifest_parser.get_manifest()
-        print manifest
+        manifest = self._parse_manifest('manifest-valid.xml')
 
         expected_manifest = Manifest(
             'Spec1',
@@ -96,6 +98,13 @@ class ManifestParserTestCase(TestCaseBase):
         self.assertEqual(manifest, expected_manifest)
         return
 
+    def test_malformed_manifest(self):
+        with self.assertRaisesRegexp(
+                ManifestParserError,
+                r'^Unable to parse the Manifest Xml file: '):
+            manifest = self._parse_manifest('manifest-malformed.xml')
+        return
+
 
 class ManifestParserTestSuite(object):
     def __init__(self, base_test_dir):
@@ -105,7 +114,9 @@ class ManifestParserTestSuite(object):
         return
 
     def get_test_suite(self):
-        tests = ['test_valid_manifest']
+        tests = [
+            'test_valid_manifest',
+            'test_malformed_manifest']
         return _unittest.TestSuite(map(ManifestParserTestCase, tests))
 
 
