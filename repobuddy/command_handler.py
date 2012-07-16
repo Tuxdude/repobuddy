@@ -143,7 +143,7 @@ class CommandHandler(object):
         # Process each repo in the Client Spec
         for repo in client_spec.repo_list:
             git = GitWrapper(self._current_dir)
-            git.clone(repo.url, repo.branch, repo.destination)
+            git.clone(repo.url, repo.branch, repo.dest)
 
         # Create the client file, writing the following
         # The manifest file name
@@ -168,9 +168,9 @@ class CommandHandler(object):
         for repo in client.repo_list:
             git = GitWrapper(
                 _os.path.join(self._current_dir,
-                              repo.destination))
+                              repo.dest))
             Logger.msg('####################################################')
-            Logger.msg('Repo: ' + repo.destination)
+            Logger.msg('Repo: ' + repo.dest)
             Logger.msg('Remote URL: ' + repo.url)
             git.update_index()
             current_branch = git.get_current_branch()

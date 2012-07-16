@@ -34,8 +34,15 @@ class Repo(object):
     def __init__(self):
         self.url = ''
         self.branch = ''
-        self.destination = ''
+        self.dest = ''
         return
+
+    def __str__(self):
+        return ('"Url: %s Branch: %s Dest: %s>"' %
+                (self.url, self.branch, self.dest))
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class ClientSpec(object):
@@ -44,12 +51,26 @@ class ClientSpec(object):
         self.repo_list = []
         return
 
+    def __str__(self):
+        return ('<client_spec: %s Repos: %s>' %
+                (self.name, str(self.repo_list)))
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class Manifest(object):
     def __init__(self):
         self.default_client_spec = ''
         self.client_spec_list = []
         return
+
+    def __str__(self):
+        return ('<<Manifest default_client_spec: %s client_specs: %s>>' %
+                (self.default_client_spec, str(self.client_spec_list)))
+
+    def __repr__(self):
+        return self.__str__()
 
 
 # manifest - a list of client specs
@@ -136,8 +157,8 @@ class _XmlContentHandler(_sax.ContentHandler):
             # Set the branch key in the repo
             self._last_repo.branch = self._last_content
         elif name == 'Destination':
-            # Set the destination key in the repo
-            self._last_repo.destination = self._last_content
+            # Set the dest key in the repo
+            self._last_repo.dest = self._last_content
         return
 
     def characters(self, content):
