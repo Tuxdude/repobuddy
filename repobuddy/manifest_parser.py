@@ -97,6 +97,10 @@ class _XmlContentHandler(_sax.ContentHandler):
                 raise ManifestParserError(
                     'Error: Duplicate Client Spec \'' +
                     client_spec.name + '\' found')
+            if len(client_spec.repo_list) == 0:
+                raise ManifestParserError(
+                    'Error: Client Spec \'%s\' should have at least one repo' %
+                    client_spec.name)
             found_client_specs.add(client_spec.name)
         if not found_default_client_spec:
             raise ManifestParserError(
