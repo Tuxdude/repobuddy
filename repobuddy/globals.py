@@ -18,7 +18,7 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-from version import __version__
+from repobuddy.version import __version__
 
 from repobuddy.utils import RepoBuddyBaseException
 

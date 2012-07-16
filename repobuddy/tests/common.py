@@ -94,7 +94,6 @@ class ShellHelper:
 
 
 class TestCommon:
-
     @classmethod
     def _git_append_add_commit(cls, text, filename, commit_log, exec_dir):
         ShellHelper.append_text_to_file(text, filename, exec_dir)

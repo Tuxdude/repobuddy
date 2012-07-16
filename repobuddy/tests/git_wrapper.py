@@ -32,7 +32,6 @@ class GitWrapperTestCase(TestCaseBase):
     _repos_dir = None
     _skip_cleanup = True
 
-
     def _git_wrapper_clone_helper(self,
                                   base_dir,
                                   url,

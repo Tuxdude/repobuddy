@@ -18,4 +18,4 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-__version__='0.2alpha'
+__version__ = '0.2alpha'
