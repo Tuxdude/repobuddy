@@ -20,6 +20,7 @@
 
 import errno as _errno
 import os as _os
+import pkg_resources as _pkg_resources
 import sys as _sys
 import time as _time
 
@@ -96,6 +97,24 @@ class FileLock(object):
             _os.close(self._fd)
             _os.unlink(self._lock_file)
             self._is_locked = False
+        return
+
+
+class ResourceHelperError(RepoBuddyBaseException):
+    def __init__(self, error_str):
+        super(ResourceHelperError, self).__init__(error_str)
+        return
+
+
+class ResourceHelper:
+    @classmethod
+    def open_data_file(cls, package_name, file_name):
+        if _pkg_resources.resource_exists(package_name, file_name):
+            return _pkg_resources.resource_stream(package_name, file_name)
+        else:
+            raise ResourceHelperError(
+                'Unable to locate the resource: %s in package %s' %
+                (file_name, package_name))
         return
 
 

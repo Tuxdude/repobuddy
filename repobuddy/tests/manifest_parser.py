@@ -23,6 +23,7 @@ import unittest as _unittest
 
 from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
 from repobuddy.manifest_parser import ManifestParser, ManifestParserError
+from repobuddy.utils import ResourceHelper
 
 
 class ManifestParserTestCase(TestCaseBase):
@@ -46,6 +47,9 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
     def test_valid_manifest(self):
+        file_handle = ResourceHelper.open_data_file(
+            'repobuddy.tests.manifests',
+            'manifest-valid.xml')
         return
 
 
