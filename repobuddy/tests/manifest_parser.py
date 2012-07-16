@@ -56,7 +56,7 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
     def test_valid_manifest(self):
-        manifest = self._parse_manifest('manifest-valid.xml')
+        manifest = self._parse_manifest('valid.xml')
 
         expected_manifest = Manifest(
             'Spec1',
@@ -99,14 +99,14 @@ class ManifestParserTestCase(TestCaseBase):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Unable to parse the Manifest Xml file: '):
-            manifest = self._parse_manifest('manifest-malformed.xml')
+            manifest = self._parse_manifest('malformed.xml')
         return
 
     def test_no_client_spec(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: There should be at least one valid Client Spec$'):
-            manifest = self._parse_manifest('manifest-no-clientspec.xml')
+            manifest = self._parse_manifest('no-clientspec.xml')
         return
 
     def test_empty_client_spec(self):
@@ -114,7 +114,7 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec2\' should have at least ' +
                 r'one repo$'):
-            manifest = self._parse_manifest('manifest-empty-clientspec.xml')
+            manifest = self._parse_manifest('empty-clientspec.xml')
             print manifest
         return
 
