@@ -21,7 +21,7 @@
 import copy as _copy
 import xml.sax as _sax
 
-from repobuddy.utils import RepoBuddyBaseException
+from repobuddy.utils import EqualityBase, RepoBuddyBaseException
 
 
 class ManifestParserError(RepoBuddyBaseException):
@@ -30,11 +30,11 @@ class ManifestParserError(RepoBuddyBaseException):
         return
 
 
-class Repo(object):
-    def __init__(self):
-        self.url = ''
-        self.branch = ''
-        self.dest = ''
+class Repo(EqualityBase):
+    def __init__(self, url='', branch='', dest=''):
+        self.url = url
+        self.branch = branch
+        self.dest = dest
         return
 
     def __str__(self):
@@ -45,10 +45,10 @@ class Repo(object):
         return self.__str__()
 
 
-class ClientSpec(object):
-    def __init__(self):
-        self.name = ''
-        self.repo_list = []
+class ClientSpec(EqualityBase):
+    def __init__(self, name='', repo_list=[]):
+        self.name = name
+        self.repo_list = repo_list[:]
         return
 
     def __str__(self):
@@ -59,10 +59,10 @@ class ClientSpec(object):
         return self.__str__()
 
 
-class Manifest(object):
-    def __init__(self):
-        self.default_client_spec = ''
-        self.client_spec_list = []
+class Manifest(EqualityBase):
+    def __init__(self, default_client_spec='', client_spec_list=[]):
+        self.default_client_spec = default_client_spec
+        self.client_spec_list = client_spec_list[:]
         return
 
     def __str__(self):

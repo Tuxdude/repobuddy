@@ -118,6 +118,14 @@ class ResourceHelper:
         return
 
 
+class EqualityBase(object):
+    def __eq__(self, other):
+        return (type(other) is type(self)) and self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+
 class LoggerError(Exception):
     def __init__(self, error_str):
         super(LoggerError, self).__init__(error_str)
