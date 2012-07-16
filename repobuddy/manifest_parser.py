@@ -153,16 +153,19 @@ class ManifestParser(object):
         self._manifest = None
         return
 
-    def parse(self, file_name):
-        manifest_xml_file = open(file_name)
+    def parse(self, file_handle):
+        if file_handle is None:
+            raise ManifestParserError(
+                'Invalid file_handle as argument to parse()')
+
         xml_parser = _XmlContentHandler()
         try:
-            _sax.parse(manifest_xml_file, xml_parser)
+            _sax.parse(file_handle, xml_parser)
         except _sax.SAXParseException as err:
             raise ManifestParserError(
                 'Unable to parse the Manifest Xml file: ' + str(err))
         finally:
-            manifest_xml_file.close()
+            file_handle.close()
         self._manifest = xml_parser.get_manifest()
         return
 

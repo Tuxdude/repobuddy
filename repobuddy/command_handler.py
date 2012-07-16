@@ -51,7 +51,7 @@ class CommandHandler(object):
         # Parse the manifest file
         manifest_parser = ManifestParser()
         try:
-            manifest_parser.parse(self._manifest_file)
+            manifest_parser.parse(open(self._manifest_file))
         except ManifestParserError as err:
             raise CommandHandlerError(str(err))
 
