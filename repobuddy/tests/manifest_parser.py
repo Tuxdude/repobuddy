@@ -105,6 +105,22 @@ class ManifestParserTestCase(TestCaseBase):
             manifest = self._parse_manifest('manifest-malformed.xml')
         return
 
+    def test_no_client_spec(self):
+        with self.assertRaisesRegexp(
+                ManifestParserError,
+                r'^Error: There should be at least one valid Client Spec$'):
+            manifest = self._parse_manifest('manifest-no-clientspec.xml')
+        return
+
+    def test_empty_client_spec(self):
+        with self.assertRaisesRegexp(
+                ManifestParserError,
+                r'^Error: Client Spec \'Spec2\' should have at least ' +
+                r'one repo$'):
+            manifest = self._parse_manifest('manifest-empty-clientspec.xml')
+            print manifest
+        return
+
 
 class ManifestParserTestSuite(object):
     def __init__(self, base_test_dir):
@@ -116,7 +132,9 @@ class ManifestParserTestSuite(object):
     def get_test_suite(self):
         tests = [
             'test_valid_manifest',
-            'test_malformed_manifest']
+            'test_malformed_manifest',
+            'test_no_client_spec',
+            'test_empty_client_spec']
         return _unittest.TestSuite(map(ManifestParserTestCase, tests))
 
 
