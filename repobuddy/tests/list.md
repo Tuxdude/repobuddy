@@ -44,9 +44,9 @@ GitWrapper
 13. Get the current branch on a valid repo
 14. Get the current branch on an invalid GIT repo
 15. Get the current branch on a detached HEAD
-16. Get the current branch on a lightweight TAG
-17. Get the current branch on an annotated TAG
-18. Get the current branch on a signed TAG
+16. Get the current tag on a lightweight TAG
+17. Get the current tag on an annotated TAG
+18. Get the current tag when there is none
 
 Client Info
 -----------
