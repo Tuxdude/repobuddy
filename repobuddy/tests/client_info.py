@@ -19,22 +19,31 @@
 #
 
 import os as _os
+import unittest as _unittest
 
-from repobuddy.tests.common import TestSuiteManager
-from repobuddy.tests.client_info import ClientInfoTestSuite
-from repobuddy.tests.git_wrapper import GitWrapperTestSuite
-from repobuddy.tests.manifest_parser import ManifestParserTestSuite
+from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
+from repobuddy.utils import ResourceHelper
 
 
-def run_tests():
-    test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
-    tests = TestSuiteManager(test_dir)
+class ClientInfoTestCase(TestCaseBase):
+    @classmethod
+    def setUpClass(cls):
+        return
 
-    git_wrapper_tests = GitWrapperTestSuite.get_test_suite()
-    manifest_parser_tests = ManifestParserTestSuite.get_test_suite()
-    client_info_tests = ClientInfoTestSuite.get_test_suite()
-    tests.add_test_suite(git_wrapper_tests)
-    tests.add_test_suite(manifest_parser_tests)
-    tests.add_test_suite(client_info_tests)
-    tests.run()
-    tests.show_results()
+    @classmethod
+    def tearDownClass(cls):
+        return
+
+    def __init__(self, methodName='runTest'):
+        super(ClientInfoTestCase, self).__init__(methodName)
+        return
+
+    def test_invalid_file(self):
+        return
+
+
+class ClientInfoTestSuite:
+    @classmethod
+    def get_test_suite(cls):
+        tests = ['test_invalid_file']
+        return _unittest.TestSuite(map(ClientInfoTestCase, tests))
