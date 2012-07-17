@@ -26,7 +26,7 @@ install:
 clean:
 	@rm -rf $(CLEANUP_FILES)
 	@rm -rf *.egg-info build dist
-	@find . -name '*,cover' | xargs rm
+	@find . -name '*.py,cover' | xargs rm
 
 pep8:
 	@$(PEP8) $(SRCS)

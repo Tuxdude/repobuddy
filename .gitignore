@@ -1,4 +1,5 @@
 *.pyc
+*.py,cover
 *.swp
 *.egg-info
 /build
