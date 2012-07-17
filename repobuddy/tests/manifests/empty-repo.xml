@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RepoBuddyManifest default_client_spec="Spec1">
+    <ClientSpec name="Spec1">
+        <Repo>
+            <Url>https://github.com/git/git.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/git</Destination>
+        </Repo>
+        <Repo>
+        </Repo>
+    </ClientSpec>
+</RepoBuddyManifest>

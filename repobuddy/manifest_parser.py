@@ -31,14 +31,14 @@ class ManifestParserError(RepoBuddyBaseException):
 
 
 class Repo(EqualityBase):
-    def __init__(self, url='', branch='', dest=''):
+    def __init__(self, url=None, branch=None, dest=None):
         self.url = url
         self.branch = branch
         self.dest = dest
         return
 
     def __str__(self):
-        return ('"Url: %s Branch: %s Dest: %s>"' %
+        return ('<Repo url:%s branch:%s dest:%s>' %
                 (self.url, self.branch, self.dest))
 
     def __repr__(self):
@@ -46,13 +46,16 @@ class Repo(EqualityBase):
 
 
 class ClientSpec(EqualityBase):
-    def __init__(self, name='', repo_list=[]):
+    def __init__(self, name=None, repo_list=None):
         self.name = name
-        self.repo_list = repo_list[:]
+        if not repo_list is None:
+            self.repo_list = repo_list[:]
+        else:
+            self.repo_list = None
         return
 
     def __str__(self):
-        return ('<client_spec: %s Repos: %s>' %
+        return ('<ClientSpec name:%s repo_list:%s>' %
                 (self.name, str(self.repo_list)))
 
     def __repr__(self):
@@ -60,13 +63,16 @@ class ClientSpec(EqualityBase):
 
 
 class Manifest(EqualityBase):
-    def __init__(self, default_client_spec='', client_spec_list=[]):
+    def __init__(self, default_client_spec=None, client_spec_list=None):
         self.default_client_spec = default_client_spec
-        self.client_spec_list = client_spec_list[:]
+        if not client_spec_list is None:
+            self.client_spec_list = client_spec_list[:]
+        else:
+            self.client_spec_list = None
         return
 
     def __str__(self):
-        return ('<<Manifest default_client_spec: %s client_specs: %s>>' %
+        return ('<Manifest default_client_spec:%s client_spec_list:%s>' %
                 (self.default_client_spec, str(self.client_spec_list)))
 
     def __repr__(self):
@@ -83,7 +89,7 @@ class _XmlContentHandler(_sax.ContentHandler):
             raise ManifestParserError(
                 'Error: default_client_spec cannot be empty')
         # Verify that there is at least one element in the client_spec_list
-        if len(self._manifest.client_spec_list) == 0:
+        if self._manifest.client_spec_list is None:
             raise ManifestParserError(
                 'Error: There should be at least one valid Client Spec')
         # Verify default_client_spec is part of client_spec_list
@@ -97,10 +103,44 @@ class _XmlContentHandler(_sax.ContentHandler):
                 raise ManifestParserError(
                     'Error: Duplicate Client Spec \'' +
                     client_spec.name + '\' found')
-            if len(client_spec.repo_list) == 0:
+            if client_spec.repo_list is None:
                 raise ManifestParserError(
                     'Error: Client Spec \'%s\' should have at least one repo' %
                     client_spec.name)
+            for repo in client_spec.repo_list:
+                if repo.url is None and repo.branch is None and \
+                        repo.dest is None:
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has no info about the Repo')
+
+                if repo.url is None:
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has a Repo with no \'Url\' info')
+                elif repo.url == '':
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has an empty Repo \'Url\'')
+
+                if repo.branch is None:
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has a Repo with no \'Branch\' info')
+                elif repo.branch == '':
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has an empty Repo \'Branch\'')
+
+                if repo.dest is None:
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has a Repo with no \'Destination\' info')
+                elif repo.dest == '':
+                    raise ManifestParserError(
+                        'Error: Client Spec \'%s\' ' % client_spec.name +
+                        'has an empty Repo \'Destination\'')
+
             found_client_specs.add(client_spec.name)
         if not found_default_client_spec:
             raise ManifestParserError(
@@ -135,6 +175,8 @@ class _XmlContentHandler(_sax.ContentHandler):
                 raise ManifestParserError(
                     'Error: No default_client_spec found')
         elif name == 'ClientSpec':
+            if self._manifest.client_spec_list is None:
+                self._manifest.client_spec_list = []
             self._last_client_spec = ClientSpec()
             try:
                 self._last_client_spec.name = attrs.getValue('name')
@@ -142,6 +184,8 @@ class _XmlContentHandler(_sax.ContentHandler):
                 raise ManifestParserError(
                     'Error: No name specified for ClientSpec')
         elif name == 'Repo':
+            if self._last_client_spec.repo_list is None:
+                self._last_client_spec.repo_list = []
             self._last_repo = Repo()
 
         self._last_content = ''
@@ -181,16 +225,29 @@ class ManifestParser(object):
     def parse(self, file_handle):
         if file_handle is None:
             raise ManifestParserError(
-                'Invalid file_handle as argument to parse()')
+                'Error: file_handle cannot be None')
+        elif isinstance(file_handle, basestring):
+            raise ManifestParserError(
+                'Error: file_handle cannot be a string')
 
         xml_parser = _XmlContentHandler()
         try:
             _sax.parse(file_handle, xml_parser)
         except _sax.SAXParseException as err:
             raise ManifestParserError(
-                'Unable to parse the Manifest Xml file: ' + str(err))
+                'Error: Unable to parse the Manifest Xml file: ' + str(err))
+        except ValueError:
+            raise ManifestParserError(
+                'Error: I/O Operation on closed file_handle')
+        except AttributeError:
+            raise ManifestParserError(
+                'Error: file_handle is not a stream ' + \
+                'object')
         finally:
-            file_handle.close()
+            try:
+                file_handle.close()
+            except AttributeError:
+                pass
         self._manifest = xml_parser.get_manifest()
         return
 
