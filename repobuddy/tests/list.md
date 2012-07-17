@@ -14,21 +14,25 @@ Fetching Repo Manifest
 
 Parsing Repo Manifest
 ---------------------
-1.  A valid manifest
-2.  A malformed manifest XML
-3.  No client specs
-4.  One valid client spec, and another empty client spec
-5.  A clientspec with no name, but valid body
-6.  A clientspec with name, but empty Repo body
-7.  A clientspec with Repo containing no URL tags
-8.  A clientspec with Repo containing empty URL body
-9.  A clientspec with Repo containing no branch tags
-10. A clientspec with Repo containing empty branch body
-11. A clientspec with Repo containing no destination tags
-12. A clientspec with Repo containing empty destination body
-13. No default client spec
-14. Default client spec not part of list
-15. Duplicate client spec names
+1.  Repo String representation
+2.  ClientSpec String representation
+3.  Manifest String representation
+4.  Invalid file handle
+5.  A valid manifest
+6.  A malformed manifest XML
+7.  No client specs
+8.  Empty client spec
+9.  Client spec with no name
+10. Client spec with empty Repo
+11. Repo with no URL
+12. Repo with empty URL
+13. Repo with no branch
+14. Repo with empty branch
+15. Repo with no destination
+16. Repo with empty destination
+17. No default client spec
+18. Nonexistent default client spec
+19. Duplicate client spec
 
 GitWrapper
 ----------
