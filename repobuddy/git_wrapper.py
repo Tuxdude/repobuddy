@@ -37,8 +37,8 @@ class GitWrapperError(RepoBuddyBaseException):
 class GitWrapper(object):
     def _exec_git(self,
                   command,
-                  capture_std_out=False,
-                  capture_std_err=False,
+                  capture_stdout=False,
+                  capture_stderr=False,
                   is_clone=False):
         if is_clone:
             git_command = _shlex.split('git ' + command)
@@ -48,9 +48,9 @@ class GitWrapper(object):
         Logger.debug('Exec: git %s' % command)
         try:
             kwargs = {}
-            if capture_std_out:
+            if capture_stdout:
                 kwargs['stdout'] = _subprocess.PIPE
-            if capture_std_err:
+            if capture_stderr:
                 kwargs['stderr'] = _subprocess.PIPE
 
             proc = _subprocess.Popen(
@@ -61,7 +61,7 @@ class GitWrapper(object):
             return_code = proc.wait()
 
             if return_code != 0:
-                if capture_std_err:
+                if capture_stderr:
                     raise GitWrapperError(
                         'Command \'git %s\' failed' % command,
                         is_git_error=True,
@@ -71,11 +71,11 @@ class GitWrapper(object):
                         'Command \'git %s\' failed' % command,
                         is_git_error=True)
 
-            if capture_std_out and capture_std_err:
+            if capture_stdout and capture_stderr:
                 return (out_msg.rstrip(), err_msg.rstrip())
-            elif capture_std_out:
+            elif capture_stdout:
                 return out_msg.rstrip()
-            elif capture_std_err:
+            elif capture_stderr:
                 return err_msg.rstrip()
         except OSError as err:
             raise GitWrapperError(str(err), is_git_error=False)
@@ -113,7 +113,7 @@ class GitWrapper(object):
     def get_untracked_files(self):
         untracked_files = self._exec_git(
             'ls-files --exclude-standard --others --',
-            capture_std_out=True)
+            capture_stdout=True)
         if untracked_files == '':
             return []
         else:
@@ -122,7 +122,7 @@ class GitWrapper(object):
     def get_unstaged_files(self):
         unstaged_files = self._exec_git(
             'diff-files --name-status -r --ignore-submodules --',
-            capture_std_out=True)
+            capture_stdout=True)
         if unstaged_files == '':
             return []
         else:
@@ -131,7 +131,7 @@ class GitWrapper(object):
     def get_uncommitted_staged_files(self):
         uncommited_staged_files = self._exec_git(
             'diff-index --cached --name-status -r --ignore-submodules HEAD --',
-            capture_std_out=True)
+            capture_stdout=True)
         if uncommited_staged_files == '':
             return []
         else:
@@ -140,8 +140,8 @@ class GitWrapper(object):
     def get_current_branch(self):
         try:
             out_msg = self._exec_git('symbolic-ref HEAD',
-                                     capture_std_out=True,
-                                     capture_std_err=True)[0]
+                                     capture_stdout=True,
+                                     capture_stderr=True)[0]
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
@@ -160,8 +160,8 @@ class GitWrapper(object):
         try:
             out_msg = self._exec_git(
                 'name-rev --name-only --tags --no-undefined HEAD',
-                capture_std_out=True,
-                capture_std_err=True)[0]
+                capture_stdout=True,
+                capture_stderr=True)[0]
         except GitWrapperError as err:
             if not err.is_git_error:
                 raise err
