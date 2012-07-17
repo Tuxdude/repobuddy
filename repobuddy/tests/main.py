@@ -27,10 +27,10 @@ from repobuddy.tests.manifest_parser import ManifestParserTestSuite
 
 def run_tests():
     test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
-
-    git_wrapper_tests = GitWrapperTestSuite(test_dir).get_test_suite()
-    manifest_parser_tests = ManifestParserTestSuite(test_dir).get_test_suite()
     tests = TestSuiteManager(test_dir)
+
+    git_wrapper_tests = GitWrapperTestSuite.get_test_suite()
+    manifest_parser_tests = ManifestParserTestSuite.get_test_suite()
     tests.add_test_suite(git_wrapper_tests)
     tests.add_test_suite(manifest_parser_tests)
     tests.run()

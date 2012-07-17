@@ -277,8 +277,16 @@ class TestCaseBase(_unittest.TestCase):
 
 
 class TestSuiteManager(object):
-    def __init__(self, base_test_dir):
-        self._base_test_dir = base_test_dir
+    _base_dir = None
+
+    @classmethod
+    def get_base_dir(cls):
+        return cls._base_dir
+
+    def __init__(self, base_dir):
+        if not _os.path.isdir(base_dir):
+            ShellHelper.make_dir(base_dir)
+        type(self)._base_dir = base_dir
         self._test_suite = None
         self._output = _cStringIO.StringIO()
         return

@@ -28,8 +28,6 @@ from repobuddy.utils import ResourceHelper
 
 
 class ManifestParserTestCase(TestCaseBase):
-    _base_dir = None
-
     def _parse_manifest(self, manifest_file):
         manifest_stream = ResourceHelper.open_data_file(
             'repobuddy.tests.manifests',
@@ -37,19 +35,6 @@ class ManifestParserTestCase(TestCaseBase):
         manifest_parser = ManifestParser()
         manifest_parser.parse(manifest_stream)
         return manifest_parser.get_manifest()
-
-    @classmethod
-    def set_base_dir(cls, base_dir):
-        cls._base_dir = base_dir
-        return
-
-    @classmethod
-    def setUpClass(cls):
-        return
-
-    @classmethod
-    def tearDownClass(cls):
-        return
 
     def __init__(self, methodName='runTest'):
         super(ManifestParserTestCase, self).__init__(methodName)
@@ -294,14 +279,9 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
 
-class ManifestParserTestSuite(object):
-    def __init__(self, base_test_dir):
-        if not _os.path.isdir(base_test_dir):
-            ShellHelper.make_dir(base_test_dir)
-        ManifestParserTestCase.set_base_dir(base_test_dir)
-        return
-
-    def get_test_suite(self):
+class ManifestParserTestSuite:
+    @classmethod
+    def get_test_suite(cls):
         tests = [
             'test_repo_str_repr',
             'test_client_spec_str_repr',
@@ -324,11 +304,3 @@ class ManifestParserTestSuite(object):
             'test_nonexistent_default_client_spec',
             'test_duplicate_client_spec']
         return _unittest.TestSuite(map(ManifestParserTestCase, tests))
-
-
-def setUpModule():
-    return
-
-
-def tearDownModule():
-    return

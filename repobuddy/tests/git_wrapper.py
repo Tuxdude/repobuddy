@@ -23,12 +23,12 @@ import shlex as _shlex
 import stat as _stat
 import unittest as _unittest
 
-from repobuddy.tests.common import TestCommon, TestCaseBase, ShellHelper
+from repobuddy.tests.common import TestCommon, TestCaseBase, \
+    TestSuiteManager, ShellHelper
 from repobuddy.git_wrapper import GitWrapper, GitWrapperError
 
 
 class GitWrapperTestCase(TestCaseBase):
-    _base_dir = None
     _repos_dir = None
     _skip_cleanup = True
 
@@ -61,13 +61,9 @@ class GitWrapperTestCase(TestCaseBase):
         return
 
     @classmethod
-    def set_base_dir(cls, base_dir):
-        cls._base_dir = base_dir
-        return
-
-    @classmethod
     def setUpClass(cls):
-        cls._repos_dir = _os.path.join(cls._base_dir, 'repos')
+        cls._repos_dir = _os.path.join(TestSuiteManager.get_base_dir(),
+                                       'repos')
         TestCommon.setup_test_repos(cls._repos_dir)
         cls._origin_repo = _os.path.join(cls._repos_dir, 'repo-origin')
         return
@@ -348,14 +344,9 @@ class GitWrapperTestCase(TestCaseBase):
         return
 
 
-class GitWrapperTestSuite(object):
-    def __init__(self, base_test_dir):
-        if not _os.path.isdir(base_test_dir):
-            ShellHelper.make_dir(base_test_dir)
-        GitWrapperTestCase.set_base_dir(base_test_dir)
-        return
-
-    def get_test_suite(self):
+class GitWrapperTestSuite:
+    @classmethod
+    def get_test_suite(cls):
         tests = [
             'test_clone_valid_repo',
             'test_clone_invalid_url',
@@ -376,11 +367,3 @@ class GitWrapperTestSuite(object):
             'test_current_tag_annotated_tag',
             'test_current_tag_no_tag']
         return _unittest.TestSuite(map(GitWrapperTestCase, tests))
-
-
-def setUpModule():
-    return
-
-
-def tearDownModule():
-    return
