@@ -26,6 +26,7 @@ install:
 clean:
 	@rm -rf $(CLEANUP_FILES)
 	@rm -rf *.egg-info build dist
+	@find . -name '*,cover' | xargs rm
 
 pep8:
 	@$(PEP8) $(SRCS)
@@ -40,5 +41,8 @@ coverage:
 	@$(COVERAGE) erase
 	@$(COVERAGE) run ./run_tests.py
 	@$(COVERAGE) report
+
+coverage-annotate: coverage
+	@$(COVERAGE) annotate
 
 .PHONY: develop sdist clean pep8 pylint pylint-report
