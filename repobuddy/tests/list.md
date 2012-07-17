@@ -30,9 +30,10 @@ Parsing Repo Manifest
 14. Repo with empty branch
 15. Repo with no destination
 16. Repo with empty destination
-17. No default client spec
-18. Nonexistent default client spec
-19. Duplicate client spec
+17. Empty default client spec
+18. No default client spec
+19. Nonexistent default client spec
+20. Duplicate client spec
 
 GitWrapper
 ----------
