@@ -58,15 +58,25 @@ GitWrapper
 
 Client Info
 -----------
-1.  Parse an invalid client info
-2.  Parse a valid client info, and invoke all the getters
-3.  Parse a valid client info, change a valid setting, and write back
-4.  Parse a valid client info, change a valid setting, and write to a
+1.  Parse a nonexistent file
+2.  Parse a file without read permissions
+3.  Parse a malformed file
+4.  Parse an empty file
+5.  Parse a valid config format, but witout RepoBuddyClientInfo
+5.  Parse a file with just the RepoBuddyClientInfo section
+6.  Parse a file with client_spec and manifest, but no RepoBuddyClientInfo
+    section.
+7.  Parse a file with section, and client_spec
+8.  Parse a file with section, and manifest
+9.  Parse a valid file, and verify all the getters
+10.  Parse a valid client info, change a valid setting, and write back
+11. Parse a valid client info, change a valid setting, and write to a
     second file
-5.  Create a new client info, and invoke all the getters
-6.  Create a new client info, and write to a file, change a setting, and
-    write to a second file
-7.  Create a new client info, and write to a file with no modifications 
+12. Parse a valid client info, do not change anything, write to a file
+13. Write a new client info by invoking no setters
+14. Write a new client info by setting only the client_spec
+15. Write a new client info by setting only the manifest
+16. Write a new client info by invoking all the setters
 
 Utils
 -----
