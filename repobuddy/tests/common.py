@@ -289,6 +289,7 @@ class TestSuiteManager(object):
         type(self)._base_dir = base_dir
         self._test_suite = None
         self._output = _cStringIO.StringIO()
+        self._test_result = None
         return
 
     def add_test_suite(self, test_suite):
@@ -301,15 +302,18 @@ class TestSuiteManager(object):
     def run(self):
         runner = _unittest.TextTestRunner(
             stream=self._output,
-            verbosity=2)
-        runner.run(self._test_suite)
+            verbosity=0)
+        self._test_result = runner.run(self._test_suite)
         return
 
     def show_results(self):
         Logger.msg('\n')
-        Logger.msg('#' * 80 + '\n')
+        Logger.msg('#' * 80)
         Logger.msg('Test Results')
         Logger.msg('-' * 70 + '\n')
+        Logger.msg('#' * 80 + '\n')
         Logger.msg(self._output.getvalue())
-        Logger.msg('#' * 80)
+        print self._test_result.errors
+        print self._test_result.failures
+        print self._test_result.testsRun
         return
