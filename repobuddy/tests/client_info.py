@@ -38,12 +38,53 @@ class ClientInfoTestCase(TestCaseBase):
         super(ClientInfoTestCase, self).__init__(methodName)
         return
 
-    def test_invalid_file(self):
+    def test_read_nonexistent_file(self):
+        return
+
+    def test_read_without_permissions(self):
+        return
+
+    def test_read_malformed_file(self):
+        return
+
+    def test_read_empty_file(self):
+        return
+
+    def test_read_config_format_without_client_info(self):
+        return
+
+    def test_read_just_section(self):
+        return
+
+    def test_read_just_options(self):
+        return
+
+    def test_read_no_client_spec(self):
+        return
+
+    def test_read_no_manifest(self):
+        return
+
+    def test_read_valid(self):
+        return
+
+    def test_read_valid_writeback_changes(self):
         return
 
 
 class ClientInfoTestSuite:
     @classmethod
     def get_test_suite(cls):
-        tests = ['test_invalid_file']
+        tests = [
+            'test_read_nonexistent_file',
+            'test_read_without_permissions',
+            'test_read_malformed_file',
+            'test_read_empty_file',
+            'test_read_config_format_without_client_info',
+            'test_read_just_section',
+            'test_read_just_options',
+            'test_read_no_client_spec',
+            'test_read_no_manifest',
+            'test_read_valid',
+            'test_read_valid_writeback_changes']
         return _unittest.TestSuite(map(ClientInfoTestCase, tests))
