@@ -23,6 +23,7 @@ import os as _os
 import subprocess as _subprocess
 import shlex as _shlex
 import shutil as _shutil
+import sys as _sys
 import unittest as _unittest
 
 from repobuddy.utils import RepoBuddyBaseException, Logger
@@ -276,6 +277,56 @@ class TestCaseBase(_unittest.TestCase):
         return
 
 
+class TestResult(_unittest.TestResult):
+    def __init__(self):
+        super(TestResult, self).__init__()
+        self.errors = []
+        self.failures = []
+        self.success = []
+        self.skipped = []
+        self.expected_failures = []
+        self.unexpected_success = []
+        return
+
+    def addError(self, test, err):
+        self.errors.append((test, err[0], err[1], err[2]))
+        return
+
+    def addFailure(self, test, err):
+        self.failures.append((test, err[0], err[1], err[2]))
+        return
+
+    def addSuccess(self, test):
+        self.success.append(test)
+        return
+
+    def addSkip(self, test, reason):
+        self.skipped.append((test, reason))
+        return
+
+    def addExpectedFailure(self, test, err):
+        self.expected_failures.append((test, err[0], err[1], err[2]))
+        return
+
+    def addUnexpectedSuccess(self, test):
+        self.unexpected_success(test)
+        return
+
+
+class TestRunner(_unittest.TextTestRunner):
+    def __init__(self, stream=_sys.stderr, descriptions=True, verbosity=1):
+        super(TestRunner, self).__init__(stream, descriptions, verbosity)
+        self._test_result = None
+        return
+
+    def _makeResult(self):
+        self._test_result = TestResult()
+        return self._test_result
+
+    def get_test_result(self):
+        return self._test_result
+
+
 class TestSuiteManager(object):
     _base_dir = None
 
@@ -300,10 +351,11 @@ class TestSuiteManager(object):
         return
 
     def run(self):
-        runner = _unittest.TextTestRunner(
+        runner = TestRunner(
             stream=self._output,
             verbosity=0)
-        self._test_result = runner.run(self._test_suite)
+        runner.run(self._test_suite)
+        self._test_result = runner.get_test_result()
         return
 
     def show_results(self):
@@ -313,7 +365,50 @@ class TestSuiteManager(object):
         Logger.msg('-' * 70 + '\n')
         Logger.msg('#' * 80 + '\n')
         Logger.msg(self._output.getvalue())
-        print self._test_result.errors
-        print self._test_result.failures
-        print self._test_result.testsRun
+        if not self._test_result.wasSuccessful():
+            Logger.msg('FAILURES' + '\n')
+            for failure in self._test_result.failures:
+                Logger.msg(str(failure[0]))
+                Logger.msg('\n')
+                Logger.msg(str(failure[1]))
+                Logger.msg('\n')
+                Logger.msg(str(failure[2]))
+                Logger.msg('\n')
+                Logger.msg(str(failure[3]))
+                Logger.msg('\n')
+            Logger.msg('ERRORS' + '\n')
+            for error in self._test_result.errors:
+                Logger.msg(str(error[0]))
+                Logger.msg('\n')
+                Logger.msg(str(error[1]))
+                Logger.msg('\n')
+                Logger.msg(str(error[2]))
+                Logger.msg('\n')
+                Logger.msg(str(error[3]))
+                Logger.msg('\n')
+            Logger.msg('SUCCESS' + '\n')
+            for success in self._test_result.success:
+                Logger.msg(str(success))
+                Logger.msg('\n')
+            Logger.msg('SKIPPED' + '\n')
+            for skipped in self._test_result.skipped:
+                Logger.msg(str(skipped[0]))
+                Logger.msg('\n')
+                Logger.msg(str(skipped[1]))
+                Logger.msg('\n')
+            Logger.msg('EXPECTED FAILURE' + '\n')
+            for expected_failure in self._test_result.expected_failures:
+                Logger.msg(str(expected_failure[0]))
+                Logger.msg('\n')
+                Logger.msg(str(expected_failure[1]))
+                Logger.msg('\n')
+                Logger.msg(str(expected_failure[2]))
+                Logger.msg('\n')
+                Logger.msg(str(expected_failure[3]))
+                Logger.msg('\n')
+            Logger.msg('UNEXPECTED SUCCESS' + '\n')
+            for unexpected_success in self._test_result.unexpected_success:
+                Logger.msg(str(unexpected_success))
+                Logger.msg('\n')
+        Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
