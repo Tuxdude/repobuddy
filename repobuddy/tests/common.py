@@ -376,20 +376,27 @@ class TestSuiteManager(object):
 
     def show_results(self):
         Logger.msg('\n')
-        Logger.msg('#' * 80)
-        Logger.msg('Test Results')
-        Logger.msg('-' * 70 + '\n')
-        Logger.msg('#' * 80 + '\n')
+        Logger.msg('*' * 120)
+        Logger.msg('{0:^120}'.format('Test Summary'))
+        Logger.msg('*' * 120)
         Logger.msg(self._output.getvalue())
+        Logger.msg('-' * 120 + '\n\n')
 
-        Logger.msg('Module     TestCase     Description   Result\n')
-        for module, results in self._test_result.test_results.iteritems():
+        for test_suite, results in self._test_result.test_results.iteritems():
+            Logger.msg('TestSuite: %s' % test_suite)
+            Logger.msg('#' * 120)
+            Logger.msg('{0:48} {1:56} {2:16}'.format(
+                'TestCase',
+                'Description',
+                'Result'))
+            Logger.msg('#' * 120)
             for result in results:
-                Logger.msg('%s %s %s %s' %
-                           (module,
-                            result['test_case'],
-                            result['description'],
-                            result['result']))
+                Logger.msg('{0:48} {1:56} {2:16}'.format(
+                    result['test_case'],
+                    result['description'],
+                    result['result']))
+            Logger.msg('-' * 120 + '\n\n')
+        Logger.msg('#' * 120 + '\n')
 
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
