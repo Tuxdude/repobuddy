@@ -23,6 +23,9 @@ sdist:
 install:
 	@$(PYTHON) setup.py install
 
+test:
+	@$(PYTHON) ./run_tests.py
+
 clean:
 	@rm -rf $(CLEANUP_FILES)
 	@rm -rf *.egg-info build dist
