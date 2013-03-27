@@ -18,11 +18,13 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import collections as _collections
 import cStringIO as _cStringIO
 import os as _os
-import subprocess as _subprocess
 import shlex as _shlex
 import shutil as _shutil
+import subprocess as _subprocess
+import sys as _sys
 import unittest as _unittest
 
 from repobuddy.utils import RepoBuddyBaseException, Logger
@@ -276,6 +278,71 @@ class TestCaseBase(_unittest.TestCase):
         return
 
 
+class TestResult(_unittest.TestResult):
+    def _update_result(self, test, err, result_str):
+        module_test_results = []
+        test_id = test.id().split('.')
+
+        if test_id[-2] not in self.test_results:
+            self.test_results[test_id[-2]] = module_test_results
+        else:
+            module_test_results = self.test_results[test_id[-2]]
+
+        result = {}
+        result['test_case'] = test_id[-1]
+        result['description'] = str(test.shortDescription())
+        result['result'] = result_str
+        if not err is None:
+            result['formated_traceback'] = \
+                _traceback.format_exception(err[0], err[1], err[2])
+
+        module_test_results.append(result)
+        return
+
+    def __init__(self):
+        super(TestResult, self).__init__()
+        self.test_results = _collections.OrderedDict()
+        return
+
+    def addError(self, test, err):
+        self._update_result(test, err, 'ERROR')
+        return
+
+    def addFailure(self, test, err):
+        self._update_result(test, err, 'FAILED')
+        return
+
+    def addSuccess(self, test):
+        self._update_result(test, None, 'PASSED')
+        return
+
+    def addSkip(self, test, reason):
+        self._update_result(test, None, 'SKIPPED')
+        return
+
+    def addExpectedFailure(self, test, err):
+        self._update_result(test, err, 'EXPECTED FAILURE')
+        return
+
+    def addUnexpectedSuccess(self, test):
+        self._update_result(test, None, 'UNEXPECTED SUCCESS')
+        return
+
+
+class TestRunner(_unittest.TextTestRunner):
+    def __init__(self, stream=_sys.stderr, descriptions=True, verbosity=1):
+        super(TestRunner, self).__init__(stream, descriptions, verbosity)
+        self._test_result = None
+        return
+
+    def _makeResult(self):
+        self._test_result = TestResult()
+        return self._test_result
+
+    def get_test_result(self):
+        return self._test_result
+
+
 class TestSuiteManager(object):
     _base_dir = None
 
@@ -289,6 +356,7 @@ class TestSuiteManager(object):
         type(self)._base_dir = base_dir
         self._test_suite = None
         self._output = _cStringIO.StringIO()
+        self._test_result = None
         return
 
     def add_test_suite(self, test_suite):
@@ -299,17 +367,36 @@ class TestSuiteManager(object):
         return
 
     def run(self):
-        runner = _unittest.TextTestRunner(
+        runner = TestRunner(
             stream=self._output,
-            verbosity=2)
+            verbosity=0)
         runner.run(self._test_suite)
+        self._test_result = runner.get_test_result()
         return
 
     def show_results(self):
         Logger.msg('\n')
-        Logger.msg('#' * 80 + '\n')
-        Logger.msg('Test Results')
-        Logger.msg('-' * 70 + '\n')
+        Logger.msg('*' * 120)
+        Logger.msg('{0:^120}'.format('Test Summary'))
+        Logger.msg('*' * 120)
         Logger.msg(self._output.getvalue())
-        Logger.msg('#' * 80)
+        Logger.msg('-' * 120 + '\n\n')
+
+        for test_suite, results in self._test_result.test_results.iteritems():
+            Logger.msg('TestSuite: %s' % test_suite)
+            Logger.msg('#' * 120)
+            Logger.msg('{0:48} {1:56} {2:16}'.format(
+                'TestCase',
+                'Description',
+                'Result'))
+            Logger.msg('#' * 120)
+            for result in results:
+                Logger.msg('{0:48} {1:56} {2:16}'.format(
+                    result['test_case'],
+                    result['description'],
+                    result['result']))
+            Logger.msg('-' * 120 + '\n\n')
+        Logger.msg('#' * 120 + '\n')
+
+        Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
