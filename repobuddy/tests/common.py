@@ -18,11 +18,12 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import collections as _collections
 import cStringIO as _cStringIO
 import os as _os
-import subprocess as _subprocess
 import shlex as _shlex
 import shutil as _shutil
+import subprocess as _subprocess
 import sys as _sys
 import unittest as _unittest
 
@@ -278,38 +279,53 @@ class TestCaseBase(_unittest.TestCase):
 
 
 class TestResult(_unittest.TestResult):
+    def _update_result(self, test, err, result_str):
+        module_test_results = []
+        test_id = test.id().split('.')
+
+        if test_id[-2] not in self.test_results:
+            self.test_results[test_id[-2]] = module_test_results
+        else:
+            module_test_results = self.test_results[test_id[-2]]
+
+        result = {}
+        result['test_case'] = test_id[-1]
+        result['description'] = str(test.shortDescription())
+        result['result'] = result_str
+        if not err is None:
+            result['formated_traceback'] = \
+                _traceback.format_exception(err[0], err[1], err[2])
+
+        module_test_results.append(result)
+        return
+
     def __init__(self):
         super(TestResult, self).__init__()
-        self.errors = []
-        self.failures = []
-        self.success = []
-        self.skipped = []
-        self.expected_failures = []
-        self.unexpected_success = []
+        self.test_results = _collections.OrderedDict()
         return
 
     def addError(self, test, err):
-        self.errors.append((test, err[0], err[1], err[2]))
+        self._update_result(test, err, 'ERROR')
         return
 
     def addFailure(self, test, err):
-        self.failures.append((test, err[0], err[1], err[2]))
+        self._update_result(test, err, 'FAILED')
         return
 
     def addSuccess(self, test):
-        self.success.append(test)
+        self._update_result(test, None, 'PASSED')
         return
 
     def addSkip(self, test, reason):
-        self.skipped.append((test, reason))
+        self._update_result(test, None, 'SKIPPED')
         return
 
     def addExpectedFailure(self, test, err):
-        self.expected_failures.append((test, err[0], err[1], err[2]))
+        self._update_result(test, err, 'EXPECTED FAILURE')
         return
 
     def addUnexpectedSuccess(self, test):
-        self.unexpected_success(test)
+        self._update_result(test, None, 'UNEXPECTED SUCCESS')
         return
 
 
@@ -365,50 +381,15 @@ class TestSuiteManager(object):
         Logger.msg('-' * 70 + '\n')
         Logger.msg('#' * 80 + '\n')
         Logger.msg(self._output.getvalue())
-        if not self._test_result.wasSuccessful():
-            Logger.msg('FAILURES' + '\n')
-            for failure in self._test_result.failures:
-                Logger.msg(str(failure[0]))
-                Logger.msg('\n')
-                Logger.msg(str(failure[1]))
-                Logger.msg('\n')
-                Logger.msg(str(failure[2]))
-                Logger.msg('\n')
-                Logger.msg(str(failure[3]))
-                Logger.msg('\n')
-            Logger.msg('ERRORS' + '\n')
-            for error in self._test_result.errors:
-                Logger.msg(str(error[0]))
-                Logger.msg('\n')
-                Logger.msg(str(error[1]))
-                Logger.msg('\n')
-                Logger.msg(str(error[2]))
-                Logger.msg('\n')
-                Logger.msg(str(error[3]))
-                Logger.msg('\n')
-            Logger.msg('SUCCESS' + '\n')
-            for success in self._test_result.success:
-                Logger.msg(str(success))
-                Logger.msg('\n')
-            Logger.msg('SKIPPED' + '\n')
-            for skipped in self._test_result.skipped:
-                Logger.msg(str(skipped[0]))
-                Logger.msg('\n')
-                Logger.msg(str(skipped[1]))
-                Logger.msg('\n')
-            Logger.msg('EXPECTED FAILURE' + '\n')
-            for expected_failure in self._test_result.expected_failures:
-                Logger.msg(str(expected_failure[0]))
-                Logger.msg('\n')
-                Logger.msg(str(expected_failure[1]))
-                Logger.msg('\n')
-                Logger.msg(str(expected_failure[2]))
-                Logger.msg('\n')
-                Logger.msg(str(expected_failure[3]))
-                Logger.msg('\n')
-            Logger.msg('UNEXPECTED SUCCESS' + '\n')
-            for unexpected_success in self._test_result.unexpected_success:
-                Logger.msg(str(unexpected_success))
-                Logger.msg('\n')
+
+        Logger.msg('Module     TestCase     Description   Result\n')
+        for module, results in self._test_result.test_results.iteritems():
+            for result in results:
+                Logger.msg('%s %s %s %s' %
+                           (module,
+                            result['test_case'],
+                            result['description'],
+                            result['result']))
+
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
