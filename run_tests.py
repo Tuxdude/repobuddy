@@ -19,8 +19,10 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
+import sys as _sys
+
 import repobuddy.tests.main as _tests
 
 
 if __name__ == '__main__':
-    _tests.run_tests()
+    _sys.exit(not _tests.run_tests())

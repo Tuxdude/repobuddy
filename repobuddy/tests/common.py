@@ -18,7 +18,6 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import cStringIO as _cStringIO
 import os as _os
 import shlex as _shlex
 import shutil as _shutil
@@ -27,9 +26,14 @@ import sys as _sys
 import traceback as _traceback
 
 if _sys.version_info < (2, 7):
+    import cStringIO as _io
     import ordereddict as _collections
     import unittest2 as _unittest
 else:
+    if _sys.version_info < (3, 0):
+        import cStringIO as _io
+    else:
+        import io as _io
     import collections as _collections
     import unittest as _unittest
 
@@ -308,14 +312,19 @@ class TestResult(_unittest.TestResult):
     def __init__(self):
         super(TestResult, self).__init__()
         self.test_results = _collections.OrderedDict()
+        self.hasErrors = False
+        self.hasFailures = False
+        self.hasUnexpectedSuccess = False
         return
 
     def addError(self, test, err):
         self._update_result(test, err, 'ERROR')
+        self.hasErrors = True
         return
 
     def addFailure(self, test, err):
         self._update_result(test, err, 'FAILED')
+        self.hasFailures = True
         return
 
     def addSuccess(self, test):
@@ -332,6 +341,7 @@ class TestResult(_unittest.TestResult):
 
     def addUnexpectedSuccess(self, test):
         self._update_result(test, None, 'UNEXPECTED SUCCESS')
+        self.hasUnexpectedSuccess = True
         return
 
 
@@ -361,7 +371,7 @@ class TestSuiteManager(object):
             ShellHelper.make_dir(base_dir)
         type(self)._base_dir = base_dir
         self._test_suite = None
-        self._output = _cStringIO.StringIO()
+        self._output = _io.StringIO()
         self._test_result = None
         return
 
@@ -388,7 +398,7 @@ class TestSuiteManager(object):
         Logger.msg(self._output.getvalue())
         Logger.msg('-' * 120 + '\n\n')
 
-        for test_suite, results in self._test_result.test_results.iteritems():
+        for test_suite, results in self._test_result.test_results.items():
             Logger.msg('TestSuite: %s' % test_suite)
             Logger.msg('#' * 120)
             Logger.msg('{0:48} {1:56} {2:16}'.format(
@@ -406,3 +416,8 @@ class TestSuiteManager(object):
 
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
+
+    def was_successful(self):
+        return (not self._test_result.hasErrors) and \
+               (not self._test_result.hasFailures) and \
+               (not self._test_result.hasUnexpectedSuccess)

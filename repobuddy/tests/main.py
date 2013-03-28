@@ -43,3 +43,5 @@ def run_tests():
     tests.add_test_suite(client_info_tests)
     tests.run()
     tests.show_results()
+
+    return tests.was_successful()
