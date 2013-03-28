@@ -18,14 +18,20 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import collections as _collections
 import cStringIO as _cStringIO
 import os as _os
 import shlex as _shlex
 import shutil as _shutil
 import subprocess as _subprocess
 import sys as _sys
-import unittest as _unittest
+import traceback as _traceback
+
+if _sys.version_info < (2, 7):
+    import ordereddict as _collections
+    import unittest2 as _unittest
+else:
+    import collections as _collections
+    import unittest as _unittest
 
 from repobuddy.utils import RepoBuddyBaseException, Logger
 

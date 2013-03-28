@@ -19,7 +19,12 @@
 #
 
 import os as _os
-import unittest as _unittest
+import sys as _sys
+
+if _sys.version_info < (2, 7):
+    import unittest2 as _unittest
+else:
+    import unittest as _unittest
 
 from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
 from repobuddy.manifest_parser import ClientSpec, Manifest, Repo, \
