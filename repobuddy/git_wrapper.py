@@ -60,6 +60,11 @@ class GitWrapper(object):
             (out_msg, err_msg) = proc.communicate()
             return_code = proc.wait()
 
+            if not out_msg is None:
+                out_msg = out_msg.decode('utf-8')
+            if not err_msg is None:
+                err_msg = err_msg.decode('utf-8')
+
             if return_code != 0:
                 if capture_stderr:
                     raise GitWrapperError(

@@ -170,7 +170,7 @@ class GitWrapperTestCase(TestCaseBase):
         base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(git.get_untracked_files(), [])
+        self._count_equal(git.get_untracked_files(), [])
         return
 
     def test_untracked_with_files(self):
@@ -190,7 +190,7 @@ class GitWrapperTestCase(TestCaseBase):
             base_dir)
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(
+        self._count_equal(
             git.get_untracked_files(),
             ['untracked-test', 'untracked-test2'])
         return
@@ -204,7 +204,7 @@ class GitWrapperTestCase(TestCaseBase):
         base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(git.get_unstaged_files(), [])
+        self._count_equal(git.get_unstaged_files(), [])
         return
 
     def test_unstaged_with_files(self):
@@ -221,7 +221,7 @@ class GitWrapperTestCase(TestCaseBase):
         ShellHelper.remove_file(_os.path.join(base_dir, 'dummy'))
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(git.get_unstaged_files(),
+        self._count_equal(git.get_unstaged_files(),
                               ['M\tREADME', 'D\tdummy'])
 
         return
@@ -235,7 +235,7 @@ class GitWrapperTestCase(TestCaseBase):
         base_dir = _os.path.join(type(self)._repos_dir, 'test-clone')
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(git.get_uncommitted_staged_files(), [])
+        self._count_equal(git.get_uncommitted_staged_files(), [])
         return
 
     def test_uncommitted_with_changes(self):
@@ -254,7 +254,7 @@ class GitWrapperTestCase(TestCaseBase):
         ShellHelper.exec_command(_shlex.split('git rm dummy'), base_dir)
 
         git = GitWrapper(base_dir)
-        self.assertItemsEqual(git.get_uncommitted_staged_files(),
+        self._count_equal(git.get_uncommitted_staged_files(),
                               ['M\tREADME', 'D\tdummy'])
         return
 

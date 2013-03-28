@@ -226,7 +226,13 @@ class ManifestParser(object):
         if file_handle is None:
             raise ManifestParserError(
                 'Error: file_handle cannot be None')
-        elif isinstance(file_handle, basestring):
+        try:
+            basestring = basestring
+        except NameError:
+            # basestring is undefined in Python 3
+            basestring = (str, bytes)
+
+        if isinstance(file_handle, basestring):
             raise ManifestParserError(
                 'Error: file_handle cannot be a string')
 

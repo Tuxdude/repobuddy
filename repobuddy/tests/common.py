@@ -275,6 +275,11 @@ class TestCaseBase(_unittest.TestCase):
         self._tear_down_cb = None
         self._tear_down_cb_args = None
         self._tear_down_cb_kwargs = None
+
+        if _sys.version_info >= (3, 2):
+            self._count_equal = self.assertCountEqual
+        else:
+            self._count_equal = self.assertItemsEqual
         return
 
     def setUp(self):
@@ -305,6 +310,7 @@ class TestResult(_unittest.TestResult):
         if not err is None:
             result['formated_traceback'] = \
                 _traceback.format_exception(err[0], err[1], err[2])
+            Logger.msg(''.join(result['formated_traceback']))
 
         module_test_results.append(result)
         return
