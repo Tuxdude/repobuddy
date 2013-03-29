@@ -1,14 +1,17 @@
-PYTHON   := python
-PYLINT   := pylint
-PEP8     := pep8
-COVERAGE := coverage
-SRCS     := $(shell find . -path ./build -prune -o -name '*.py' -print)
-CLEANUP_FILES := \
-            $$HOME/.local/bin/repobuddy \
-            $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
-            *.egg-info \
-            build \
-            dist
+PYTHON              := python
+PYLINT              := pylint
+PEP8                := pep8
+COVERAGE            := coverage
+COVERAGE_HTML_DIR   := coverage-html
+BROWSER             := chromium
+SRCS                := $(shell find . -path ./build -prune -o -name '*.py' -print)
+CLEANUP_FILES       := \
+                       $$HOME/.local/bin/repobuddy \
+	               $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
+                       *.egg-info \
+                       build \
+                       dist \
+		       $(COVERAGE_HTML_DIR)
 
 dev-install:
 	@$(PYTHON) setup.py develop
@@ -23,8 +26,8 @@ sdist:
 install:
 	@$(PYTHON) setup.py install
 
-test:
-	@$(PYTHON) ./run_tests.py
+install-user:
+	@$(PYTHON) setup.py install --user
 
 clean:
 	@rm -rf $(CLEANUP_FILES)
@@ -40,12 +43,17 @@ pylint:
 pylint-report:
 	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
 
+test:
+	@$(PYTHON) ./run_tests.py
+
 coverage:
 	@$(COVERAGE) erase
-	@$(COVERAGE) run ./run_tests.py
-	@$(COVERAGE) report
+	@($(COVERAGE) run --source=repobuddy ./run_tests.py && \
+	    $(COVERAGE) report) || ($(COVERAGE) report && /bin/false)
 
 coverage-annotate: coverage
-	@$(COVERAGE) annotate
+	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
+	@$(BROWSER) $(COVERAGE_HTML_DIR)/index.html
 
-.PHONY: develop sdist clean pep8 pylint pylint-report
+.PHONY: dev-install dev-uninstall sdist install install-user clean
+.PHONY: pep8 pylint pylint-report test coverage converage-annotate
