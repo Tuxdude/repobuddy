@@ -2,7 +2,7 @@ PYTHON              := python
 PYLINT              := pylint
 PEP8                := pep8
 COVERAGE            := coverage
-COVERAGE_HTML_DIR   := coverage_html
+COVERAGE_HTML_DIR   := coverage-html
 BROWSER             := chromium
 SRCS                := $(shell find . -path ./build -prune -o -name '*.py' -print)
 CLEANUP_FILES       := \
@@ -10,7 +10,8 @@ CLEANUP_FILES       := \
 	               $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
                        *.egg-info \
                        build \
-                       dist
+                       dist \
+		       $(COVERAGE_HTML_DIR)
 
 dev-install:
 	@$(PYTHON) setup.py develop
@@ -47,8 +48,8 @@ test:
 
 coverage:
 	@$(COVERAGE) erase
-	@$(COVERAGE) run --source=repobuddy ./run_tests.py
-	@$(COVERAGE) report
+	@($(COVERAGE) run --source=repobuddy ./run_tests.py && \
+	    $(COVERAGE) report) || ($(COVERAGE) report && /bin/false)
 
 coverage-annotate: coverage
 	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
