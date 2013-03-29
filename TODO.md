@@ -5,7 +5,7 @@ Command TODOs
 -------------
 -   refresh config - re-fetch the xml config file
 -   refresh client - fetch the latest for all repos
--   cleanup client - cleanup the .repodude dirs in the client
+-   cleanup client - cleanup the .repobuddy dirs in the client
 
 General TODOs
 -------------
