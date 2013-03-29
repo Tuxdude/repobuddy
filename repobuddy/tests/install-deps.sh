@@ -6,3 +6,4 @@ if python -c 'import sys as _sys; _sys.exit(_sys.version_info[0] != 2)'; then
         pip install ordereddict unittest2
     fi
 fi
+pip install coverage

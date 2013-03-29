@@ -9,4 +9,4 @@ python:
 install: repobuddy/tests/install-deps.sh
 
 # Run the tests
-script: make test
+script: make coverage
