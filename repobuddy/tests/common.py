@@ -294,7 +294,21 @@ class TestCaseBase(_unittest.TestCase):
 
 
 class TestResult(_unittest.TestResult):
-    def _update_result(self, test, err, result_str):
+    PASSED = 0
+    ERROR = 1
+    FAILED = 2
+    SKIPPED = 3
+    EXPECTED_FAILURE = 4
+    UNEXPECTED_SUCCESS = 5
+
+    _result_str = {PASSED : 'PASSED',
+                   ERROR : 'ERROR',
+                   FAILED : 'FAILED',
+                   SKIPPED : 'SKIPPED',
+                   EXPECTED_FAILURE : 'EXPECTED FAILURE',
+                   UNEXPECTED_SUCCESS : 'UNEXPECTED_SUCCESS'}
+
+    def _update_result(self, test, err, result_type):
         module_test_results = []
         test_id = test.id().split('.')
 
@@ -306,11 +320,10 @@ class TestResult(_unittest.TestResult):
         result = {}
         result['test_case'] = test_id[-1]
         result['description'] = str(test.shortDescription())
-        result['result'] = result_str
+        result['result'] = result_type
         if not err is None:
             result['formated_traceback'] = \
-                _traceback.format_exception(err[0], err[1], err[2])
-            Logger.msg(''.join(result['formated_traceback']))
+                ''.join(_traceback.format_exception(err[0], err[1], err[2]))
 
         module_test_results.append(result)
         return
@@ -323,30 +336,34 @@ class TestResult(_unittest.TestResult):
         self.hasUnexpectedSuccess = False
         return
 
+    @classmethod
+    def get_result_str(cls, result):
+        return cls._result_str[result]
+
     def addError(self, test, err):
-        self._update_result(test, err, 'ERROR')
+        self._update_result(test, err, type(self).ERROR)
         self.hasErrors = True
         return
 
     def addFailure(self, test, err):
-        self._update_result(test, err, 'FAILED')
+        self._update_result(test, err, type(self).FAILED)
         self.hasFailures = True
         return
 
     def addSuccess(self, test):
-        self._update_result(test, None, 'PASSED')
+        self._update_result(test, None, type(self).PASSED)
         return
 
     def addSkip(self, test, reason):
-        self._update_result(test, None, 'SKIPPED')
+        self._update_result(test, None, type(self).SKIPPED)
         return
 
     def addExpectedFailure(self, test, err):
-        self._update_result(test, err, 'EXPECTED FAILURE')
+        self._update_result(test, err, type(self).EXPECTED_FAILURE)
         return
 
     def addUnexpectedSuccess(self, test):
-        self._update_result(test, None, 'UNEXPECTED SUCCESS')
+        self._update_result(test, None, type(self).UNEXPECTED_SUCCESS)
         self.hasUnexpectedSuccess = True
         return
 
@@ -404,6 +421,9 @@ class TestSuiteManager(object):
         Logger.msg(self._output.getvalue())
         Logger.msg('-' * 120 + '\n\n')
 
+        error_traces_str = ''
+        failure_traces_str = ''
+
         for test_suite, results in self._test_result.test_results.items():
             Logger.msg('TestSuite: %s' % test_suite)
             Logger.msg('#' * 120)
@@ -416,9 +436,30 @@ class TestSuiteManager(object):
                 Logger.msg('{0:48} {1:56} {2:16}'.format(
                     result['test_case'],
                     result['description'],
-                    result['result']))
+                    TestResult.get_result_str(result['result'])))
+                if result['result'] == TestResult.ERROR:
+                    error_traces_str += \
+                            '%s::%s\n%s\n' % (test_suite,
+                                              result['test_case'],
+                                              result['formated_traceback'])
+                elif result['result'] == TestResult.FAILED:
+                    failure_traces_str += \
+                            '%s::%s\n%s\n' % (test_suite,
+                                              result['test_case'],
+                                              result['formated_traceback'])
             Logger.msg('-' * 120 + '\n\n')
-        Logger.msg('#' * 120 + '\n')
+
+        if self._test_result.hasErrors:
+            Logger.msg('#' * 120)
+            Logger.msg('Errors')
+            Logger.msg('#' * 120 + '\n')
+            Logger.msg(error_traces_str + '-' * 120 + '\n')
+
+        if self._test_result.hasFailures:
+            Logger.msg('#' * 120)
+            Logger.msg('Failures')
+            Logger.msg('#' * 120 + '\n')
+            Logger.msg(failure_traces_str + '-' * 120 + '\n')
 
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
