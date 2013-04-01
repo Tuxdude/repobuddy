@@ -32,7 +32,7 @@ install-user:
 clean:
 	@rm -rf $(CLEANUP_FILES)
 	@rm -rf *.egg-info build dist
-	@find . -name '*.py,cover' -print0 | xargs -0 rm
+	@find . -name '*.py,cover' -print0 | xargs -0 -r rm
 
 pep8:
 	@$(PEP8) $(SRCS)
