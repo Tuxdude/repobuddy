@@ -247,8 +247,7 @@ class ManifestParser(object):
                 'Error: I/O Operation on closed file_handle')
         except AttributeError:
             raise ManifestParserError(
-                'Error: file_handle is not a stream ' + \
-                'object')
+                'Error: file_handle is not a stream object')
         finally:
             try:
                 file_handle.close()

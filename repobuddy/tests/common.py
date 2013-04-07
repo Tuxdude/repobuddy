@@ -301,12 +301,12 @@ class TestResult(_unittest.TestResult):
     EXPECTED_FAILURE = 4
     UNEXPECTED_SUCCESS = 5
 
-    _result_str = {PASSED : 'PASSED',
-                   ERROR : 'ERROR',
-                   FAILED : 'FAILED',
-                   SKIPPED : 'SKIPPED',
-                   EXPECTED_FAILURE : 'EXPECTED FAILURE',
-                   UNEXPECTED_SUCCESS : 'UNEXPECTED_SUCCESS'}
+    _result_str = {PASSED: 'PASSED',
+                   ERROR: 'ERROR',
+                   FAILED: 'FAILED',
+                   SKIPPED: 'SKIPPED',
+                   EXPECTED_FAILURE: 'EXPECTED FAILURE',
+                   UNEXPECTED_SUCCESS: 'UNEXPECTED_SUCCESS'}
 
     def _update_result(self, test, err, result_type):
         module_test_results = []
@@ -439,14 +439,14 @@ class TestSuiteManager(object):
                     TestResult.get_result_str(result['result'])))
                 if result['result'] == TestResult.ERROR:
                     error_traces_str += \
-                            '%s::%s\n%s\n' % (test_suite,
-                                              result['test_case'],
-                                              result['formated_traceback'])
+                        '%s::%s\n%s\n' % (test_suite,
+                                          result['test_case'],
+                                          result['formated_traceback'])
                 elif result['result'] == TestResult.FAILED:
                     failure_traces_str += \
-                            '%s::%s\n%s\n' % (test_suite,
-                                              result['test_case'],
-                                              result['formated_traceback'])
+                        '%s::%s\n%s\n' % (test_suite,
+                                          result['test_case'],
+                                          result['formated_traceback'])
             Logger.msg('-' * 120 + '\n\n')
 
         if self._test_result.hasErrors:

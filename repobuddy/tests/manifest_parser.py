@@ -18,7 +18,6 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import os as _os
 import sys as _sys
 
 if _sys.version_info < (2, 7):
@@ -26,7 +25,7 @@ if _sys.version_info < (2, 7):
 else:
     import unittest as _unittest
 
-from repobuddy.tests.common import ShellHelper, TestCommon, TestCaseBase
+from repobuddy.tests.common import TestCaseBase
 from repobuddy.manifest_parser import ClientSpec, Manifest, Repo, \
     ManifestParser, ManifestParserError
 from repobuddy.utils import ResourceHelper
@@ -61,11 +60,11 @@ class ManifestParserTestCase(TestCaseBase):
             'Spec1',
             [
                 Repo('https://github.com/git/git.git',
-                    'master',
-                    'repos/git'),
+                     'master',
+                     'repos/git'),
                 Repo('https://github.com/github/linguist.git',
-                    'master',
-                    'repos/linguist')])
+                     'master',
+                     'repos/linguist')])
         expected_client_spec_str = \
             '<ClientSpec name:Spec1 repo_list:' + \
             '[<Repo url:https://github.com/git/git.git branch:master ' + \
@@ -91,12 +90,12 @@ class ManifestParserTestCase(TestCaseBase):
                              'master',
                              'repos/linguist')])])
         expected_manifest_str = \
-                '<Manifest default_client_spec:Spec1 client_spec_list:' + \
-                '[<ClientSpec name:Spec1 repo_list:[<Repo ' + \
-                'url:https://github.com/git/git.git branch:master ' + \
-                'dest:repos/git>, ' + \
-                '<Repo url:https://github.com/github/linguist.git ' + \
-                'branch:master dest:repos/linguist>]>]>'
+            '<Manifest default_client_spec:Spec1 client_spec_list:' + \
+            '[<ClientSpec name:Spec1 repo_list:[<Repo ' + \
+            'url:https://github.com/git/git.git branch:master ' + \
+            'dest:repos/git>, ' + \
+            '<Repo url:https://github.com/github/linguist.git ' + \
+            'branch:master dest:repos/linguist>]>]>'
 
         self.assertEqual(str(manifest), expected_manifest_str)
         self.assertEqual(repr(manifest), expected_manifest_str)
@@ -122,13 +121,12 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: file_handle cannot be a string$'):
             manifest_parser.parse('dummy')
-        
+
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: file_handle is not a stream object$'):
             manifest_parser.parse([])
         return
-
 
     def test_valid_manifest(self):
         manifest = self._parse_manifest('valid.xml')
@@ -174,14 +172,14 @@ class ManifestParserTestCase(TestCaseBase):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: Unable to parse the Manifest Xml file: '):
-            manifest = self._parse_manifest('malformed.xml')
+            self._parse_manifest('malformed.xml')
         return
 
     def test_no_client_spec(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: There should be at least one valid Client Spec$'):
-            manifest = self._parse_manifest('no-clientspec.xml')
+            self._parse_manifest('no-clientspec.xml')
         return
 
     def test_empty_client_spec(self):
@@ -189,21 +187,21 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec2\' should have at least ' +
                 r'one repo$'):
-            manifest = self._parse_manifest('empty-clientspec.xml')
+            self._parse_manifest('empty-clientspec.xml')
         return
 
     def test_client_spec_no_name(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: No name specified for ClientSpec$'):
-            manifest = self._parse_manifest('clientspec-no-name.xml')
+            self._parse_manifest('clientspec-no-name.xml')
         return
 
     def test_empty_repo(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has no info about the Repo$'):
-            manifest = self._parse_manifest('empty-repo.xml')
+            self._parse_manifest('empty-repo.xml')
         return
 
     def test_repo_no_url(self):
@@ -211,14 +209,14 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has a Repo with no ' +
                 r'\'Url\' info$'):
-            manifest = self._parse_manifest('repo-no-url.xml')
+            self._parse_manifest('repo-no-url.xml')
         return
 
     def test_repo_empty_url(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has an empty Repo \'Url\'$'):
-            manifest = self._parse_manifest('repo-empty-url.xml')
+            self._parse_manifest('repo-empty-url.xml')
         return
 
     def test_repo_no_branch(self):
@@ -226,7 +224,7 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has a Repo with no ' +
                 r'\'Branch\' info$'):
-            manifest = self._parse_manifest('repo-no-branch.xml')
+            self._parse_manifest('repo-no-branch.xml')
         return
 
     def test_repo_empty_branch(self):
@@ -234,7 +232,7 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has an empty Repo '
                 r'\'Branch\'$'):
-            manifest = self._parse_manifest('repo-empty-branch.xml')
+            self._parse_manifest('repo-empty-branch.xml')
         return
 
     def test_repo_no_dest(self):
@@ -242,7 +240,7 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has a Repo with no '
                 r'\'Destination\' info$'):
-            manifest = self._parse_manifest('repo-no-dest.xml')
+            self._parse_manifest('repo-no-dest.xml')
         return
 
     def test_repo_empty_dest(self):
@@ -250,21 +248,21 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Client Spec \'Spec1\' has an empty Repo '
                 r'\'Destination\'$'):
-            manifest = self._parse_manifest('repo-empty-dest.xml')
+            self._parse_manifest('repo-empty-dest.xml')
         return
 
     def test_no_default_client_spec(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: No default_client_spec found$'):
-            manifest = self._parse_manifest('no-default-clientspec.xml')
+            self._parse_manifest('no-default-clientspec.xml')
         return
 
     def test_empty_default_client_spec(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: default_client_spec cannot be empty$'):
-            manifest = self._parse_manifest('empty-default-clientspec.xml')
+            self._parse_manifest('empty-default-clientspec.xml')
         return
 
     def test_nonexistent_default_client_spec(self):
@@ -272,15 +270,14 @@ class ManifestParserTestCase(TestCaseBase):
                 ManifestParserError,
                 r'^Error: Unable to find the Client Spec \'Spec1\' in '
                 r'the list of Repos$'):
-            manifest = self._parse_manifest(
-                'nonexistent-default-clientspec.xml')
+            self._parse_manifest('nonexistent-default-clientspec.xml')
         return
 
     def test_duplicate_client_spec(self):
         with self.assertRaisesRegexp(
                 ManifestParserError,
                 r'^Error: Duplicate Client Spec \'Spec1\' found$'):
-            manifest = self._parse_manifest('duplicate-clientspec.xml')
+            self._parse_manifest('duplicate-clientspec.xml')
         return
 
 

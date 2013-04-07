@@ -222,7 +222,7 @@ class GitWrapperTestCase(TestCaseBase):
 
         git = GitWrapper(base_dir)
         self._count_equal(git.get_unstaged_files(),
-                              ['M\tREADME', 'D\tdummy'])
+                          ['M\tREADME', 'D\tdummy'])
 
         return
 
@@ -255,7 +255,7 @@ class GitWrapperTestCase(TestCaseBase):
 
         git = GitWrapper(base_dir)
         self._count_equal(git.get_uncommitted_staged_files(),
-                              ['M\tREADME', 'D\tdummy'])
+                          ['M\tREADME', 'D\tdummy'])
         return
 
     def test_current_branch_valid_repo(self):

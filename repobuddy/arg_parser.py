@@ -17,12 +17,11 @@
 #   License along with this program.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
-from version import __version__
-
 import argparse as _argparse
 
 from repobuddy.globals import HelpStrings
 from repobuddy.utils import Logger, RepoBuddyBaseException
+from repobuddy.version import __version__
 
 
 class ArgParserError(RepoBuddyBaseException):
