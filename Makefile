@@ -27,7 +27,7 @@ install:
 	@$(PYTHON) setup.py install
 
 install-user:
-	@$(PYTHON) setup.py install --user
+	@$(PYTHON) setup.py install --user --prefix=
 
 clean:
 	@rm -rf $(CLEANUP_FILES)
