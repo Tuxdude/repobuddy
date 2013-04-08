@@ -60,7 +60,7 @@ class ClientInfoTestCase(TestCaseBase):
             file_name)
         test_config_file_name = _os.path.join(type(self)._config_base_dir,
                                               file_name)
-        test_config_file = open(test_config_file_name, 'w')
+        test_config_file = open(test_config_file_name, 'wb')
         _shutil.copyfileobj(client_config_stream, test_config_file)
         test_config_file.close()
         return test_config_file_name
