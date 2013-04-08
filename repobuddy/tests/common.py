@@ -88,11 +88,22 @@ class ShellHelper:
         return
 
     @classmethod
-    def make_dir(cls, dirname):
-        try:
-            _os.mkdir(dirname)
-        except (OSError, IOError) as err:
-            raise ShellError(str(err))
+    def make_dir(cls,
+                 dirname,
+                 create_parent_dirs=False,
+                 only_if_not_exists=False):
+        if not create_parent_dirs:
+            try:
+                if not only_if_not_exists or not _os.path.exists(dirname):
+                    _os.mkdir(dirname)
+            except (OSError, IOError) as err:
+                raise ShellError(str(err))
+        else:
+            try:
+                if not only_if_not_exists or not _os.path.exists(dirname):
+                    _os.makedirs(dirname)
+            except (OSError, IOError) as err:
+                raise ShellError(str(err))
         return
 
     @classmethod
