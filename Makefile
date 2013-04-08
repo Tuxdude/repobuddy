@@ -26,9 +26,6 @@ sdist:
 install:
 	@$(PYTHON) setup.py install
 
-install-user:
-	@$(PYTHON) setup.py install --user --prefix=
-
 clean:
 	@rm -rf $(CLEANUP_FILES)
 	@find . -name '*.py,cover' -print0 | xargs -0 -r rm
