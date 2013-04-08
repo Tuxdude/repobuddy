@@ -37,7 +37,9 @@ setup(
     packages=find_packages(),
     package_data={
         # Include all the test manifest xml files
-        'repobuddy.tests.manifests': ['*.xml']},
+        'repobuddy.tests.manifests': ['*.xml'],
+        # Include all the test client config files
+        'repobuddy.tests.configs': ['*.config']},
     entry_points={
         'console_scripts': [
             'repobuddy = repobuddy.main:run_repobuddy',
