@@ -62,7 +62,7 @@ Client Info
 2.  Parse a file without read permissions
 3.  Parse a malformed file
 4.  Parse an empty file
-5.  Parse a valid config format, but witout RepoBuddyClientInfo
+5.  Parse a valid config format, but without RepoBuddyClientInfo
 5.  Parse a file with just the RepoBuddyClientInfo section
 6.  Parse a file with client_spec and manifest, but no RepoBuddyClientInfo
     section.
