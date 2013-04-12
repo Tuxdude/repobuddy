@@ -120,6 +120,9 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_empty_file(self):
+        self._run_tests(
+            [('empty.config',
+              r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_config_format_without_client_info(self):
