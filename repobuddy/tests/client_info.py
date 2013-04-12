@@ -112,8 +112,9 @@ class ClientInfoTestCase(TestCaseBase):
                     r'section headers\.\nfile:.*' +
                     r'malformed-no-section-headers.config, line: '),
                    ('malformed-parsing-errors.config',
-                    r'^Error: Parsing config failed => File contains ' +
-                    r'parsing errors: .*malformed-parsing-errors.config' +
+                    r'^Error: Parsing config failed => (File|Source) ' +
+                    r'contains parsing errors: .*' +
+                    r'malformed-parsing-errors.config' +
                     r'\s+\[line  2\]: \'invalid_config invalid_value\\n\'$')]
         self._run_tests(configs)
         return
