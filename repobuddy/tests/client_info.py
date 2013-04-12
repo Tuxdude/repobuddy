@@ -97,8 +97,9 @@ class ClientInfoTestCase(TestCaseBase):
         with self.assertRaisesRegexp(
                 ClientInfoError,
             r'^Error: Parsing config failed => File contains no section ' +
-            r'headers\.\nfile:.*malformed.config, line: '):
-            ClientInfo(self._open_config_file('malformed.config'))
+            r'headers\.\nfile:.*malformed-no-section-headers.config, line: '):
+            ClientInfo(
+                self._open_config_file('malformed-no-section-headers.config'))
         return
 
     def test_read_empty_file(self):
