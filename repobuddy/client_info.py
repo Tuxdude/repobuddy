@@ -36,13 +36,16 @@ class ClientInfoError(RepoBuddyBaseException):
 
 class ClientInfo(object):
     def _validate_config(self):
-        # Verify clientSpec and configXml sections exist
+        # Verify client_spec and manifest options exist
+        self.get_client_spec()
+        self.get_manifest()
         return
 
     def _get_config(self, section, option):
         try:
             return self._config.get(section, option)
-        except _configparser.NoOptionError as err:
+        except (_configparser.NoOptionError,
+                _configparser.NoSectionError) as err:
             raise ClientInfoError('Error: ' + str(err))
         return
 
