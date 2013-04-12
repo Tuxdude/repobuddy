@@ -54,52 +54,64 @@ class ClientInfoTestCase(TestCaseBase):
         super(ClientInfoTestCase, self).__init__(methodName)
         return
 
-    def _open_config_file(self, file_name):
-        client_config_stream = ResourceHelper.open_data_file(
-            'repobuddy.tests.configs',
-            file_name)
+    def _open_config_file(self, file_name, from_resource):
         test_config_file_name = _os.path.join(type(self)._config_base_dir,
                                               file_name)
-        test_config_file = open(test_config_file_name, 'wb')
-        _shutil.copyfileobj(client_config_stream, test_config_file)
-        test_config_file.close()
+        if from_resource:
+            client_config_stream = ResourceHelper.open_data_file(
+                'repobuddy.tests.configs',
+                file_name)
+            test_config_file = open(test_config_file_name, 'wb')
+            _shutil.copyfileobj(client_config_stream, test_config_file)
+            test_config_file.close()
+
         return test_config_file_name
 
+    def _run_tests(self, configs, from_resource=True):
+        for file_name, expected_error in configs:
+            with self.assertRaisesRegexp(ClientInfoError, expected_error):
+                ClientInfo(self._open_config_file(file_name, from_resource))
+        return
+
     def test_read_nonexistent_file(self):
-        with self.assertRaisesRegexp(
-                ClientInfoError,
-                r'No such file or directory: \'non-existent-file\'$'):
-            ClientInfo('non-existent-file')
+        self._run_tests(
+            [('non-existent-file.config',
+              r'No such file or directory: .*non-existent-file.config\'$')],
+            from_resource=False)
         return
 
     def test_read_without_permissions(self):
         base_dir = type(self)._test_base_dir
+        config_file_name = 'noread-client.config'
+        file_full_path = self._open_config_file(config_file_name,
+                                                from_resource=False)
+
         ShellHelper.exec_command(
-            _shlex.split('sudo touch noread-client.config'),
+            _shlex.split('sudo touch ' + file_full_path),
             base_dir)
         ShellHelper.exec_command(
-            _shlex.split('sudo chown root:root noread-client.config'),
+            _shlex.split('sudo chown root:root ' + file_full_path),
             base_dir)
         ShellHelper.exec_command(
-            _shlex.split('sudo chmod 600 noread-client.config'),
+            _shlex.split('sudo chmod 600 ' + file_full_path),
             base_dir)
         self._set_tear_down_cb(ShellHelper.exec_command,
-                               _shlex.split('sudo rm noread-client.config'),
+                               _shlex.split('sudo rm ' + file_full_path),
                                base_dir)
 
-        with self.assertRaisesRegexp(
-                ClientInfoError,
-                r'Permission denied: .*noread-client.config\'$'):
-            ClientInfo(_os.path.join(base_dir, 'noread-client.config'))
+        self._run_tests(
+            [(config_file_name,
+              r'Permission denied: .*noread-client.config\'$')],
+            from_resource=False)
+
         return
 
     def test_read_malformed_file(self):
-        with self.assertRaisesRegexp(
-                ClientInfoError,
-            r'^Error: Parsing config failed => File contains no section ' +
-            r'headers\.\nfile:.*malformed-no-section-headers.config, line: '):
-            ClientInfo(
-                self._open_config_file('malformed-no-section-headers.config'))
+        configs = [('malformed-no-section-headers.config',
+                    r'^Error: Parsing config failed => File contains no ' +
+                    r'section headers\.\nfile:.*' +
+                    r'malformed-no-section-headers.config, line: ')]
+        self._run_tests(configs)
         return
 
     def test_read_empty_file(self):
