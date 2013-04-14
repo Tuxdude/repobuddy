@@ -20,7 +20,7 @@
 
 import sys as _sys
 
-if _sys.version_info < (2, 7):  #pragma: no cover
+if _sys.version_info < (2, 7):  # pragma: no cover
     import unittest2 as _unittest
 else:
     import unittest as _unittest

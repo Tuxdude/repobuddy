@@ -46,7 +46,7 @@ class FileLockError(RepoBuddyBaseException):
 
 
 # Credits to Evan for the FileLock code
-# http://www.evanfosmark.com/2009/01/cross-platform-file-locking-support-in-python/
+# noqa http://www.evanfosmark.com/2009/01/cross-platform-file-locking-support-in-python/
 # Have made minor changes to the original version
 class FileLock(object):
     def __init__(self, file_name, timeout=1, delay=.1):

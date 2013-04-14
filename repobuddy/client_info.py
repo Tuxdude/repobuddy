@@ -20,7 +20,7 @@
 
 import sys as _sys
 
-if _sys.version_info >= (3, 0): #pragma: no cover
+if _sys.version_info >= (3, 0):     # pragma: no cover
     import configparser as _configparser
 else:
     import ConfigParser as _configparser
