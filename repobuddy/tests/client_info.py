@@ -132,6 +132,9 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_just_section(self):
+        self._run_tests(
+            [('missing-options.config',
+              r'No option \'.*\' in section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_just_options(self):
