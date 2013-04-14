@@ -27,7 +27,7 @@ execfile(_os.path.join('repobuddy', 'version.py'))
 
 setup(
     name='RepoBuddy',
-    version=__version__,
+    version=__version__,    # pylint: disable=E0602
     author='Ash',
     author_email='tuxdude.github@gmail.com',
     description='Multi-repository manager for GIT based projects',

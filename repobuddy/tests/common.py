@@ -25,11 +25,13 @@ import subprocess as _subprocess
 import sys as _sys
 import traceback as _traceback
 
-if _sys.version_info < (2, 7):  # pragma: no cover
+if _sys.version_info < (2, 7):          # pragma: no cover
+    # pylint: disable=F0401
     import cStringIO as _io
     import ordereddict as _collections
     import unittest2 as _unittest
 else:
+    # pylint: disable=F0401
     if _sys.version_info < (3, 0):
         import cStringIO as _io
     else:
@@ -288,8 +290,10 @@ class TestCaseBase(_unittest.TestCase):
         self._tear_down_cb_kwargs = None
 
         if _sys.version_info >= (3, 2):
+            # pylint: disable=E1101
             self._count_equal = self.assertCountEqual
         else:
+            # pylint: disable=E1101
             self._count_equal = self.assertItemsEqual
         return
 

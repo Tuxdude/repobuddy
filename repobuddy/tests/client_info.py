@@ -23,10 +23,10 @@ import shlex as _shlex
 import shutil as _shutil
 import sys as _sys
 
-if _sys.version_info < (2, 7):  # pragma: no cover
-    import unittest2 as _unittest
+if _sys.version_info < (2, 7):      # pragma: no cover
+    import unittest2 as _unittest   # pylint: disable=F0401
 else:
-    import unittest as _unittest
+    import unittest as _unittest    # pylint: disable=F0401
 
 
 from repobuddy.client_info import ClientInfo, ClientInfoError

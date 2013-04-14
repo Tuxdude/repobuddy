@@ -20,10 +20,10 @@
 
 import sys as _sys
 
-if _sys.version_info >= (3, 0):     # pragma: no cover
-    import configparser as _configparser
+if _sys.version_info >= (3, 0):             # pragma: no cover
+    import configparser as _configparser    # pylint: disable=F0401
 else:
-    import ConfigParser as _configparser
+    import ConfigParser as _configparser    # pylint: disable=F0401
 
 from repobuddy.utils import RepoBuddyBaseException
 
