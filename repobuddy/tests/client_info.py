@@ -138,6 +138,9 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_just_options(self):
+        self._run_tests(
+            [('missing-section.config',
+              r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_no_client_spec(self):
