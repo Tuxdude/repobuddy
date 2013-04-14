@@ -283,7 +283,7 @@ class TestCaseBase(_unittest.TestCase):
         self._tear_down_cb_kwargs = None
         return
 
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
         super(TestCaseBase, self).__init__(methodName)
         self._tear_down_cb = None
         self._tear_down_cb_args = None
@@ -297,10 +297,10 @@ class TestCaseBase(_unittest.TestCase):
             self._count_equal = self.assertItemsEqual
         return
 
-    def setUp(self):
+    def setUp(self):        # pylint: disable=C0103
         return
 
-    def tearDown(self):
+    def tearDown(self):     # pylint: disable=C0103
         if not self._tear_down_cb is None:
             self._tear_down_cb(*self._tear_down_cb_args,
                                **self._tear_down_cb_kwargs)
@@ -346,40 +346,40 @@ class TestResult(_unittest.TestResult):
     def __init__(self):
         super(TestResult, self).__init__()
         self.test_results = _collections.OrderedDict()
-        self.hasErrors = False
-        self.hasFailures = False
-        self.hasUnexpectedSuccess = False
+        self.has_errors = False
+        self.has_failures = False
+        self.has_unexpected_success = False
         return
 
     @classmethod
     def get_result_str(cls, result):
         return cls._result_str[result]
 
-    def addError(self, test, err):
+    def addError(self, test, err):              # pylint: disable=C0103
         self._update_result(test, err, type(self).ERROR)
-        self.hasErrors = True
+        self.has_errors = True
         return
 
-    def addFailure(self, test, err):
+    def addFailure(self, test, err):            # pylint: disable=C0103
         self._update_result(test, err, type(self).FAILED)
-        self.hasFailures = True
+        self.has_failures = True
         return
 
-    def addSuccess(self, test):
+    def addSuccess(self, test):                 # pylint: disable=C0103
         self._update_result(test, None, type(self).PASSED)
         return
 
-    def addSkip(self, test, reason):
+    def addSkip(self, test, reason):            # pylint: disable=C0103
         self._update_result(test, None, type(self).SKIPPED)
         return
 
-    def addExpectedFailure(self, test, err):
+    def addExpectedFailure(self, test, err):    # pylint: disable=C0103
         self._update_result(test, err, type(self).EXPECTED_FAILURE)
         return
 
-    def addUnexpectedSuccess(self, test):
+    def addUnexpectedSuccess(self, test):       # pylint: disable=C0103
         self._update_result(test, None, type(self).UNEXPECTED_SUCCESS)
-        self.hasUnexpectedSuccess = True
+        self.has_unexpected_success = True
         return
 
 
@@ -389,7 +389,7 @@ class TestRunner(_unittest.TextTestRunner):
         self._test_result = None
         return
 
-    def _makeResult(self):
+    def _makeResult(self):  # pylint: disable=C0103
         self._test_result = TestResult()
         return self._test_result
 
@@ -464,13 +464,13 @@ class TestSuiteManager(object):
                                           result['formated_traceback'])
             Logger.msg('-' * 120 + '\n\n')
 
-        if self._test_result.hasErrors:
+        if self._test_result.has_errors:
             Logger.msg('#' * 120)
             Logger.msg('Errors')
             Logger.msg('#' * 120 + '\n')
             Logger.msg(error_traces_str + '-' * 120 + '\n')
 
-        if self._test_result.hasFailures:
+        if self._test_result.has_failures:
             Logger.msg('#' * 120)
             Logger.msg('Failures')
             Logger.msg('#' * 120 + '\n')
@@ -480,6 +480,6 @@ class TestSuiteManager(object):
         return
 
     def was_successful(self):
-        return (not self._test_result.hasErrors) and \
-               (not self._test_result.hasFailures) and \
-               (not self._test_result.hasUnexpectedSuccess)
+        return (not self._test_result.has_errors) and \
+               (not self._test_result.has_failures) and \
+               (not self._test_result.has_unexpected_success)

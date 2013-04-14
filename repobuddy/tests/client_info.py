@@ -36,7 +36,7 @@ from repobuddy.utils import ResourceHelper
 
 class ClientInfoTestCase(TestCaseBase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):        # pylint: disable=C0103
         cls._test_base_dir = TestSuiteManager.get_base_dir()
         cls._config_base_dir = _os.path.join(cls._test_base_dir,
                                              'test-configs')
@@ -46,11 +46,11 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls):     # pylint: disable=C0103
         ShellHelper.remove_dir(cls._config_base_dir)
         return
 
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
         super(ClientInfoTestCase, self).__init__(methodName)
         return
 
@@ -125,7 +125,7 @@ class ClientInfoTestCase(TestCaseBase):
               r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
-    def test_read_config_format_without_client_info(self):
+    def test_read_without_section_header(self):
         self._run_tests_expect_error(
             [('no-client-info.config',
               r'No section: \'RepoBuddyClientInfo\'$')])
@@ -172,7 +172,7 @@ class ClientInfoTestSuite:
             'test_read_without_permissions',
             'test_read_malformed_file',
             'test_read_empty_file',
-            'test_read_config_format_without_client_info',
+            'test_read_without_section_header',
             'test_read_just_section',
             'test_read_just_options',
             'test_read_no_client_spec',

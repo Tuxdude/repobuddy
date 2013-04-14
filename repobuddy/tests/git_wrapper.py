@@ -66,7 +66,7 @@ class GitWrapperTestCase(TestCaseBase):
         return
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):            # pylint: disable=C0103
         cls._repos_dir = _os.path.join(TestSuiteManager.get_base_dir(),
                                        'repos')
         TestCommon.setup_test_repos(cls._repos_dir)
@@ -74,12 +74,12 @@ class GitWrapperTestCase(TestCaseBase):
         return
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls):         # pylint: disable=C0103
         if not cls._skip_cleanup:   # pragma: no cover
             ShellHelper.remove_dir(cls._repos_dir)
         return
 
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
         super(GitWrapperTestCase, self).__init__(methodName)
         return
 
