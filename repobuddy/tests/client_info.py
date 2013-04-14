@@ -151,6 +151,10 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_no_manifest(self):
+        self._run_tests(
+            [('missing-manifest.config',
+              r'No option \'manifest\' in section: ' +
+              r'\'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_valid(self):
