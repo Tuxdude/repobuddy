@@ -48,7 +48,7 @@ class ShellError(RepoBuddyBaseException):
         return
 
 
-class ShellHelper:
+class ShellHelper:  # pylint: disable=W0232
     @classmethod
     def exec_command(cls, command, base_dir, debug_output=True):
         Logger.msg('>> ' + ' '.join(command))
@@ -118,7 +118,7 @@ class ShellHelper:
         return
 
 
-class TestCommon:
+class TestCommon:   # pylint: disable=W0232
     @classmethod
     def _git_append_add_commit(cls, text, filename, commit_log, exec_dir):
         ShellHelper.append_text_to_file(text, filename, exec_dir)

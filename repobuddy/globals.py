@@ -29,7 +29,7 @@ class HelpStringsError(RepoBuddyBaseException):
         return
 
 
-class HelpStrings:
+class HelpStrings:  # pylint: disable=W0232
     PROGRAM_DESCRIPTION = 'Multi-repo manager for Git'
     PROGRAM_NAME = 'repobuddy'
     PROGRAM_VERSION = '%(prog)s ' + __version__

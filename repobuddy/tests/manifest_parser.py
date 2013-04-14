@@ -281,7 +281,7 @@ class ManifestParserTestCase(TestCaseBase):
         return
 
 
-class ManifestParserTestSuite:
+class ManifestParserTestSuite:  # pylint: disable=W0232
     @classmethod
     def get_test_suite(cls):
         tests = [

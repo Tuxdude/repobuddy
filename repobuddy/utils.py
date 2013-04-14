@@ -106,7 +106,7 @@ class ResourceHelperError(RepoBuddyBaseException):
         return
 
 
-class ResourceHelper:
+class ResourceHelper:   # pylint: disable=W0232
     @classmethod
     def open_data_file(cls, package_name, file_name):
         if _pkg_resources.resource_exists(package_name, file_name):
@@ -139,7 +139,7 @@ class LoggerError(Exception):
         return str(self._error_str)
 
 
-class Logger:
+class Logger:   # pylint: disable=W0232
     _disable_debug = True
 
     def __new__(cls):

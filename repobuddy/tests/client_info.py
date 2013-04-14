@@ -164,7 +164,7 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
 
-class ClientInfoTestSuite:
+class ClientInfoTestSuite:  # pylint: disable=W0232
     @classmethod
     def get_test_suite(cls):
         tests = [

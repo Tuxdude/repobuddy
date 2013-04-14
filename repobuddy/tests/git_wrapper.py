@@ -349,7 +349,7 @@ class GitWrapperTestCase(TestCaseBase):
         return
 
 
-class GitWrapperTestSuite:
+class GitWrapperTestSuite:  # pylint: disable=W0232
     @classmethod
     def get_test_suite(cls):
         tests = [

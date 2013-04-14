@@ -227,7 +227,7 @@ class ManifestParser(object):
             raise ManifestParserError(
                 'Error: file_handle cannot be None')
         try:
-            basestring = basestring
+            basestring = basestring     # pylint: disable=W0622
         except NameError:
             # basestring is undefined in Python 3
             basestring = (str, bytes)

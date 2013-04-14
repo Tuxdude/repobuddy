@@ -53,7 +53,7 @@ class GitWrapper(object):
             if capture_stderr:
                 kwargs['stderr'] = _subprocess.PIPE
 
-            proc = _subprocess.Popen(
+            proc = _subprocess.Popen(   # pylint: disable=W0142
                 git_command,
                 cwd=self._base_dir,
                 **kwargs)
