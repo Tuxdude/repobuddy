@@ -67,14 +67,14 @@ class ClientInfoTestCase(TestCaseBase):
 
         return test_config_file_name
 
-    def _run_tests(self, configs, from_resource=True):
+    def _run_tests_expect_error(self, configs, from_resource=True):
         for file_name, expected_error in configs:
             with self.assertRaisesRegexp(ClientInfoError, expected_error):
                 ClientInfo(self._open_config_file(file_name, from_resource))
         return
 
     def test_read_nonexistent_file(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('non-existent-file.config',
               r'No such file or directory: .*non-existent-file.config\'$')],
             from_resource=False)
@@ -99,7 +99,7 @@ class ClientInfoTestCase(TestCaseBase):
                                _shlex.split('sudo rm ' + file_full_path),
                                base_dir)
 
-        self._run_tests(
+        self._run_tests_expect_error(
             [(config_file_name,
               r'Permission denied: .*noread-client.config\'$')],
             from_resource=False)
@@ -116,42 +116,42 @@ class ClientInfoTestCase(TestCaseBase):
                     r'contains parsing errors: .*' +
                     r'malformed-parsing-errors.config' +
                     r'\s+\[line  2\]: \'invalid_config invalid_value\\n\'$')]
-        self._run_tests(configs)
+        self._run_tests_expect_error(configs)
         return
 
     def test_read_empty_file(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('empty.config',
               r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_config_format_without_client_info(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('no-client-info.config',
               r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_just_section(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('missing-options.config',
               r'No option \'.*\' in section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_just_options(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('missing-section.config',
               r'No section: \'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_no_client_spec(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('missing-client-spec.config',
               r'No option \'client_spec\' in section: ' +
               r'\'RepoBuddyClientInfo\'$')])
         return
 
     def test_read_no_manifest(self):
-        self._run_tests(
+        self._run_tests_expect_error(
             [('missing-manifest.config',
               r'No option \'manifest\' in section: ' +
               r'\'RepoBuddyClientInfo\'$')])
