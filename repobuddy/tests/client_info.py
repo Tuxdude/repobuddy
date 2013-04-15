@@ -36,7 +36,7 @@ from repobuddy.utils import ResourceHelper
 
 class ClientInfoTestCase(TestCaseBase):
     @classmethod
-    def setUpClass(cls):        # pylint: disable=C0103
+    def setUpClass(cls):
         cls._test_base_dir = TestSuiteManager.get_base_dir()
         cls._config_base_dir = _os.path.join(cls._test_base_dir,
                                              'test-configs')
@@ -46,11 +46,11 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     @classmethod
-    def tearDownClass(cls):     # pylint: disable=C0103
+    def tearDownClass(cls):
         ShellHelper.remove_dir(cls._config_base_dir)
         return
 
-    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
+    def __init__(self, methodName='runTest'):
         super(ClientInfoTestCase, self).__init__(methodName)
         return
 

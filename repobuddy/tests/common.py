@@ -283,7 +283,7 @@ class TestCaseBase(_unittest.TestCase):
         self._tear_down_cb_kwargs = None
         return
 
-    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
+    def __init__(self, methodName='runTest'):
         super(TestCaseBase, self).__init__(methodName)
         self._tear_down_cb = None
         self._tear_down_cb_args = None
@@ -297,10 +297,10 @@ class TestCaseBase(_unittest.TestCase):
             self._count_equal = self.assertItemsEqual
         return
 
-    def setUp(self):        # pylint: disable=C0103
+    def setUp(self):
         return
 
-    def tearDown(self):     # pylint: disable=C0103
+    def tearDown(self):
         if not self._tear_down_cb is None:
             self._tear_down_cb(*self._tear_down_cb_args,
                                **self._tear_down_cb_kwargs)
@@ -355,29 +355,29 @@ class TestResult(_unittest.TestResult):
     def get_result_str(cls, result):
         return cls._result_str[result]
 
-    def addError(self, test, err):              # pylint: disable=C0103
+    def addError(self, test, err):
         self._update_result(test, err, type(self).ERROR)
         self.has_errors = True
         return
 
-    def addFailure(self, test, err):            # pylint: disable=C0103
+    def addFailure(self, test, err):
         self._update_result(test, err, type(self).FAILED)
         self.has_failures = True
         return
 
-    def addSuccess(self, test):                 # pylint: disable=C0103
+    def addSuccess(self, test):
         self._update_result(test, None, type(self).PASSED)
         return
 
-    def addSkip(self, test, reason):            # pylint: disable=C0103
+    def addSkip(self, test, reason):
         self._update_result(test, None, type(self).SKIPPED)
         return
 
-    def addExpectedFailure(self, test, err):    # pylint: disable=C0103
+    def addExpectedFailure(self, test, err):
         self._update_result(test, err, type(self).EXPECTED_FAILURE)
         return
 
-    def addUnexpectedSuccess(self, test):       # pylint: disable=C0103
+    def addUnexpectedSuccess(self, test):
         self._update_result(test, None, type(self).UNEXPECTED_SUCCESS)
         self.has_unexpected_success = True
         return
@@ -389,7 +389,7 @@ class TestRunner(_unittest.TextTestRunner):
         self._test_result = None
         return
 
-    def _makeResult(self):  # pylint: disable=C0103
+    def _makeResult(self):
         self._test_result = TestResult()
         return self._test_result
 

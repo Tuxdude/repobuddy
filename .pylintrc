@@ -86,16 +86,16 @@ class-rgx=[A-Z_][a-zA-Z0-9]+$
 function-rgx=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match correct method names
-method-rgx=[a-z_][a-z0-9_]{2,40}$
+method-rgx=([a-z_][a-z0-9_]{2,40}|(start|end)(Document|Element)|add(Error|Failure|Success|Skip|ExpectedFailure|UnexpectedSuccess)|_makeResult|(setUp|tearDown)(Class|))$
 
 # Regular expression which should only match correct instance attribute names
 attr-rgx=[a-z_][a-z0-9_]{2,30}$
 
 # Regular expression which should only match correct argument names
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+argument-rgx=([a-z_][a-z0-9_]{2,30}|methodName)$
 
 # Regular expression which should only match correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+variable-rgx=([a-z_][a-z0-9_]{2,30}|methodName)$
 
 # Regular expression which should only match correct list comprehension /
 # generator expression variable names

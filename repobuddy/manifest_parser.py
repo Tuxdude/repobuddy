@@ -158,15 +158,15 @@ class _XmlContentHandler(_sax.ContentHandler):
         return
 
     # Overriden methods of _sax.ContentHandler
-    def startDocument(self):                # pylint: disable=C0103
+    def startDocument(self):
         self._manifest = Manifest()
         return
 
-    def endDocument(self):                  # pylint: disable=C0103
+    def endDocument(self):
         self._validate_manifest()
         return
 
-    def startElement(self, name, attrs):    # pylint: disable=C0103
+    def startElement(self, name, attrs):
         if name == 'RepoBuddyManifest':
             try:
                 self._manifest.default_client_spec = \
@@ -191,7 +191,7 @@ class _XmlContentHandler(_sax.ContentHandler):
         self._last_content = ''
         return
 
-    def endElement(self, name):             # pylint: disable=C0103
+    def endElement(self, name):
         if name == 'ClientSpec':
             # Add this clientspec to the manifest
             self._manifest.client_spec_list.append(self._last_client_spec)

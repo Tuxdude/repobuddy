@@ -40,7 +40,7 @@ class ManifestParserTestCase(TestCaseBase):
         manifest_parser.parse(manifest_stream)
         return manifest_parser.get_manifest()
 
-    def __init__(self, methodName='runTest'):   # pylint: disable=C0103
+    def __init__(self, methodName='runTest'):
         super(ManifestParserTestCase, self).__init__(methodName)
         return
 
