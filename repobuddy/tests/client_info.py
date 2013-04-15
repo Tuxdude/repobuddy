@@ -158,6 +158,12 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_valid(self):
+        client_info = ClientInfo(self._open_config_file('valid.config',
+                                                        from_resource=True))
+        self.assertEqual('some_valid_client_spec',
+                         client_info.get_client_spec())
+        self.assertEqual('some_valid_manifest',
+                         client_info.get_manifest())
         return
 
     def test_read_valid_writeback_changes(self):
