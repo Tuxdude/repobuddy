@@ -13,3 +13,7 @@ exclude_lines =
     def __repr__
 
     if _sys.version_info
+
+    def add(Error|Failure|Success|Skip|ExpectedFailure|UnexpectedSuccess)
+
+    def show_results
