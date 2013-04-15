@@ -23,7 +23,7 @@ import shlex as _shlex
 import stat as _stat
 import sys as _sys
 
-if _sys.version_info < (2, 7):      # pragma: no cover
+if _sys.version_info < (2, 7):
     import unittest2 as _unittest   # pylint: disable=F0401
 else:
     import unittest as _unittest    # pylint: disable=F0401

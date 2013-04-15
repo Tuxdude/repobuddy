@@ -1,0 +1,14 @@
+# .coveragerc to control coverage.py
+[run]
+source = repobuddy
+branch = True
+
+[report]
+# Regexes for lines to exclude from consideration
+exclude_lines =
+    # Have to re-enable the standard pragma
+    pragma: no cover
+
+    def __repr__
+
+    if _sys.version_info

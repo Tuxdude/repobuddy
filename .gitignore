@@ -5,5 +5,5 @@
 /build
 /dist
 .coverage
-/coverage-html/*
+/coverage-html-report/*
 /testing-ground

@@ -25,7 +25,7 @@ import subprocess as _subprocess
 import sys as _sys
 import traceback as _traceback
 
-if _sys.version_info < (2, 7):          # pragma: no cover
+if _sys.version_info < (2, 7):
     # pylint: disable=F0401
     import cStringIO as _io
     import ordereddict as _collections

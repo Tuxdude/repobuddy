@@ -2,7 +2,7 @@ PYTHON              := python
 PYLINT              := pylint
 PEP8                := pep8
 COVERAGE            := coverage
-COVERAGE_HTML_DIR   := coverage-html
+COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := chromium
 SRCS                := $(shell find . -path ./build -prune -o -name '*.py' -print)
 CLEANUP_FILES       := \
@@ -44,7 +44,7 @@ test:
 
 coverage:
 	@$(COVERAGE) erase
-	@($(COVERAGE) run --source=repobuddy ./run_tests.py && \
+	@($(COVERAGE) run ./run_tests.py && \
 	    $(COVERAGE) report) || ($(COVERAGE) report && /bin/false)
 
 coverage-annotate: coverage
