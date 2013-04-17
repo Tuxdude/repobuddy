@@ -4,13 +4,26 @@ TEST-LIST
 Unit tests
 ----------
 
-Fetching Repo Manifest
-----------------------
-1.  From file
-2.  From GIT
-3.  From HTTP
-4.  From HTTPS
-5.  From SSH
+GitWrapper
+----------
+1.  Clone a repo - TODO: Needs proper validation
+2.  Clone an invalid repo URL
+3.  Clone a valid repo URL but invalid branch
+4.  Clone a valid repo but into a directory with no write permissions
+5.  Update index on a valid GIT repo
+6.  Update index on an invalid GIT repo
+7.  Get Untracked files when there are none
+8.  Get Untracked files with 2 untracked files
+9.  Get Unstaged files when there are none
+10. Get Unstaged files with 2 unstaged files
+11. Get Uncommitted staged files when there are none
+12. Get Uncommitted staged files with 2 such files.
+13. Get the current branch on a valid repo
+14. Get the current branch on an invalid GIT repo
+15. Get the current branch on a detached HEAD
+16. Get the current tag on a lightweight TAG
+17. Get the current tag on an annotated TAG
+18. Get the current tag when there is none
 
 Parsing Repo Manifest
 ---------------------
@@ -34,27 +47,6 @@ Parsing Repo Manifest
 18. No default client spec
 19. Nonexistent default client spec
 20. Duplicate client spec
-
-GitWrapper
-----------
-1.  Clone a repo - TODO: Needs proper validation
-2.  Clone an invalid repo URL
-3.  Clone a valid repo URL but invalid branch
-4.  Clone a valid repo but into a directory with no write permissions
-5.  Update index on a valid GIT repo
-6.  Update index on an invalid GIT repo
-7.  Get Untracked files when there are none
-8.  Get Untracked files with 2 untracked files
-9.  Get Unstaged files when there are none
-10. Get Unstaged files with 2 unstaged files
-11. Get Uncommitted staged files when there are none
-12. Get Uncommitted staged files with 2 such files.
-13. Get the current branch on a valid repo
-14. Get the current branch on an invalid GIT repo
-15. Get the current branch on a detached HEAD
-16. Get the current tag on a lightweight TAG
-17. Get the current tag on an annotated TAG
-18. Get the current tag when there is none
 
 Client Info
 -----------
@@ -91,6 +83,14 @@ Arg Parser
 3.  Invoke status -h, status --help and help status
 4.  Invoke help -h, help --help and help help
 5.  Invoke -v and --version
+
+Fetching Repo Manifest
+----------------------
+1.  From file
+2.  From GIT
+3.  From HTTP
+4.  From HTTPS
+5.  From SSH
 
 Command Handlers
 ----------------
