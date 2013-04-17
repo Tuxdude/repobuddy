@@ -106,7 +106,7 @@ class ClientInfo(object):
                 output_file_name = self._config_file_name
 
         try:
-            with open(output_file_name, 'wb') as config_file:
+            with open(output_file_name, 'w') as config_file:
                 self._config.write(config_file)
         except IOError as err:
             raise ClientInfoError('Error: ' + str(err))
