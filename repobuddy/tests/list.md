@@ -77,6 +77,7 @@ Client Info
 15. Write a new client info by setting only the client_spec
 16. Write a new client info by setting only the manifest
 17. Write a new client info by invoking all the setters
+18. Support for UTF-8 in read/write
 
 Utils
 -----
