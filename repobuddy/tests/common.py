@@ -78,6 +78,15 @@ class ShellHelper:  # pylint: disable=W0232
         return
 
     @classmethod
+    def read_file_as_string(cls, filename):
+        try:
+            with open(filename, 'r') as file_handle:
+                data = file_handle.read()
+        except (OSError, IOError) as err:
+            raise ShellError(str(err))
+        return data
+
+    @classmethod
     def append_text_to_file(cls, text, filename, base_dir):
         try:
             with open(_os.path.join(base_dir, filename), 'a') as file_handle:
