@@ -24,6 +24,7 @@ from repobuddy.tests.common import TestSuiteManager
 from repobuddy.tests.client_info import ClientInfoTestSuite
 from repobuddy.tests.git_wrapper import GitWrapperTestSuite
 from repobuddy.tests.manifest_parser import ManifestParserTestSuite
+from repobuddy.tests.utils import UtilsTestSuite
 
 
 def run_tests():
@@ -38,9 +39,11 @@ def run_tests():
     git_wrapper_tests = GitWrapperTestSuite.get_test_suite()
     manifest_parser_tests = ManifestParserTestSuite.get_test_suite()
     client_info_tests = ClientInfoTestSuite.get_test_suite()
+    utils_tests = UtilsTestSuite.get_test_suite()
     tests.add_test_suite(git_wrapper_tests)
     tests.add_test_suite(manifest_parser_tests)
     tests.add_test_suite(client_info_tests)
+    tests.add_test_suite(utils_tests)
     tests.run()
     tests.show_results()
 
