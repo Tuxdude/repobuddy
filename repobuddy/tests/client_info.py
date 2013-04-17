@@ -166,6 +166,17 @@ class ClientInfoTestCase(TestCaseBase):
         return
 
     def test_read_valid_writeback_changes(self):
+        config_file_name = self._open_config_file('valid.config',
+                                                  from_resource=True)
+        client_info = ClientInfo(config_file_name)
+        config_data = ShellHelper.read_file_as_string(
+            config_file_name).replace('some_valid_client_spec',
+                                      'some_other_client_spec').rstrip()
+        client_info.set_client_spec('some_other_client_spec')
+        client_info.write()
+        self.assertEqual(
+            config_data,
+            ShellHelper.read_file_as_string(config_file_name).rstrip())
         return
 
 
