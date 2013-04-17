@@ -444,28 +444,30 @@ class TestSuiteManager(object):
 
     def show_results(self):
         Logger.msg('\n')
-        Logger.msg('*' * 120)
-        Logger.msg('{0:^120}'.format('Test Summary'))
-        Logger.msg('*' * 120)
+        Logger.msg('*' * 72)
+        Logger.msg('{0:^72}'.format('Test Summary'))
+        Logger.msg('*' * 72)
         Logger.msg(self._output.getvalue())
-        Logger.msg('-' * 120 + '\n\n')
+        Logger.msg('-' * 72 + '\n\n')
 
         error_traces_str = ''
         failure_traces_str = ''
 
         for test_suite, results in self._test_result.test_results.items():
             Logger.msg('TestSuite: %s' % test_suite)
-            Logger.msg('#' * 120)
-            Logger.msg('{0:48} {1:56} {2:16}'.format(
+            Logger.msg('#' * 72)
+            Logger.msg('{0:<8} {1:48} {2:16}'.format(
+                'No.',
                 'TestCase',
-                'Description',
                 'Result'))
-            Logger.msg('#' * 120)
+            Logger.msg('#' * 72)
+            test_count = 0
             for result in results:
-                Logger.msg('{0:48} {1:56} {2:16}'.format(
+                Logger.msg('{0:<8} {1:48} {2:16}'.format(
+                    test_count,
                     result['test_case'],
-                    result['description'],
                     TestResult.get_result_str(result['result'])))
+                test_count += 1
                 if result['result'] == TestResult.ERROR:
                     error_traces_str += \
                         '%s::%s\n%s\n' % (test_suite,
@@ -476,19 +478,19 @@ class TestSuiteManager(object):
                         '%s::%s\n%s\n' % (test_suite,
                                           result['test_case'],
                                           result['formated_traceback'])
-            Logger.msg('-' * 120 + '\n\n')
+            Logger.msg('-' * 72 + '\n\n')
 
         if self._test_result.has_errors:
-            Logger.msg('#' * 120)
+            Logger.msg('#' * 72)
             Logger.msg('Errors')
-            Logger.msg('#' * 120 + '\n')
-            Logger.msg(error_traces_str + '-' * 120 + '\n')
+            Logger.msg('#' * 72 + '\n')
+            Logger.msg(error_traces_str + '-' * 72 + '\n')
 
         if self._test_result.has_failures:
-            Logger.msg('#' * 120)
+            Logger.msg('#' * 72)
             Logger.msg('Failures')
-            Logger.msg('#' * 120 + '\n')
-            Logger.msg(failure_traces_str + '-' * 120 + '\n')
+            Logger.msg('#' * 72 + '\n')
+            Logger.msg(failure_traces_str + '-' * 72 + '\n')
 
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
         return
