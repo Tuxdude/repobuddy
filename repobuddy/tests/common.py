@@ -53,18 +53,24 @@ class ShellHelper:  # pylint: disable=W0232
     def exec_command(cls, command, base_dir, debug_output=True):
         Logger.msg('>> ' + ' '.join(command))
         try:
-            if debug_output:
-                proc = _subprocess.Popen(
-                    command,
-                    cwd=base_dir)
-            else:
-                proc = _subprocess.Popen(
-                    command,
-                    cwd=base_dir,
-                    stdout=open(_os.devnull, 'w'),
-                    stderr=_subprocess.STDOUT)
-            proc.communicate()
-            return_code = proc.wait()
+            kwargs = {}
+            return_code = None
+
+            if not debug_output:
+                kwargs['stdout'] = open(_os.devnull, 'w')
+                kwargs['stderr'] = _subprocess.STDOUT
+
+            proc = _subprocess.Popen(command,   # pylint: disable=W0142
+                                     cwd=base_dir,
+                                     **kwargs)
+            try:
+                proc.communicate()
+            except:
+                proc.kill()
+                proc.wait()
+                raise
+
+            return_code = proc.poll()
             if return_code != 0:
                 raise ShellError('Command \'%s\' failed!' % command)
         except (OSError, IOError) as err:

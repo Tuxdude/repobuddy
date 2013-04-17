@@ -57,8 +57,15 @@ class GitWrapper(object):
                 git_command,
                 cwd=self._base_dir,
                 **kwargs)
-            (out_msg, err_msg) = proc.communicate()
-            return_code = proc.wait()
+
+            try:
+                (out_msg, err_msg) = proc.communicate()
+            except:
+                proc.kill()
+                proc.wait()
+                raise
+
+            return_code = proc.poll()
 
             if not out_msg is None:
                 out_msg = out_msg.decode('utf-8')
