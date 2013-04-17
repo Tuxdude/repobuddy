@@ -71,11 +71,8 @@ Client Info
 10. Parse a valid file, and verify all the getters
 11. Parse a valid client info, , modify a setting, write back, write to a
     second file and verify the consistency.
-12. Write a new client info by invoking no setters
-13. Write a new client info by setting only the client_spec
-14. Write a new client info by setting only the manifest
-15. Write a new client info by invoking all the setters
-16. Support for UTF-8 in read/write
+12. Write a new client info by invoking the setters
+13. Support for UTF-8 in read/write
 
 Utils
 -----

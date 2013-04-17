@@ -207,7 +207,35 @@ class ClientInfoTestCase(TestCaseBase):
         self.assertEqual(
             config_data,
             ShellHelper.read_file_as_string(updated_config).rstrip())
+        return
 
+    def test_create_new_config(self):
+        target_config = _os.path.join(type(self)._config_base_dir,
+                                      'newly-written.config')
+        client_info = ClientInfo()
+        with self.assertRaisesRegexp(
+                ClientInfoError,
+                'Error: Missing options. No option \'client_spec\' ' +
+                'in section: \'RepoBuddyClientInfo\''):
+            client_info.write(target_config)
+
+        client_info.set_client_spec('some_client_spec')
+        with self.assertRaisesRegexp(
+                ClientInfoError,
+                'Error: Missing options. No option \'manifest\' ' +
+                'in section: \'RepoBuddyClientInfo\''):
+            client_info.write(target_config)
+
+        client_info = ClientInfo()
+        client_info.set_manifest('some_manifest')
+        with self.assertRaisesRegexp(
+                ClientInfoError,
+                'Error: Missing options. No option \'client_spec\' ' +
+                'in section: \'RepoBuddyClientInfo\''):
+            client_info.write(target_config)
+
+        client_info.set_client_spec('some_new_client_spec')
+        client_info.write(target_config)
         return
 
 
@@ -225,5 +253,6 @@ class ClientInfoTestSuite:  # pylint: disable=W0232
             'test_read_no_client_spec',
             'test_read_no_manifest',
             'test_read_valid',
-            'test_read_valid_writeback']
+            'test_read_valid_writeback',
+            'test_create_new_config']
         return _unittest.TestSuite(map(ClientInfoTestCase, tests))
