@@ -74,9 +74,8 @@ class ShellHelper:  # pylint: disable=W0232
     @classmethod
     def append_text_to_file(cls, text, filename, base_dir):
         try:
-            file_handle = open(_os.path.join(base_dir, filename), 'a')
-            file_handle.write(text)
-            file_handle.close()
+            with open(_os.path.join(base_dir, filename), 'a') as file_handle:
+                file_handle.write(text)
         except (OSError, IOError) as err:
             raise ShellError(str(err))
         return

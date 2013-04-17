@@ -59,18 +59,15 @@ class ClientInfo(object):
     def __init__(self, config_file_name=None):
         if not config_file_name is None:
             try:
-                file_handle = open(config_file_name, 'r')
+                with open(config_file_name, 'r') as file_handle:
+                    self._config = _configparser.RawConfigParser()
+                    try:
+                        self._config.readfp(file_handle)
+                    except _configparser.ParsingError as err:
+                        raise ClientInfoError(
+                            'Error: Parsing config failed => ' + str(err))
             except IOError as err:
                 raise ClientInfoError('Error: ' + str(err))
-
-            self._config = _configparser.RawConfigParser()
-            try:
-                self._config.readfp(file_handle)
-            except _configparser.ParsingError as err:
-                raise ClientInfoError(
-                    'Error: Parsing config failed => ' + str(err))
-            finally:
-                file_handle.close()
 
             self._validate_config()
             self._config_file_name = config_file_name

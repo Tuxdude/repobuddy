@@ -61,9 +61,8 @@ class ClientInfoTestCase(TestCaseBase):
             client_config_stream = ResourceHelper.open_data_file(
                 'repobuddy.tests.configs',
                 file_name)
-            test_config_file = open(test_config_file_name, 'wb')
-            _shutil.copyfileobj(client_config_stream, test_config_file)
-            test_config_file.close()
+            with open(test_config_file_name, 'wb') as test_config_file:
+                _shutil.copyfileobj(client_config_stream, test_config_file)
 
         return test_config_file_name
 
