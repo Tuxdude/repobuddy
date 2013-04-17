@@ -165,18 +165,49 @@ class ClientInfoTestCase(TestCaseBase):
                          client_info.get_manifest())
         return
 
-    def test_read_valid_writeback_changes(self):
+    def test_read_valid_writeback(self):
+        # Open the valid.config
         config_file_name = self._open_config_file('valid.config',
                                                   from_resource=True)
         client_info = ClientInfo(config_file_name)
+
         config_data = ShellHelper.read_file_as_string(
-            config_file_name).replace('some_valid_client_spec',
-                                      'some_other_client_spec').rstrip()
+            config_file_name).rstrip()
+
+        # Write without making any changes
+        client_info.write()
+        self.assertEqual(
+            config_data,
+            ShellHelper.read_file_as_string(config_file_name).rstrip())
+
+        # Set a new client_spec and write the changes
+        config_data = config_data.replace('some_valid_client_spec',
+                                          'some_other_client_spec')
         client_info.set_client_spec('some_other_client_spec')
         client_info.write()
         self.assertEqual(
             config_data,
             ShellHelper.read_file_as_string(config_file_name).rstrip())
+
+        # Write the client_info to a new file
+        updated_config = _os.path.join(type(self)._config_base_dir,
+                                       'updated-valid.config')
+        client_info.write(updated_config)
+        self.assertEqual(
+            config_data,
+            ShellHelper.read_file_as_string(updated_config).rstrip())
+
+        # Modify the manifest, and write to the original file
+        client_info.set_manifest('some_other_manifest')
+        client_info.write()
+        self.assertEqual(
+            config_data.replace('some_valid_manifest',
+                                'some_other_manifest'),
+            ShellHelper.read_file_as_string(config_file_name).rstrip())
+        self.assertEqual(
+            config_data,
+            ShellHelper.read_file_as_string(updated_config).rstrip())
+
         return
 
 
@@ -194,5 +225,5 @@ class ClientInfoTestSuite:  # pylint: disable=W0232
             'test_read_no_client_spec',
             'test_read_no_manifest',
             'test_read_valid',
-            'test_read_valid_writeback_changes']
+            'test_read_valid_writeback']
         return _unittest.TestSuite(map(ClientInfoTestCase, tests))
