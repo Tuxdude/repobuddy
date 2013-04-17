@@ -69,15 +69,13 @@ Client Info
 8.  Parse a file with section, and client_spec
 9.  Parse a file with section, and manifest
 10. Parse a valid file, and verify all the getters
-11. Parse a valid client info, change a valid setting, and write back
-12. Parse a valid client info, change a valid setting, and write to a
-    second file
-13. Parse a valid client info, do not change anything, write to a file
-14. Write a new client info by invoking no setters
-15. Write a new client info by setting only the client_spec
-16. Write a new client info by setting only the manifest
-17. Write a new client info by invoking all the setters
-18. Support for UTF-8 in read/write
+11. Parse a valid client info, , modify a setting, write back, write to a
+    second file and verify the consistency.
+12. Write a new client info by invoking no setters
+13. Write a new client info by setting only the client_spec
+14. Write a new client info by setting only the manifest
+15. Write a new client info by invoking all the setters
+16. Support for UTF-8 in read/write
 
 Utils
 -----
