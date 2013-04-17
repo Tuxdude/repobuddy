@@ -94,19 +94,24 @@ class ClientInfo(object):
         return self._get_config('RepoBuddyClientInfo', 'manifest')
 
     def write(self, file_name=None):
-        output_file_name = file_name
-
         # If file_name parameter is empty, check if the file name was
         # specified in the constructor
-        if output_file_name is None:
+        if file_name is None:
             if self._config_file_name is None:
                 raise ClientInfoError(
                     'Error: file_name parameter cannot be empty')
             else:
-                output_file_name = self._config_file_name
+                file_name = self._config_file_name
+
+        # Verify that the config is valid
+        try:
+            self._validate_config()
+        except ClientInfoError as err:
+            raise ClientInfoError(
+                'Error: Missing options. ' + str(err).split('Error: ')[1])
 
         try:
-            with open(output_file_name, 'w') as config_file:
+            with open(file_name, 'w') as config_file:
                 self._config.write(config_file)
         except IOError as err:
             raise ClientInfoError('Error: ' + str(err))
