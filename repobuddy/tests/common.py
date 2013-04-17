@@ -463,11 +463,11 @@ class TestSuiteManager(object):
             Logger.msg('#' * 72)
             test_count = 0
             for result in results:
+                test_count += 1
                 Logger.msg('{0:<8} {1:48} {2:16}'.format(
                     test_count,
                     result['test_case'],
                     TestResult.get_result_str(result['result'])))
-                test_count += 1
                 if result['result'] == TestResult.ERROR:
                     error_traces_str += \
                         '%s::%s\n%s\n' % (test_suite,
