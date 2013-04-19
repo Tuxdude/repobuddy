@@ -68,10 +68,11 @@ Client Info
 
 Utils
 -----
-1.  Create a lock file, and try to acquire the lock file in a second instance
-2.  Create a lock file in one thread, and try to acquire the lock file in a
+1.  Create a lock file, verify file is created, release and verify file is
+    removed.
+2.  Create a lock file, and try to acquire the same lock again.
+3.  Create a lock file in one thread, and try to acquire the lock file in a
     second instance, while the first instance releases the lock.
-3.  Create a lock file, and check if the file is created. Release the lock and
     check if the file is removed.
 4.  Create a lock file in one thread, try to delete the file in another thread.
 5.  Create a lock file in a directory with no write permission.
