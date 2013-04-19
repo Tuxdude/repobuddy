@@ -84,7 +84,7 @@ class UtilsTestCase(TestCaseBase):
         event = _threading.Event()
         event.clear()
         wait_thread = _threading.Thread(target=self._wait_with_lock,
-                                         args=(lock_file, event))
+                                        args=(lock_file, event))
         self._set_tear_down_cb(event.set)
         wait_thread.daemon = False
         lock = FileLock(lock_file)
