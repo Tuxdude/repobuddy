@@ -40,6 +40,7 @@ class ClientInfoTestCase(TestCaseBase):
         cls._test_base_dir = TestSuiteManager.get_base_dir()
         cls._config_base_dir = _os.path.join(cls._test_base_dir,
                                              'test-configs')
+        ShellHelper.remove_dir(cls._config_base_dir)
         ShellHelper.make_dir(cls._config_base_dir,
                              create_parent_dirs=True,
                              only_if_not_exists=True)
