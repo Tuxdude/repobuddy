@@ -36,6 +36,7 @@ class UtilsTestCase(TestCaseBase):
     def setUpClass(cls):
         cls._test_base_dir = TestSuiteManager.get_base_dir()
         cls._utils_base_dir = _os.path.join(cls._test_base_dir, 'utils')
+        ShellHelper.remove_dir(cls._utils_base_dir)
         ShellHelper.make_dir(cls._utils_base_dir,
                              create_parent_dirs=True,
                              only_if_not_exists=True)
@@ -48,6 +49,14 @@ class UtilsTestCase(TestCaseBase):
 
     def __init__(self, methodName='runTest'):
         super(UtilsTestCase, self).__init__(methodName)
+        return
+
+    def test_file_lock_basic(self):
+        lock_file = _os.path.join(type(self)._utils_base_dir,
+                                  'lock_basic')
+        with FileLock(lock_file) as lock:
+            self.assertTrue(_os.path.isfile(lock_file))
+        self.assertFalse(_os.path.isfile(lock_file))
         return
 
     def test_file_lock_multiple_times(self):
@@ -66,5 +75,6 @@ class UtilsTestSuite:
     @classmethod
     def get_test_suite(cls):
         tests = [
+            'test_file_lock_basic',
             'test_file_lock_multiple_times']
         return _unittest.TestSuite(map(UtilsTestCase, tests))
