@@ -70,7 +70,9 @@ class ClientInfoTestCase(TestCaseBase):
     def _run_tests_expect_error(self, configs, from_resource=True):
         for file_name, expected_error in configs:
             with self.assertRaisesRegexp(ClientInfoError, expected_error):
-                ClientInfo(self._open_config_file(file_name, from_resource))
+                ClientInfo(     # pragma: no branch
+                    self._open_config_file(file_name, from_resource))
+
         return
 
     def test_read_nonexistent_file(self):
