@@ -20,6 +20,8 @@
 
 import os as _os
 import sys as _sys
+import threading as _threading
+import time as _time
 
 if _sys.version_info < (2, 7):
     import unittest2 as _unittest   # pylint: disable=F0401
@@ -47,6 +49,11 @@ class UtilsTestCase(TestCaseBase):
         ShellHelper.remove_dir(cls._utils_base_dir)
         return
 
+    def _wait_with_lock(self, file_name, event):
+        with FileLock(file_name) as lock:
+            event.wait()
+        return
+
     def __init__(self, methodName='runTest'):
         super(UtilsTestCase, self).__init__(methodName)
         return
@@ -71,11 +78,39 @@ class UtilsTestCase(TestCaseBase):
             self.assertTrue(err.exception.is_time_out)
         return
 
+    def test_file_lock_multiple_threads(self):
+        lock_file = _os.path.join(type(self)._utils_base_dir,
+                                  'lock_multi_thread')
+        event = _threading.Event()
+        event.clear()
+        wait_thread = _threading.Thread(target=self._wait_with_lock,
+                                         args=(lock_file, event))
+        self._set_tear_down_cb(event.set)
+        wait_thread.daemon = False
+        lock = FileLock(lock_file)
+
+        with self.assertRaisesRegexp(
+                FileLockError,
+                r'^Timeout$') as err:
+            wait_thread.start()
+            _time.sleep(3)
+            lock.lock()
+        self.assertTrue(err.exception.is_time_out)
+
+        event.set()
+        wait_thread.join(3)
+        self.assertFalse(wait_thread.is_alive())
+
+        lock.lock()
+        lock.unlock()
+        return
+
 
 class UtilsTestSuite:
     @classmethod
     def get_test_suite(cls):
         tests = [
             'test_file_lock_basic',
-            'test_file_lock_multiple_times']
+            'test_file_lock_multiple_times',
+            'test_file_lock_multiple_threads']
         return _unittest.TestSuite(map(UtilsTestCase, tests))
