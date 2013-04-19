@@ -50,7 +50,7 @@ class UtilsTestCase(TestCaseBase):
         return
 
     def _wait_with_lock(self, file_name, event):
-        with FileLock(file_name) as lock:
+        with FileLock(file_name):
             event.wait()
         return
 
@@ -61,7 +61,7 @@ class UtilsTestCase(TestCaseBase):
     def test_file_lock_basic(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
                                   'lock_basic')
-        with FileLock(lock_file) as lock:
+        with FileLock(lock_file):
             self.assertTrue(_os.path.isfile(lock_file))
         self.assertFalse(_os.path.isfile(lock_file))
         return
@@ -69,7 +69,7 @@ class UtilsTestCase(TestCaseBase):
     def test_file_lock_multiple_times(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
                                   'lock_multi_times')
-        with FileLock(lock_file) as first_lock:
+        with FileLock(lock_file):
             second_lock = FileLock(lock_file)
             with self.assertRaisesRegexp(
                     FileLockError,
@@ -106,7 +106,7 @@ class UtilsTestCase(TestCaseBase):
         return
 
 
-class UtilsTestSuite:
+class UtilsTestSuite:  # pylint: disable=W0232
     @classmethod
     def get_test_suite(cls):
         tests = [
