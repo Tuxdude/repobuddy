@@ -60,7 +60,8 @@ class UtilsTestCase(TestCaseBase):
         return
 
     def test_file_lock_multiple_times(self):
-        lock_file = _os.path.join(type(self)._utils_base_dir, 'lock_acquire')
+        lock_file = _os.path.join(type(self)._utils_base_dir,
+                                  'lock_multi_times')
         with FileLock(lock_file) as first_lock:
             second_lock = FileLock(lock_file)
             with self.assertRaisesRegexp(
