@@ -58,20 +58,20 @@ class FileLock(object):
         return
 
     def __del__(self):
-        self.unlock()
+        self.release()
         return
 
     def __enter__(self):
         if not self._is_locked:
-            self.lock()
+            self.acquire()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback):
         if self._is_locked:
-            self.unlock()
+            self.release()
         return
 
-    def lock(self):
+    def acquire(self):
         begin = _time.time()
         while True:
             try:
@@ -92,7 +92,7 @@ class FileLock(object):
         self._is_locked = True
         return
 
-    def unlock(self):
+    def release(self):
         if self._is_locked:
             _os.close(self._fd)
             _os.unlink(self._lock_file)

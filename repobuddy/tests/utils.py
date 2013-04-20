@@ -74,7 +74,7 @@ class UtilsTestCase(TestCaseBase):
             with self.assertRaisesRegexp(
                     FileLockError,
                     r'^Timeout$') as err:
-                second_lock.lock()
+                second_lock.acquire()
             self.assertTrue(err.exception.is_time_out)
         return
 
@@ -94,15 +94,15 @@ class UtilsTestCase(TestCaseBase):
                 r'^Timeout$') as err:
             wait_thread.start()
             _time.sleep(3)
-            lock.lock()
+            lock.acquire()
         self.assertTrue(err.exception.is_time_out)
 
         event.set()
         wait_thread.join(3)
         self.assertFalse(wait_thread.is_alive())
 
-        lock.lock()
-        lock.unlock()
+        lock.acquire()
+        lock.release()
         return
 
 
