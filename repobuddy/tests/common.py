@@ -145,6 +145,10 @@ class TestCommon:   # pylint: disable=W0232
         return
 
     @classmethod
+    def get_string_stream(cls):
+        return _io.StringIO()
+
+    @classmethod
     def setup_test_repos(cls, base_dir):
         # Cleanup and create an empty directory
         ShellHelper.remove_dir(base_dir)
