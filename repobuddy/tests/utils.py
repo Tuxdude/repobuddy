@@ -105,6 +105,15 @@ class UtilsTestCase(TestCaseBase):
         lock.release()
         return
 
+    def test_file_lock_delete_with_acquire(self):
+        lock_file = _os.path.join(type(self)._utils_base_dir,
+                                  'lock_delete_with_acquire')
+        with FileLock(lock_file):
+            self.assertTrue(_os.path.isfile(lock_file))
+            ShellHelper.remove_file(lock_file)
+        self.assertFalse(_os.path.isfile(lock_file))
+        return
+
 
 class UtilsTestSuite:  # pylint: disable=W0232
     @classmethod
@@ -112,5 +121,6 @@ class UtilsTestSuite:  # pylint: disable=W0232
         tests = [
             'test_file_lock_basic',
             'test_file_lock_multiple_times',
-            'test_file_lock_multiple_threads']
+            'test_file_lock_multiple_threads',
+            'test_file_lock_delete_with_acquire']
         return _unittest.TestSuite(map(UtilsTestCase, tests))
