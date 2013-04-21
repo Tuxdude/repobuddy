@@ -61,7 +61,7 @@ class UtilsTestCase(TestCaseBase):
 
     def test_file_lock_basic(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
-                                  'lock_basic')
+                                  'lock-basic')
         with FileLock(lock_file):
             self.assertTrue(_os.path.isfile(lock_file))
         self.assertFalse(_os.path.isfile(lock_file))
@@ -69,7 +69,7 @@ class UtilsTestCase(TestCaseBase):
 
     def test_file_lock_multiple_times(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
-                                  'lock_multi_times')
+                                  'lock-multi-times')
         with FileLock(lock_file):
             second_lock = FileLock(lock_file)
             with self.assertRaisesRegexp(
@@ -81,7 +81,7 @@ class UtilsTestCase(TestCaseBase):
 
     def test_file_lock_multiple_threads(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
-                                  'lock_multi_thread')
+                                  'lock-multi-thread')
         event = _threading.Event()
         event.clear()
         wait_thread = _threading.Thread(target=self._wait_with_lock,
@@ -108,7 +108,7 @@ class UtilsTestCase(TestCaseBase):
 
     def test_file_lock_delete_with_acquire(self):
         lock_file = _os.path.join(type(self)._utils_base_dir,
-                                  'lock_delete_with_acquire')
+                                  'lock-delete-with-acquire')
         with FileLock(lock_file):
             self.assertTrue(_os.path.isfile(lock_file))
             ShellHelper.remove_file(lock_file)
@@ -132,13 +132,13 @@ class UtilsTestCase(TestCaseBase):
         self._set_tear_down_cb(ShellHelper.exec_command,
                                _shlex.split('sudo rm -rf ' + test_dir),
                                base_dir)
-        lock_file = _os.path.join(test_dir, 'lock_no_permissions')
+        lock_file = _os.path.join(test_dir, 'lock-no-permissions')
         lock_handle =  FileLock(lock_file)
 
         with self.assertRaisesRegexp(
                 FileLockError,
                 r'^Error: Unable to create the lock file: ' +
-                r'.*lock_no_permissions$'):
+                r'.*lock-no-permissions$'):
             lock_handle.acquire()
         return
 
