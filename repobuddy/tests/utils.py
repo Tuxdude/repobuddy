@@ -145,7 +145,7 @@ class UtilsTestCase(TestCaseBase):
                                _shlex.split('sudo rm -rf ' + test_dir),
                                base_dir)
         lock_file = _os.path.join(test_dir, 'lock-no-permissions')
-        lock_handle =  FileLock(lock_file)
+        lock_handle = FileLock(lock_file)
 
         with self.assertRaisesRegexp(
                 FileLockError,
