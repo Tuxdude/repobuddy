@@ -12,6 +12,7 @@ CLEANUP_FILES       := \
                        build \
                        dist \
 		       $(COVERAGE_HTML_DIR)
+MAKEFLAGS 	    += --no-print-directory
 
 dev-install:
 	@$(PYTHON) setup.py develop
@@ -40,12 +41,13 @@ pylint-report:
 	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
 
 test:
-	@$(PYTHON) ./run_tests.py
+	@$(MAKE) coverage || ($(MAKE) pep8 && /bin/false)
+	@$(MAKE) pep8
 
 coverage:
 	@$(COVERAGE) erase
 	@($(COVERAGE) run ./run_tests.py && \
-	    $(COVERAGE) report) || ($(COVERAGE) report && /bin/false)
+	    $(COVERAGE) report && echo) || ($(COVERAGE) report && echo && /bin/false)
 
 coverage-annotate: coverage
 	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
