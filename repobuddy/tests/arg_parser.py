@@ -77,11 +77,23 @@ class ArgParserTestCase(TestCaseBase):
         with self.assertRaisesRegexp(ArgParserError, None) as err:
             arg_parser.parse(_shlex.split('-h'))
 
-        help_str = self._str_stream.getvalue()
-        self.assertTrue(help_str.find(HelpStrings.PROGRAM_DESCRIPTION) != -1)
-        self.assertTrue(not _re.search(
-            r'Available Commands:\s+{init,help,status}', help_str) is None)
         self.assertTrue(err.exception.exit_prog_without_error)
+
+        help_str = self._str_stream.getvalue()
+        print(help_str)
+
+        help_regex = _re.compile(
+            r'^usage: ([a-z]+) ((\[-(h|v)\] ){2})\{(([a-z]+,)*[a-z]+)\} ' +
+            r'\.\.\.\s+' + HelpStrings.PROGRAM_DESCRIPTION + '\s+')
+        match_obj = help_regex.search(help_str)
+        self.assertIsNotNone(match_obj)
+        groups = match_obj.groups()
+
+        self.assertEqual(groups[0], 'repobuddy')
+        self.assertItemsEqual(groups[1].rstrip().split(' '), ['[-h]', '[-v]'])
+        self.assertItemsEqual(groups[4].rstrip().split(','),
+                              ['status', 'init', 'help'])
+
         return
 
 
