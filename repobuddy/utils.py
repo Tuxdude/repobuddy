@@ -95,7 +95,12 @@ class FileLock(object):
     def release(self):
         if self._is_locked:
             _os.close(self._fd)
-            _os.unlink(self._lock_file)
+            try:
+                _os.unlink(self._lock_file)
+            except OSError as err:
+                # Lock file could be deleted, ignoring
+                if err.errno != _errno.ENOENT:
+                    raise FileLockError('Error: ' + str(err))
             self._is_locked = False
         return
 
