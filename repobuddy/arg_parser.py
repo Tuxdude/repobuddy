@@ -25,14 +25,9 @@ from repobuddy.version import __version__
 
 
 class ArgParserError(RepoBuddyBaseException):
-    def __init__(self, error_str=None):
+    def __init__(self, error_str=None, exit_prog_without_error=False):
         super(ArgParserError, self).__init__(error_str)
-        return
-
-
-class ArgParserExitNoError(RepoBuddyBaseException):
-    def __init__(self):
-        super(ArgParserExitNoError, self).__init__('')
+        self.exit_prog_without_error = exit_prog_without_error
         return
 
 
@@ -53,10 +48,7 @@ class _MasterParser(_argparse.ArgumentParser):
     def exit(self, status=0, message=None):
         if not message is None:
             Logger.error(message)
-        if status == 0:
-            raise ArgParserExitNoError()
-        else:
-            raise ArgParserError()
+        raise ArgParserError(None, status == 0)
 
     # Overriden from ArgumentParser
     # Stores the error message in ArgParserError instead of printing directly

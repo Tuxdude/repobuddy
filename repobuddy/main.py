@@ -21,8 +21,7 @@
 
 import sys as _sys
 
-from repobuddy.arg_parser import ArgParser, ArgParserError, \
-    ArgParserExitNoError
+from repobuddy.arg_parser import ArgParser, ArgParserError
 from repobuddy.command_handler import CommandHandler, CommandHandlerError
 from repobuddy.utils import Logger
 
@@ -37,11 +36,10 @@ def run_repobuddy():
     try:
         arg_parser.parse(_sys.argv[1:])
     except (CommandHandlerError, ArgParserError) as err:
-        err_msg = str(err)
-        if not err_msg is 'None':
-            Logger.error(err_msg)
-        _sys.exit(1)
-    except ArgParserExitNoError:
-        pass
+        if not err.exit_prog_without_error:
+            err_msg = str(err)
+            if not err_msg is 'None':
+                Logger.error(err_msg)
+            _sys.exit(1)
 
     _sys.exit(0)
