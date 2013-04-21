@@ -146,6 +146,9 @@ class LoggerError(Exception):
 
 class Logger:   # pylint: disable=W0232
     _disable_debug = True
+    debug_stream = _sys.stdout
+    msg_stream = _sys.stdout
+    error_stream = _sys.stdout
 
     def __new__(cls):
         raise LoggerError('This class should not be instantiated')
@@ -153,24 +156,24 @@ class Logger:   # pylint: disable=W0232
     @classmethod
     def msg(cls, msg, append_new_line=True):
         if append_new_line:
-            _sys.stdout.write(msg + '\n')
+            cls.msg_stream.write(msg + '\n')
         else:
-            _sys.stdout.write(msg)
+            cls.msg_stream.write(msg)
         return
 
     @classmethod
     def debug(cls, msg, append_new_line=True):
         if not cls._disable_debug:
             if append_new_line:
-                _sys.stdout.write(msg + '\n')
+                cls.debug_stream.write(msg + '\n')
             else:
-                _sys.stdout.write(msg)
+                cls.debug_stream.write(msg)
         return
 
     @classmethod
     def error(cls, msg, append_new_line=True):
         if append_new_line:
-            _sys.stdout.write(msg + '\n')
+            cls.error_stream.write(msg + '\n')
         else:
-            _sys.stdout.write(msg)
+            cls.error_stream.write(msg)
         return
