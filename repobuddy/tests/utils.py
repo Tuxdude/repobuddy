@@ -65,6 +65,18 @@ class UtilsTestCase(TestCaseBase):
         with FileLock(lock_file):
             self.assertTrue(_os.path.isfile(lock_file))
         self.assertFalse(_os.path.isfile(lock_file))
+
+        with FileLock(lock_file) as lock_handle:
+            self.assertTrue(_os.path.isfile(lock_file))
+            lock_handle.release()
+        self.assertFalse(_os.path.isfile(lock_file))
+
+        lock_handle = FileLock(lock_file)
+        lock_handle.acquire()
+        with lock_handle:
+            self.assertTrue(_os.path.isfile(lock_file))
+        self.assertFalse(_os.path.isfile(lock_file))
+
         return
 
     def test_file_lock_multiple_times(self):
