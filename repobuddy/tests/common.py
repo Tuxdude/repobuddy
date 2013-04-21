@@ -402,7 +402,7 @@ class TestResult(_unittest.TestResult):
 
 
 class TestRunner(_unittest.TextTestRunner):
-    def __init__(self, stream=_sys.stderr, descriptions=True, verbosity=1):
+    def __init__(self, stream, descriptions=True, verbosity=1):
         super(TestRunner, self).__init__(stream, descriptions, verbosity)
         self._test_result = None
         return
