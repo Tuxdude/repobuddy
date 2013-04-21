@@ -19,6 +19,7 @@
 #
 
 import os as _os
+import shlex as _shlex
 import sys as _sys
 import threading as _threading
 import time as _time
@@ -119,6 +120,28 @@ class UtilsTestCase(TestCaseBase):
         self.assertFalse(_os.path.isfile(lock_file))
         return
 
+    def test_file_lock_dir_without_permissions(self):
+        base_dir = type(self)._utils_base_dir
+        test_dir = _os.path.join(base_dir,
+                                 'test-permissions')
+        ShellHelper.make_dir(test_dir,
+                             create_parent_dirs=True,
+                             only_if_not_exists=True)
+        ShellHelper.exec_command(
+            _shlex.split('sudo chown root:root ' + test_dir), base_dir)
+        self._set_tear_down_cb(ShellHelper.exec_command,
+                               _shlex.split('sudo rm -rf ' + test_dir),
+                               base_dir)
+        lock_file = _os.path.join(test_dir, 'lock_no_permissions')
+        lock_handle =  FileLock(lock_file)
+
+        with self.assertRaisesRegexp(
+                FileLockError,
+                r'^Error: Unable to create the lock file: ' +
+                r'.*lock_no_permissions$'):
+            lock_handle.acquire()
+        return
+
 
 class UtilsTestSuite:  # pylint: disable=W0232
     @classmethod
@@ -127,5 +150,6 @@ class UtilsTestSuite:  # pylint: disable=W0232
             'test_file_lock_basic',
             'test_file_lock_multiple_times',
             'test_file_lock_multiple_threads',
-            'test_file_lock_delete_with_acquire']
+            'test_file_lock_delete_with_acquire',
+            'test_file_lock_dir_without_permissions']
         return _unittest.TestSuite(map(UtilsTestCase, tests))
