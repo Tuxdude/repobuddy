@@ -145,7 +145,7 @@ class LoggerError(Exception):
 
 
 class Logger:   # pylint: disable=W0232
-    _disable_debug = True
+    disable_debug = True
     debug_stream = _sys.stdout
     msg_stream = _sys.stdout
     error_stream = _sys.stdout
@@ -163,7 +163,7 @@ class Logger:   # pylint: disable=W0232
 
     @classmethod
     def debug(cls, msg, append_new_line=True):
-        if not cls._disable_debug:
+        if not cls.disable_debug:
             if append_new_line:
                 cls.debug_stream.write(msg + '\n')
             else:
