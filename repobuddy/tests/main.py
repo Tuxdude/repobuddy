@@ -20,6 +20,7 @@
 
 import os as _os
 
+from repobuddy.tests.arg_parser import ArgParserTestSuite
 from repobuddy.tests.common import TestSuiteManager
 from repobuddy.tests.client_info import ClientInfoTestSuite
 from repobuddy.tests.git_wrapper import GitWrapperTestSuite
@@ -36,14 +37,16 @@ def run_tests():
     test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
     tests = TestSuiteManager(test_dir)
 
-    git_wrapper_tests = GitWrapperTestSuite.get_test_suite()
-    manifest_parser_tests = ManifestParserTestSuite.get_test_suite()
-    client_info_tests = ClientInfoTestSuite.get_test_suite()
-    utils_tests = UtilsTestSuite.get_test_suite()
-    tests.add_test_suite(git_wrapper_tests)
-    tests.add_test_suite(manifest_parser_tests)
-    tests.add_test_suite(client_info_tests)
-    tests.add_test_suite(utils_tests)
+    test_suite_classes = [
+        GitWrapperTestSuite,
+        ManifestParserTestSuite,
+        ClientInfoTestSuite,
+        UtilsTestSuite,
+        ArgParserTestSuite]
+
+    for test_suite_class in test_suite_classes:
+        tests.add_test_suite(test_suite_class.get_test_suite())
+
     tests.run()
     tests.show_results()
 
