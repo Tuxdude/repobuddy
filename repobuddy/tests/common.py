@@ -309,10 +309,10 @@ class TestCaseBase(_unittest.TestCase):
 
         if _sys.version_info >= (3, 2):
             # pylint: disable=E1101
-            self._count_equal = self.assertCountEqual
+            self._assert_count_equal = self.assertCountEqual
         else:
             # pylint: disable=E1101
-            self._count_equal = self.assertItemsEqual
+            self._assert_count_equal = self.assertItemsEqual
         return
 
     def setUp(self):
