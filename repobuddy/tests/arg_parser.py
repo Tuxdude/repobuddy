@@ -90,9 +90,9 @@ class ArgParserTestCase(TestCaseBase):
         groups = match_obj.groups()
 
         self.assertEqual(groups[0], 'repobuddy')
-        self.assertItemsEqual(groups[1].rstrip().split(' '), ['[-h]', '[-v]'])
-        self.assertItemsEqual(groups[4].rstrip().split(','),
-                              ['status', 'init', 'help'])
+        self._count_equal(groups[1].rstrip().split(' '), ['[-h]', '[-v]'])
+        self._count_equal(groups[4].rstrip().split(','),
+                          ['status', 'init', 'help'])
 
         return
 
