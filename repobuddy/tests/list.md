@@ -74,7 +74,8 @@ Utils
 3.  Create a lock file in one thread, and try to acquire the lock file in a
     second instance, while the first instance releases the lock.
     check if the file is removed.
-4.  Create a lock file in one thread, try to delete the file in another thread.
+4.  With the lock file held, delete the file, create another instance of the
+    same lock file, still holding the lock.
 5.  Create a lock file in a directory with no write permission.
 
 Arg Parser

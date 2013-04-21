@@ -111,6 +111,11 @@ class UtilsTestCase(TestCaseBase):
         with FileLock(lock_file):
             self.assertTrue(_os.path.isfile(lock_file))
             ShellHelper.remove_file(lock_file)
+
+            second_lock = FileLock(lock_file)
+            second_lock.acquire()
+            second_lock.release()
+
         self.assertFalse(_os.path.isfile(lock_file))
         return
 
