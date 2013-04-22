@@ -36,6 +36,7 @@ from repobuddy.tests.common import ShellHelper, TestCaseBase, TestCommon, \
     TestSuiteManager
 from repobuddy.globals import HelpStrings
 from repobuddy.utils import Logger
+from repobuddy.version import __version__
 
 
 class ArgParserTestCase(TestCaseBase):
@@ -74,6 +75,15 @@ class ArgParserTestCase(TestCaseBase):
                                  ['status', 'init', 'help'])
         return
 
+    def _test_version(self, args_str):
+        self._str_stream.truncate(0)
+        arg_parser = ArgParser(self._handlers)
+        with self.assertRaisesRegexp(ArgParserError, None) as err:
+            arg_parser.parse(_shlex.split(args_str))
+        self.assertTrue(err.exception.exit_prog_without_error)
+        self.assertEqual(self._str_stream.getvalue().rstrip(), __version__)
+        return
+
     def __init__(self, methodName='runTest'):
         super(ArgParserTestCase, self).__init__(methodName)
         self._original_logger_state = {'msg_stream': Logger.msg_stream,
@@ -99,11 +109,16 @@ class ArgParserTestCase(TestCaseBase):
         self._test_help('--help')
         return
 
+    def test_version(self):
+        self._test_version('-v')
+        self._test_version('--version')
+        return
 
 
 class ArgParserTestSuite:  # pylint: disable=W0232
     @classmethod
     def get_test_suite(cls):
         tests = [
-            'test_help']
+            'test_help',
+            'test_version']
         return _unittest.TestSuite(map(ArgParserTestCase, tests))
