@@ -53,30 +53,11 @@ class ArgParserTestCase(TestCaseBase):
         Logger.error_stream = self._original_logger_state['error_stream']
         return
 
-    def __init__(self, methodName='runTest'):
-        super(ArgParserTestCase, self).__init__(methodName)
-        self._original_logger_state = {'msg_stream': Logger.msg_stream,
-                                       'error_stream': Logger.error_stream}
-        self._handlers = {}
-        return
-
-    def setUp(self):
-        self._handlers.clear()
-        self._handlers['init'] = None
-        self._handlers['status'] = None
-
-        self._str_stream = TestCommon.get_string_stream()
-        Logger.msg_stream = self._str_stream
-        Logger.error_stream = self._str_stream
-
-        self._set_tear_down_cb(self._reset_logger)
-        return
-
-    def test_help(self):
+    def _test_help(self, args_str):
+        self._str_stream.truncate(0)
         arg_parser = ArgParser(self._handlers)
-
         with self.assertRaisesRegexp(ArgParserError, None) as err:
-            arg_parser.parse(_shlex.split('-h'))
+            arg_parser.parse(_shlex.split(args_str))
         self.assertTrue(err.exception.exit_prog_without_error)
 
         help_regex = _re.compile(
@@ -92,6 +73,31 @@ class ArgParserTestCase(TestCaseBase):
         self._assert_count_equal(groups[4].rstrip().split(','),
                                  ['status', 'init', 'help'])
         return
+
+    def __init__(self, methodName='runTest'):
+        super(ArgParserTestCase, self).__init__(methodName)
+        self._original_logger_state = {'msg_stream': Logger.msg_stream,
+                                       'error_stream': Logger.error_stream}
+        self._handlers = {}
+        self._str_stream = TestCommon.get_string_stream()
+        return
+
+    def setUp(self):
+        self._handlers.clear()
+        self._handlers['init'] = None
+        self._handlers['status'] = None
+
+        self._str_stream.truncate(0)
+        Logger.msg_stream = self._str_stream
+        Logger.error_stream = self._str_stream
+
+        self._set_tear_down_cb(self._reset_logger)
+        return
+
+    def test_help(self):
+        self._test_help('-h')
+        return
+
 
 
 class ArgParserTestSuite:  # pylint: disable=W0232

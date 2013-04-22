@@ -497,6 +497,7 @@ class TestSuiteManager(object):
             Logger.msg(failure_traces_str + '-' * 72 + '\n')
 
         Logger.msg('Tests Run: ' + str(self._test_result.testsRun))
+        Logger.msg('\n')
         return
 
     def was_successful(self):
