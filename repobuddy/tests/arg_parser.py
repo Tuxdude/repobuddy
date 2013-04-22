@@ -96,6 +96,7 @@ class ArgParserTestCase(TestCaseBase):
 
     def test_help(self):
         self._test_help('-h')
+        self._test_help('--help')
         return
 
 
