@@ -20,12 +20,7 @@
 
 import os as _os
 
-from repobuddy.tests.arg_parser import ArgParserTestSuite
 from repobuddy.tests.common import TestSuiteManager
-from repobuddy.tests.client_info import ClientInfoTestSuite
-from repobuddy.tests.git_wrapper import GitWrapperTestSuite
-from repobuddy.tests.manifest_parser import ManifestParserTestSuite
-from repobuddy.tests.utils import UtilsTestSuite
 
 
 def run_tests():
@@ -37,14 +32,24 @@ def run_tests():
     test_dir = _os.path.join(_os.getcwd(), 'testing-ground')
     tests = TestSuiteManager(test_dir)
 
-    test_suite_classes = [
-        GitWrapperTestSuite,
-        ManifestParserTestSuite,
-        ClientInfoTestSuite,
-        UtilsTestSuite,
-        ArgParserTestSuite]
+    tests_override = _os.environ.get('REPOBUDDY_TESTS')
+    test_suite_classes = None
 
-    for test_suite_class in test_suite_classes:
+    if tests_override is None:
+        test_suite_classes = [
+            'git_wrapper.GitWrapperTestSuite',
+            'manifest_parser.ManifestParserTestSuite',
+            'client_info.ClientInfoTestSuite',
+            'utils.UtilsTestSuite',
+            'arg_parser.ArgParserTestSuite']
+    else:
+        test_suite_classes = tests_override.split(',')
+
+    for class_name in test_suite_classes:
+        module_parts = ('repobuddy.tests.' + class_name).split('.')
+        test_suite_class = __import__('.'.join(module_parts[:-1]))
+        for part in module_parts[1:]:
+            test_suite_class = getattr(test_suite_class, part)
         tests.add_test_suite(test_suite_class.get_test_suite())
 
     tests.run()
