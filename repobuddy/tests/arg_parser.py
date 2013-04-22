@@ -74,18 +74,15 @@ class ArgParserTestCase(TestCaseBase):
 
     def test_help(self):
         arg_parser = ArgParser(self._handlers)
+
         with self.assertRaisesRegexp(ArgParserError, None) as err:
             arg_parser.parse(_shlex.split('-h'))
-
         self.assertTrue(err.exception.exit_prog_without_error)
-
-        help_str = self._str_stream.getvalue()
-        print(help_str)
 
         help_regex = _re.compile(
             r'^usage: ([a-z]+) ((\[-(h|v)\] ){2})\{(([a-z]+,)*[a-z]+)\} ' +
             r'\.\.\.\s+' + HelpStrings.PROGRAM_DESCRIPTION + '\s+')
-        match_obj = help_regex.search(help_str)
+        match_obj = help_regex.search(self._str_stream.getvalue())
         self.assertIsNotNone(match_obj)
         groups = match_obj.groups()
 
@@ -94,7 +91,6 @@ class ArgParserTestCase(TestCaseBase):
                                  ['[-h]', '[-v]'])
         self._assert_count_equal(groups[4].rstrip().split(','),
                                  ['status', 'init', 'help'])
-
         return
 
 
