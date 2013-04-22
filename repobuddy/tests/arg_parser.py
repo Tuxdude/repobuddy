@@ -49,13 +49,19 @@ class ArgParserTestCase(TestCaseBase):
     def tearDownClass(cls):
         return
 
+    def _hook_into_logger(self):
+        self._str_stream = TestCommon.get_string_stream()
+        Logger.msg_stream = self._str_stream
+        Logger.error_stream = self._str_stream
+        return
+
     def _reset_logger(self):
         Logger.msg_stream = self._original_logger_state['msg_stream']
         Logger.error_stream = self._original_logger_state['error_stream']
         return
 
     def _test_help(self, args_str):
-        self._str_stream.truncate(0)
+        self._hook_into_logger()
         arg_parser = ArgParser(self._handlers)
         with self.assertRaisesRegexp(ArgParserError, None) as err:
             arg_parser.parse(_shlex.split(args_str))
@@ -76,7 +82,7 @@ class ArgParserTestCase(TestCaseBase):
         return
 
     def _test_version(self, args_str):
-        self._str_stream.truncate(0)
+        self._hook_into_logger()
         arg_parser = ArgParser(self._handlers)
         with self.assertRaisesRegexp(ArgParserError, None) as err:
             arg_parser.parse(_shlex.split(args_str))
@@ -96,10 +102,6 @@ class ArgParserTestCase(TestCaseBase):
         self._handlers.clear()
         self._handlers['init'] = None
         self._handlers['status'] = None
-
-        self._str_stream.truncate(0)
-        Logger.msg_stream = self._str_stream
-        Logger.error_stream = self._str_stream
 
         self._set_tear_down_cb(self._reset_logger)
         return
