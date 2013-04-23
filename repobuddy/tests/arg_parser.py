@@ -56,6 +56,14 @@ class ArgParserTestCase(TestCaseBase):
         Logger.error_stream = self._original_logger_state['error_stream']
         return
 
+    def _reset_handlers(self):
+        self._last_handler = None
+        self._last_handler_args.clear()
+        self._handlers.clear()
+        self._handlers['init'] = None
+        self._handlers['status'] = None
+        return
+
     def _test_help(self, args_str):
         self._hook_into_logger()
         arg_parser = ArgParser(self._handlers)
@@ -118,14 +126,6 @@ class ArgParserTestCase(TestCaseBase):
 
         self.assertEqual(groups[0], 'repobuddy')
 
-        return
-
-    def _reset_handlers(self):
-        self._last_handler = None
-        self._last_handler_args.clear()
-        self._handlers.clear()
-        self._handlers['init'] = None
-        self._handlers['status'] = None
         return
 
     def _init_handler(self, args):
