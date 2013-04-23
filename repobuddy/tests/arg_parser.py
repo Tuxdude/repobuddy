@@ -67,10 +67,10 @@ class ArgParserTestCase(TestCaseBase):
             arg_parser.parse(_shlex.split(args_str))
         self.assertTrue(err.exception.exit_prog_without_error)
 
-        help_regex = _re.compile(
+        usage_regex = _re.compile(
             r'^usage: ([a-z]+) ((\[-(h|v)\] ){2})\{(([a-z]+,)*[a-z]+)\} ' +
             r'\.\.\.\s+' + HelpStrings.PROGRAM_DESCRIPTION + '\s+')
-        match_obj = help_regex.search(self._str_stream.getvalue())
+        match_obj = usage_regex.search(self._str_stream.getvalue())
         self.assertIsNotNone(match_obj)
         groups = match_obj.groups()
 
