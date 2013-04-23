@@ -18,12 +18,9 @@
 #   <http://www.gnu.org/licenses/>.
 #
 
-import os as _os
 import re as _re
 import shlex as _shlex
 import sys as _sys
-import threading as _threading
-import time as _time
 
 if _sys.version_info < (2, 7):
     import unittest2 as _unittest   # pylint: disable=F0401
@@ -32,8 +29,7 @@ else:
 
 
 from repobuddy.arg_parser import ArgParser, ArgParserError
-from repobuddy.tests.common import ShellHelper, TestCaseBase, TestCommon, \
-    TestSuiteManager
+from repobuddy.tests.common import TestCaseBase, TestCommon, TestSuiteManager
 from repobuddy.globals import HelpStrings
 from repobuddy.utils import Logger
 from repobuddy.version import __version__
