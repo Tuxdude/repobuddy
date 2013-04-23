@@ -40,9 +40,14 @@ pylint:
 pylint-report:
 	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
 
+ifeq ($(REPOBUDDY_TESTS),)
 test:
 	@$(MAKE) coverage || ($(MAKE) pep8 && /bin/false)
 	@$(MAKE) pep8
+else
+test:
+	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
+endif
 
 coverage:
 	@$(COVERAGE) erase
