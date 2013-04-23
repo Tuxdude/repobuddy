@@ -1,3 +1,4 @@
+==========
 Repo Buddy
 ==========
 
@@ -17,6 +18,15 @@ Features (planned)
 
 Inspired by Google's Android repo tool, but much simpler to configure,
 customize and manage a project with multiple Git repositories.
+
+Build Status
+------------
+**Branch dev ⇒** |dev-travis-status|
+
+.. |dev-travis-status| image:: https://travis-ci.org/Tuxdude/repobuddy.png?branch=dev
+    :target: `travis-build-status`_
+    :alt: Build Status
+.. _travis-build-status: https://travis-ci.org/Tuxdude/repobuddy
 
 Bug Reports and Feature Requests
 --------------------------------
