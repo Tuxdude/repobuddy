@@ -128,6 +128,18 @@ class ArgParserTestCase(TestCaseBase):
 
         return
 
+    def _test_help_unsupported_command(self, args_str):
+        self._hook_into_logger()
+        arg_parser = ArgParser(self._handlers)
+        args = _shlex.split(args_str)
+        with self.assertRaisesRegexp(
+                ArgParserError,
+                r'^Error: Unknown command \'' + args[-1] +
+                r'\'\s+usage:') as err:
+            arg_parser.parse(args)
+        self.assertFalse(err.exception.exit_prog_without_error)
+        return
+
     def _init_handler(self, args):
         self._last_handler = args.command
         self._last_handler_args['client_spec'] = args.client_spec
@@ -187,6 +199,11 @@ class ArgParserTestCase(TestCaseBase):
         self._test_status_help('help status')
         return
 
+    def test_help_unsupported_command(self):
+        self._test_help_unsupported_command('help some-unsupported-command')
+        self._test_help_unsupported_command('help invalid-command')
+        return
+
     def test_handlers(self):
         self._test_handlers('init some-client-spec',
                             self._init_handler,
@@ -207,5 +224,6 @@ class ArgParserTestSuite:  # pylint: disable=W0232
             'test_version',
             'test_init_help',
             'test_status_help',
+            'test_help_unsupported_command',
             'test_handlers']
         return _unittest.TestSuite(map(ArgParserTestCase, tests))
