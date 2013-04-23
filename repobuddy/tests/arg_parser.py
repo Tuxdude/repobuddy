@@ -126,7 +126,6 @@ class ArgParserTestCase(TestCaseBase):
         groups = match_obj.groups()
 
         self.assertEqual(groups[0], 'repobuddy')
-
         return
 
     def _test_help_unsupported_command(self, args_str):
@@ -138,6 +137,27 @@ class ArgParserTestCase(TestCaseBase):
                 r'\'\s+usage:') as err:
             arg_parser.parse(args)
         self.assertFalse(err.exception.exit_prog_without_error)
+        return
+
+    def _test_unsupported_command(self, args_str):
+        arg_parser = ArgParser(self._handlers)
+        args = _shlex.split(args_str)
+
+        with self.assertRaises(ArgParserError) as err:
+            arg_parser.parse(args)
+        self.assertFalse(err.exception.exit_prog_without_error)
+
+        error_regex = _re.compile(
+            r'^([a-z]+): Error: argument command: invalid choice: \'' +
+            args[0] + r'\' \(choose from (.*)\)\s+usage:')
+        match_obj = error_regex.search(str(err.exception))
+        self.assertIsNotNone(match_obj)
+        groups = match_obj.groups()
+
+        self.assertEqual(groups[0], 'repobuddy')
+        self._assert_count_equal(
+            [cmd_str.strip('\'') for cmd_str in groups[1].split(', ')],
+            ['init', 'status', 'help'])
         return
 
     def _init_handler(self, args):
@@ -203,6 +223,12 @@ class ArgParserTestCase(TestCaseBase):
         self._test_help_unsupported_command('help invalid-command')
         return
 
+    def test_unsupported_command(self):
+        self._test_unsupported_command('some-invalid-command')
+        self._test_unsupported_command('foo')
+        self._test_unsupported_command('bar baz')
+        return
+
     def test_handlers(self):
         self._test_handlers('init some-client-spec',
                             self._init_handler,
@@ -224,5 +250,6 @@ class ArgParserTestSuite:  # pylint: disable=W0232
             'test_init_help',
             'test_status_help',
             'test_help_unsupported_command',
+            'test_unsupported_command',
             'test_handlers']
         return _unittest.TestSuite(map(ArgParserTestCase, tests))

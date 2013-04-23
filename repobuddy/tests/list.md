@@ -85,7 +85,8 @@ Arg Parser
 3.  Invoke init -h, init --help and help init
 4.  Invoke status -h, status --help and help status
 5.  Invoke help with an unsupported command
-6.  Verify that the right handlers are invoked.
+6.  Invoke an invalid command
+7.  Verify command handlers are being invoked
 
 Fetching Repo Manifest
 ----------------------
