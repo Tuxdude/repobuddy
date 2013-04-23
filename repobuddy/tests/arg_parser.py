@@ -107,6 +107,23 @@ class ArgParserTestCase(TestCaseBase):
 
         return
 
+    def _test_status_help(self, args_str):
+        self._hook_into_logger()
+        arg_parser = ArgParser(self._handlers)
+        with self.assertRaisesRegexp(ArgParserError, None) as err:
+            arg_parser.parse(_shlex.split(args_str))
+        self.assertTrue(err.exception.exit_prog_without_error)
+
+        usage_regex = _re.compile(
+            r'^usage: ([a-z]+) status \[-h\]\s+')
+        match_obj = usage_regex.search(self._str_stream.getvalue())
+        self.assertIsNotNone(match_obj)
+        groups = match_obj.groups()
+
+        self.assertEqual(groups[0], 'repobuddy')
+
+        return
+
     def __init__(self, methodName='runTest'):
         super(ArgParserTestCase, self).__init__(methodName)
         self._original_logger_state = {'msg_stream': Logger.msg_stream,
@@ -139,6 +156,12 @@ class ArgParserTestCase(TestCaseBase):
         self._test_init_help('help init')
         return
 
+    def test_status_help(self):
+        self._test_status_help('status -h')
+        self._test_status_help('status --help')
+        self._test_status_help('help status')
+        return
+
 
 class ArgParserTestSuite:  # pylint: disable=W0232
     @classmethod
@@ -146,5 +169,6 @@ class ArgParserTestSuite:  # pylint: disable=W0232
         tests = [
             'test_help',
             'test_version',
-            'test_init_help']
+            'test_init_help',
+            'test_status_help']
         return _unittest.TestSuite(map(ArgParserTestCase, tests))
