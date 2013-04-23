@@ -62,10 +62,12 @@ class _MasterParser(_argparse.ArgumentParser):
 class ArgParser(object):
     def _display_help_init(self):
         Logger.msg(self._init_command_parser.format_help())
+        self._master_parser.exit(status=0)
         return
 
     def _display_help_status(self):
         Logger.msg(self._status_command_parser.format_help())
+        self._master_parser.exit(status=0)
         return
 
     def _help_command_handler(self, args):
