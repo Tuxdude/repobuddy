@@ -49,6 +49,7 @@ class ArgParserTestCase(TestCaseBase):
         self._str_stream = TestCommon.get_string_stream()
         Logger.msg_stream = self._str_stream
         Logger.error_stream = self._str_stream
+        self._set_tear_down_cb(self._reset_logger)
         return
 
     def _reset_logger(self):
@@ -129,7 +130,6 @@ class ArgParserTestCase(TestCaseBase):
         return
 
     def _test_help_unsupported_command(self, args_str):
-        self._hook_into_logger()
         arg_parser = ArgParser(self._handlers)
         args = _shlex.split(args_str)
         with self.assertRaisesRegexp(
@@ -174,7 +174,6 @@ class ArgParserTestCase(TestCaseBase):
 
     def setUp(self):
         self._reset_handlers()
-        self._set_tear_down_cb(self._reset_logger)
         return
 
     def test_help(self):
