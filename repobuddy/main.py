@@ -36,7 +36,8 @@ def run_repobuddy():
     try:
         arg_parser.parse(_sys.argv[1:])
     except (CommandHandlerError, ArgParserError) as err:
-        if not err.exit_prog_without_error:
+        if isinstance(err, CommandHandlerError) or \
+           (not err.exit_prog_without_error):
             err_msg = str(err)
             if not err_msg is 'None':
                 Logger.error(err_msg)
