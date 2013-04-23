@@ -14,6 +14,10 @@ exclude_lines =
 
     if _sys.version_info
 
+    if not tests_override is None:
+
     def add(Error|Failure|Success|Skip|ExpectedFailure|UnexpectedSuccess)
 
     def show_results
+
+    return$

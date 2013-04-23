@@ -35,15 +35,15 @@ def run_tests():
     tests_override = _os.environ.get('REPOBUDDY_TESTS')
     test_suite_classes = None
 
-    if tests_override is None:
+    if not tests_override is None:
+        test_suite_classes = tests_override.split(',')
+    else:
         test_suite_classes = [
             'git_wrapper.GitWrapperTestSuite',
             'manifest_parser.ManifestParserTestSuite',
             'client_info.ClientInfoTestSuite',
             'utils.UtilsTestSuite',
             'arg_parser.ArgParserTestSuite']
-    else:
-        test_suite_classes = tests_override.split(',')
 
     for class_name in test_suite_classes:
         module_parts = ('repobuddy.tests.' + class_name).split('.')
