@@ -124,19 +124,48 @@ class ArgParserTestCase(TestCaseBase):
 
         return
 
+    def _reset_handlers(self):
+        self._last_handler = None
+        self._last_handler_args.clear()
+        self._handlers.clear()
+        self._handlers['init'] = None
+        self._handlers['status'] = None
+        return
+
+    def _init_handler(self, args):
+        self._last_handler = args.command
+        self._last_handler_args['client_spec'] = args.client_spec
+        return
+
+    def _status_handler(self, args):
+        self._last_handler = args.command
+        return
+
+    def _test_handlers(self,
+                       args_str,
+                       command_handler,
+                       handler_name,
+                       expected_handler_args):
+        self._reset_handlers()
+        self._handlers[handler_name] = command_handler
+
+        ArgParser(self._handlers).parse(_shlex.split(args_str))
+        self.assertEqual(self._last_handler, handler_name)
+        self.assertEqual(self._last_handler_args, expected_handler_args)
+        return
+
     def __init__(self, methodName='runTest'):
         super(ArgParserTestCase, self).__init__(methodName)
         self._original_logger_state = {'msg_stream': Logger.msg_stream,
                                        'error_stream': Logger.error_stream}
         self._handlers = {}
         self._str_stream = TestCommon.get_string_stream()
+        self._last_handler = None
+        self._last_handler_args = {}
         return
 
     def setUp(self):
-        self._handlers.clear()
-        self._handlers['init'] = None
-        self._handlers['status'] = None
-
+        self._reset_handlers()
         self._set_tear_down_cb(self._reset_logger)
         return
 
@@ -162,6 +191,17 @@ class ArgParserTestCase(TestCaseBase):
         self._test_status_help('help status')
         return
 
+    def test_handlers(self):
+        self._test_handlers('init some-client-spec',
+                            self._init_handler,
+                            'init',
+                            {'client_spec': 'some-client-spec'})
+        self._test_handlers('status',
+                            self._status_handler,
+                            'status',
+                            {})
+        return
+
 
 class ArgParserTestSuite:  # pylint: disable=W0232
     @classmethod
@@ -170,5 +210,6 @@ class ArgParserTestSuite:  # pylint: disable=W0232
             'test_help',
             'test_version',
             'test_init_help',
-            'test_status_help']
+            'test_status_help',
+            'test_handlers']
         return _unittest.TestSuite(map(ArgParserTestCase, tests))

@@ -84,7 +84,7 @@ Arg Parser
 2.  Invoke -v and --version
 3.  Invoke init -h, init --help and help init
 4.  Invoke status -h, status --help and help status
-5.  Invoke help -h, help --help and help help
+5.  Verify that the right handlers are invoked.
 
 Fetching Repo Manifest
 ----------------------
