@@ -88,6 +88,28 @@ Arg Parser
 6.  Invoke an invalid command
 7.  Verify command handlers are being invoked
 
+Command Handlers
+----------------
+1.  Verify the number of handlers.
+2.  init - Initialize a client with a valid Spec
+3.  init - Initialize a client with an invalid Spec
+4.  init - Re-initialize a client
+5.  init - Initialize a client from an invalid repo manifest
+6.  status- Uninitialized client
+7.  status- No changes in any of the repos
+8.  status- No changes, but on a different branch in one of the repo
+9.  status- No changes, but on different branches in 2 repos
+10. status- 3 repos - 1 with untracked change, 1 with tracked but uncommitted
+    and third with staged change
+11. status - Committed changes and ahead of origin, but in same branch
+12. status - Committed changes and ahead of origin, but in a different branch
+13. status - Local copy in a different branch, and deleted the branch in the SPEC
+
+Feature/General Usage Tests
+---------------------------
+1.  No write permissions in the current dir
+2.  2nd instance of repobuddy while the lock is taken
+
 Fetching Repo Manifest
 ----------------------
 1.  From file
@@ -95,30 +117,3 @@ Fetching Repo Manifest
 3.  From HTTP
 4.  From HTTPS
 5.  From SSH
-
-Command Handlers
-----------------
-
-init command
-------------
-1.  Initialize a client with a valid Spec
-2.  Initialize a client with an invalid Spec
-3.  Re-initialize a client
-4.  Initialize a client from an invalid repo manifest
-
-status command
---------------
-1.  Uninitialized client
-2.  No changes in any of the repos
-3.  No changes, but on a different branch in one of the repo
-4.  No changes, but on different branches in 2 repos
-5.  3 repos - 1 with untracked change, 1 with tracked but uncommitted and
-    third with staged change
-6.  Committed changes and ahead of origin, but in same branch
-7.  Committed changes and ahead of origin, but in a different branch
-8.  Local copy in a different branch, and deleted the branch in the SPEC
-
-General
--------
-1.  No write permissions in the current dir
-2.  2nd instance of repobuddy while the lock is taken
