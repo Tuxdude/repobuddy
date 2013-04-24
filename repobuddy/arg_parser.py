@@ -102,6 +102,9 @@ class ArgParser(object):
             'init',
             help=HelpStrings.INIT_COMMAND_HELP)
         self._init_command_parser.add_argument(
+            'manifest',
+            help=HelpStrings.INIT_MANIFEST_ARG)
+        self._init_command_parser.add_argument(
             'client_spec',
             help=HelpStrings.INIT_CLIENT_SPEC_ARG)
         self._init_command_parser.set_defaults(func=handlers['init'])

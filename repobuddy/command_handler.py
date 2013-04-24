@@ -35,10 +35,14 @@ class CommandHandlerError(RepoBuddyBaseException):
 
 
 class CommandHandler(object):
-    def _get_manifest(self):
+    def _get_manifest(self, manifest):
         # FIXME: Support various protcols for fetching the manifest XML file
-        input_manifest = _os.path.join(self._current_dir,
-                                       'manifest/repomanifest-example.xml')
+        input_manifest = None
+        if not _os.path.isabs(manifest):
+            input_manifest = _os.path.join(self._current_dir,
+                                           manifest)
+        else:
+            input_manifest = manifest
 
         # Copy the manifest xml file to .repobuddy dir
         try:
@@ -132,7 +136,7 @@ class CommandHandler(object):
             raise CommandHandlerError('Error: Client is already initialized')
 
         # Download the manifest XML
-        self._get_manifest()
+        self._get_manifest(args.manifest)
 
         # Parse the manifest XML
         self._parse_manifest()

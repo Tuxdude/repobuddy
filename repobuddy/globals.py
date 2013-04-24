@@ -36,7 +36,9 @@ class HelpStrings:  # pylint: disable=W0232
     MASTER_PARSER_ARG_HELP = 'Command to invoke'
     MASTER_PARSER_ARG_TITLE = 'Available Commands'
     INIT_COMMAND_HELP = 'Init the current directory to set up the repos'
-    INIT_CLIENT_SPEC_ARG = 'The Client Spec to use for this client'
+    INIT_MANIFEST_ARG = 'The Manifest file to use for this client'
+    INIT_CLIENT_SPEC_ARG = 'The Client Spec in the Manifest to use for ' + \
+                           'this client'
     HELP_COMMAND_HELP = 'Show usage details for a command'
     HELP_COMMAND_ARG = 'Command to see the help message for'
     STATUS_COMMAND = 'Show status of the current client config'

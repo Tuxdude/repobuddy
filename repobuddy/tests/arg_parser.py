@@ -103,7 +103,7 @@ class ArgParserTestCase(TestCaseBase):
         self.assertTrue(err.exception.exit_prog_without_error)
 
         usage_regex = _re.compile(
-            r'^usage: ([a-z]+) init \[-h\] client_spec\s+')
+            r'^usage: ([a-z]+) init \[-h\] manifest client_spec\s+')
         match_obj = usage_regex.search(self._str_stream.getvalue())
         self.assertIsNotNone(match_obj)
         groups = match_obj.groups()
@@ -162,6 +162,7 @@ class ArgParserTestCase(TestCaseBase):
 
     def _init_handler(self, args):
         self._last_handler = args.command
+        self._last_handler_args['manifest'] = args.manifest
         self._last_handler_args['client_spec'] = args.client_spec
         return
 
@@ -230,10 +231,11 @@ class ArgParserTestCase(TestCaseBase):
         return
 
     def test_handlers(self):
-        self._test_handlers('init some-client-spec',
+        self._test_handlers('init some-manifest some-client-spec',
                             self._init_handler,
                             'init',
-                            {'client_spec': 'some-client-spec'})
+                            {'manifest': 'some-manifest',
+                             'client_spec': 'some-client-spec'})
         self._test_handlers('status',
                             self._status_handler,
                             'status',
