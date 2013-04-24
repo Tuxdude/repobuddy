@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-#   Copyright (C) 2012 Ash (Tuxdude) <tuxdude.github@gmail.com>
+#   Copyright (C) 2013 Ash (Tuxdude) <tuxdude.github@gmail.com>
 #
 #   This file is part of repobuddy.
 #
