@@ -43,7 +43,8 @@ def run_tests():
             'manifest_parser.ManifestParserTestSuite',
             'client_info.ClientInfoTestSuite',
             'utils.UtilsTestSuite',
-            'arg_parser.ArgParserTestSuite']
+            'arg_parser.ArgParserTestSuite',
+            'command_handler.CommandHandlerTestSuite']
 
     for class_name in test_suite_classes:
         module_parts = ('repobuddy.tests.' + class_name).split('.')
