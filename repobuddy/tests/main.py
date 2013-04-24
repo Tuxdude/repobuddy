@@ -35,8 +35,8 @@ def run_tests():
     tests_override = _os.environ.get('REPOBUDDY_TESTS')
     test_suite_classes = None
 
-    if not tests_override is None:
-        test_suite_classes = tests_override.split(',')
+    if not tests_override is None and not tests_override.strip() is '':
+        test_suite_classes = tests_override.strip().split(',')
     else:
         test_suite_classes = [
             'git_wrapper.GitWrapperTestSuite',

@@ -40,23 +40,26 @@ pylint:
 pylint-report:
 	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
 
-ifeq ($(REPOBUDDY_TESTS),)
-test:
-	@$(MAKE) coverage || ($(MAKE) pep8 && /bin/false)
-	@$(MAKE) pep8
-else
-test:
-	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
-endif
+coverage-annotate: coverage
+	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
+	@$(BROWSER) $(COVERAGE_HTML_DIR)/index.html
 
 coverage:
 	@$(COVERAGE) erase
 	@($(COVERAGE) run ./run_tests.py && \
 	    $(COVERAGE) report && echo) || ($(COVERAGE) report && echo && /bin/false)
 
-coverage-annotate: coverage
-	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
-	@$(BROWSER) $(COVERAGE_HTML_DIR)/index.html
+ifeq ($(REPOBUDDY_TESTS),)
+test:
+	@$(MAKE) coverage || ($(MAKE) pep8 && /bin/false)
+	@$(MAKE) pep8
+
+else
+coverage:REPOBUDDY_TESTS=
+
+test:
+	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
+endif
 
 .PHONY: dev-install dev-uninstall sdist install install-user clean
 .PHONY: pep8 pylint pylint-report test coverage converage-annotate
