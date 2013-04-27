@@ -5,9 +5,11 @@ COVERAGE            := coverage
 COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := chromium
 SRCS                := $(shell find . \( -path ./build -o -path ./docs \) -prune -o -name '*.py' -print)
+PYTHON_VERSION      := $($(PYTHON) --version 2>&1 | sed 's/^Python \([0-9]\.[0-9]\)\.[0-9]$/\1/')
 CLEANUP_FILES       := \
                        $$HOME/.local/bin/repobuddy \
-	               $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
+                       $$HOME/.local/bin/test_repobuddy \
+	               $$HOME/.local/lib/python$(PYTHON_VERSION)/site-packages/RepoBuddy*.egg* \
                        *.egg-info \
                        build \
                        dist \
@@ -15,7 +17,7 @@ CLEANUP_FILES       := \
 MAKEFLAGS 	    += --no-print-directory
 
 dev-install:
-	@$(PYTHON) setup.py develop
+	@$(PYTHON) setup.py develop --user --prefix=
 
 dev-uninstall:
 	@$(PYTHON) setup.py develop --uninstall
@@ -29,7 +31,7 @@ install:
 
 clean:
 	@rm -rf $(CLEANUP_FILES)
-	@find . -name '*.py,cover' -print0 | xargs -0 -r rm
+	@find . -name '*.py,cover' -print0 | xargs -0 -r rm -f
 
 pep8:
 	@$(PEP8) $(SRCS)
