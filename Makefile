@@ -4,7 +4,7 @@ PEP8                := pep8
 COVERAGE            := coverage
 COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := chromium
-SRCS                := $(shell find . -path ./build -prune -o -name '*.py' -print)
+SRCS                := $(shell find . \( -path ./build -o -path ./docs \) -prune -o -name '*.py' -print)
 CLEANUP_FILES       := \
                        $$HOME/.local/bin/repobuddy \
 	               $$HOME/.local/lib/python2.7/site-packages/RepoBuddy*.egg \
