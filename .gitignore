@@ -2,6 +2,7 @@
 *.py,cover
 *.swp
 *.egg-info
+/docs/.build
 /build
 /dist
 .coverage
