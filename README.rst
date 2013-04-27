@@ -1,6 +1,6 @@
-==========
-Repo Buddy
-==========
+=========
+RepoBuddy
+=========
 
 Multi-repository management tool for GIT
 
@@ -40,5 +40,5 @@ Ash (Tuxdude) <tuxdude.github@gmail.com>
 
 License
 -------
-Repo Buddy sources are released under GNU LGPL v3 license. Feel free to
+RepoBuddy sources are released under GNU LGPL v3 license. Feel free to
 redistribute and/or modify under the same or equivalent license.
