@@ -6,7 +6,7 @@ python:
     - "3.3"
 
 # Install any dependencies if required
-install: repobuddy/tests/install-deps.sh
+install: make install-test-deps
 
 # Run the tests
 script: make test

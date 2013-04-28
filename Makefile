@@ -1,3 +1,4 @@
+TOP_DIR             := $(dir $(lastword $(MAKEFILE_LIST)))
 PYTHON              := python
 PYLINT              := pylint
 PEP8                := pep8
@@ -5,6 +6,7 @@ PEP257              := pep257
 COVERAGE            := coverage
 COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := xdg-open
+INSTALL_TEST_DEPS   := $(TOP_DIR)/repobuddy/tests/install-deps.sh
 SRCS                := $(shell find . \( -path ./build -o -path ./docs \) -prune -o -name '*.py' -print)
 PYTHON_VERSION      := $($(PYTHON) --version 2>&1 | sed 's/^Python \([0-9]\.[0-9]\)\.[0-9]$/\1/')
 CLEANUP_FILES       := \
@@ -29,6 +31,9 @@ sdist:
 
 install:
 	@$(PYTHON) setup.py install
+
+install-test-deps:
+	@$(INSTALL_TEST_DEPS)
 
 clean:
 	@rm -rf $(CLEANUP_FILES)
@@ -67,5 +72,5 @@ test:
 	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
 endif
 
-.PHONY: dev-install dev-uninstall sdist install install-user clean
+.PHONY: dev-install dev-uninstall sdist install install-test-deps clean
 .PHONY: pep8 pep257 pylint pylint-report test coverage converage-annotate
