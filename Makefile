@@ -1,6 +1,7 @@
 PYTHON              := python
 PYLINT              := pylint
 PEP8                := pep8
+PEP257              := pep257
 COVERAGE            := coverage
 COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := xdg-open
@@ -36,6 +37,9 @@ clean:
 pep8:
 	@$(PEP8) $(SRCS)
 
+pep257:
+	@$(PEP257) --explain $(SRCS)
+
 pylint:
 	@$(PYLINT) --rcfile=.pylintrc -r n -i y -d C0111 $(SRCS)
 
@@ -64,4 +68,4 @@ test:
 endif
 
 .PHONY: dev-install dev-uninstall sdist install install-user clean
-.PHONY: pep8 pylint pylint-report test coverage converage-annotate
+.PHONY: pep8 pep257 pylint pylint-report test coverage converage-annotate
