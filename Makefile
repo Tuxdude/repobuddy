@@ -46,10 +46,10 @@ pep257:
 	@$(PEP257) --explain $(SRCS)
 
 pylint:
-	@$(PYLINT) --rcfile=.pylintrc -r n -i y -d C0111 $(SRCS)
+	@$(PYLINT) --rcfile=.pylintrc --reports=n --include-ids=y $(SRCS)
 
 pylint-report:
-	@$(PYLINT) --rcfile=.pylintrc -r y -i y -d C0111 $(SRCS)
+	@$(PYLINT) --rcfile=.pylintrc --reports=y --include-ids=y $(SRCS)
 
 coverage-annotate: coverage
 	@$(COVERAGE) html -d $(COVERAGE_HTML_DIR)
