@@ -39,6 +39,9 @@ clean:
 	@rm -rf $(CLEANUP_FILES)
 	@find . -name '*.py,cover' -print0 | xargs -0 -r rm -f
 
+docs:
+	@$(MAKE) -C ./docs html
+
 pep8:
 	@$(PEP8) $(SRCS)
 
@@ -72,5 +75,5 @@ test:
 	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
 endif
 
-.PHONY: dev-install dev-uninstall sdist install install-test-deps clean
+.PHONY: dev-install dev-uninstall sdist install install-test-deps clean docs
 .PHONY: pep8 pep257 pylint pylint-report test coverage converage-annotate
