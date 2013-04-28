@@ -137,33 +137,40 @@ class ManifestParserTestCase(TestCaseBase):
                 ClientSpec(
                     'Spec1',
                     [
-                        Repo('https://github.com/git/git.git',
-                             'master',
-                             'repos/git'),
-                        Repo('https://github.com/github/linguist.git',
-                             'master',
-                             'repos/linguist')]),
+                        Repo(
+                            'https://gist.github.com/08e8481e9d43646eb942.git',
+                            'master',
+                            'repos/gist-test-repo1'),
+                        Repo(
+                            'https://gist.github.com/157762e334f517a1062e.git',
+                            'master',
+                            'repos/gist-test-repo3')]),
                 ClientSpec(
                     'Spec2',
                     [
-                        Repo('https://github.com/github/gitignore.git',
-                             'master',
-                             'gitignore'),
-                        Repo('git://github.com/github/linguist.git',
-                             'master',
-                             'linguist',)]),
+                        Repo(
+                            'https://gist.github.com/08e8481e9d43646eb942.git',
+                            'master',
+                            'gist-test-repo2'),
+                        Repo(
+                            'git://github.com/github/linguist.git',
+                            'master',
+                            'linguist',)]),
                 ClientSpec(
                     'Spec3',
                     [
-                        Repo('git://github.com/jquery/jquery.git',
-                             'master',
-                             'repos/jquery'),
-                        Repo('git://github.com/Tuxdude/repobuddy.git',
-                             'dev',
-                             'repos/repobuddy'),
-                        Repo('https://github.com/github/gitignore.git',
-                             'master',
-                             'repos/gitignore')])])
+                        Repo(
+                            'https://gist.github.com/08e8481e9d43646eb942.git',
+                            'master',
+                            'repos/gist-test-repo1'),
+                        Repo(
+                            'https://gist.github.com/08e8481e9d43646eb942.git',
+                            'master',
+                            'repos/gist-test-repo2'),
+                        Repo(
+                            'https://gist.github.com/157762e334f517a1062e.git',
+                            'master',
+                            'repos/gist-test-repo3')])])
 
         self.assertEqual(manifest, expected_manifest)
         return

@@ -2,21 +2,21 @@
 <RepoBuddyManifest default_client_spec="Spec1">
     <ClientSpec name="Spec1">
         <Repo>
-            <Url>https://github.com/git/git.git</Url>
+            <Url>https://gist.github.com/08e8481e9d43646eb942.git</Url>
             <Branch>master</Branch>
-            <Destination>repos/git</Destination>
+            <Destination>repos/gist-test-repo1</Destination>
         </Repo>
         <Repo>
-            <Url>https://github.com/github/linguist.git</Url>
+            <Url>https://gist.github.com/157762e334f517a1062e.git</Url>
             <Branch>master</Branch>
-            <Destination>repos/linguist</Destination>
+            <Destination>repos/gist-test-repo3</Destination>
         </Repo>
     </ClientSpec>
     <ClientSpec name="Spec2">
         <Repo>
-            <Url>https://github.com/github/gitignore.git</Url>
+            <Url>https://gist.github.com/08e8481e9d43646eb942.git</Url>
             <Branch>master</Branch>
-            <Destination>gitignore</Destination>
+            <Destination>gist-test-repo2</Destination>
         </Repo>
         <Repo>
             <Url>git://github.com/github/linguist.git</Url>
@@ -26,19 +26,19 @@
     </ClientSpec>
     <ClientSpec name="Spec3">
         <Repo>
-            <Url>git://github.com/jquery/jquery.git</Url>
+            <Url>https://gist.github.com/08e8481e9d43646eb942.git</Url>
             <Branch>master</Branch>
-            <Destination>repos/jquery</Destination>
+            <Destination>repos/gist-test-repo1</Destination>
         </Repo>
         <Repo>
-            <Url>git://github.com/Tuxdude/repobuddy.git</Url>
-            <Branch>dev</Branch>
-            <Destination>repos/repobuddy</Destination>
+            <Url>https://gist.github.com/08e8481e9d43646eb942.git</Url>
+            <Branch>master</Branch>
+            <Destination>repos/gist-test-repo2</Destination>
         </Repo>
         <Repo>
-            <Url>https://github.com/github/gitignore.git</Url>
+            <Url>https://gist.github.com/157762e334f517a1062e.git</Url>
             <Branch>master</Branch>
-            <Destination>repos/gitignore</Destination>
+            <Destination>repos/gist-test-repo3</Destination>
         </Repo>
     </ClientSpec>
 </RepoBuddyManifest>
