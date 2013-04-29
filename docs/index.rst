@@ -1,7 +1,4 @@
-.. RepoBuddy documentation master file, created by
-   sphinx-quickstart on Fri Apr 26 20:26:27 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. RepoBuddy documentation master file.
 
 Welcome to RepoBuddy's documentation!
 =====================================
@@ -9,9 +6,11 @@ Welcome to RepoBuddy's documentation!
 Contents:
 
 .. toctree::
+   :numbered:
    :maxdepth: 2
 
-
+   intro
+   codedoc
 
 Indices and tables
 ==================

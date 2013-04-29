@@ -7,7 +7,7 @@ COVERAGE            := coverage
 COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := xdg-open
 INSTALL_TEST_DEPS   := $(TOP_DIR)/repobuddy/tests/install-deps.sh
-SRCS                := $(shell find . \( -path ./build -o -path ./docs \) -prune -o -name '*.py' -print)
+SRCS                := $(shell find . \( -path ./build \) -prune -o -name '*.py' -print)
 PYTHON_VERSION      := $($(PYTHON) --version 2>&1 | sed 's/^Python \([0-9]\.[0-9]\)\.[0-9]$/\1/')
 CLEANUP_FILES       := \
                        $$HOME/.local/bin/repobuddy \
@@ -40,7 +40,7 @@ clean:
 	@find . -name '*.py,cover' -print0 | xargs -0 -r rm -f
 
 docs:
-	@$(MAKE) -C ./docs html
+	@$(MAKE) -C ./docs clean && $(MAKE) -C ./docs html
 
 pep8:
 	@$(PEP8) $(SRCS)
