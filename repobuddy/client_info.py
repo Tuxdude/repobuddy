@@ -25,7 +25,6 @@
 
 """
 
-
 import sys as _sys
 
 if _sys.version_info >= (3, 0):
@@ -76,8 +75,8 @@ class ClientInfo(object):
         :param option: The name of the option in the config file.
         :type option: str
         :returns: The value of the option under the section.
-        :raises: :class:`ClientInfoError` when the section or the option or
-            both do not exist.
+        :raises: :exc:`ClientInfoError` when the section or the option or both
+            do not exist.
 
         """
         try:
@@ -97,7 +96,7 @@ class ClientInfo(object):
         :param value: The new value for the option under the section.
         :type value: str
         :returns: None
-        :raises: :class:`ClientInfoError` when the section does not exist.
+        :raises: :exc:`ClientInfoError` when the section does not exist.
 
         """
         try:
@@ -116,7 +115,7 @@ class ClientInfo(object):
             opened, parsed and the instance represents the state of the config
             file.
         :type config_file_name: str
-        :raises: :class:`ClientInfoError` when ``config_file_name`` is not
+        :raises: :exc:`ClientInfoError` when ``config_file_name`` is not
             ``None`` and any of the following conditions are met:
 
             - Failed to open the config file.
@@ -150,8 +149,8 @@ class ClientInfo(object):
         :param client_spec_name: The value for ``client_spec`` in the config.
         :type client_spec_name: str
         :returns: None
-        :raises: :class:`ClientInfoError` if the config does not already have
-            the ``RepoBuddyClientInfo`` section.
+        :raises: :exc:`ClientInfoError` if the config does not already have the
+            ``RepoBuddyClientInfo`` section.
 
         """
         self._set_config('RepoBuddyClientInfo',
@@ -165,8 +164,8 @@ class ClientInfo(object):
         :param manifest_xml: The value for ``manifest`` in the config.
         :type manifest_xml: str
         :returns: None
-        :raises: :class:`ClientInfoError` if the config does not have
-            the ``RepoBuddyClientInfo`` section.
+        :raises: :exc:`ClientInfoError` if the config does not have the
+            ``RepoBuddyClientInfo`` section.
 
         """
         self._set_config('RepoBuddyClientInfo', 'manifest', manifest_xml)
@@ -177,7 +176,7 @@ class ClientInfo(object):
 
         :returns: The value of ``client_spec`` in the config.
         :rtype: str
-        :raises: :class:`ClientInfoError` if the config does not have the
+        :raises: :exc:`ClientInfoError` if the config does not have the
             ``client_spec`` option.
 
         """
@@ -188,7 +187,7 @@ class ClientInfo(object):
 
         :returns: The value of ``manifest`` in the config.
         :rtype: str
-        :raises: :class:`ClientInfoError` if the config does not have the
+        :raises: :exc:`ClientInfoError` if the config does not have the
             ``manifest`` option.
 
         """
@@ -206,8 +205,8 @@ class ClientInfo(object):
         :param file_name: The name of the file to write the config into.
         :type file_name: str
         :returns: None
-        :raises: :class:`ClientInfoError` when any of the following
-            conditions are met:
+        :raises: :exc:`ClientInfoError` when any of the following conditions
+            are met:
 
             - ``file_name`` parameter is ``None`` and no file name was
               provided during initialization.
