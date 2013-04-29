@@ -21,6 +21,9 @@ import os
 # like shown here.
 sys.path.insert(0, os.path.abspath('../'))
 
+# ReadTheDocs
+on_rtd = os.environ.get('READTHEDOCS') is not None
+
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -50,7 +53,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'RepoBuddy'
-copyright = u'2013, Ash <tuxdude.github@gmail.com>'
+author = u'Ash <tuxdude.github@gmail.com>'
+copyright = u'2013, ' + author
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -238,7 +242,7 @@ man_pages = [
     ('index',
      'repobuddy',
      u'RepoBuddy Documentation',
-     [u'Ash <tuxdude.github@gmail.com>'],
+     [author],
      1)
 ]
 
@@ -253,10 +257,10 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     ('index',
-     'RepoBuddy',
+     project,
      u'RepoBuddy Documentation',
-     u'Ash <tuxdude.github@gmail.com>',
-     'RepoBuddy',
+     author,
+     project,
      'One line description of project.',
      'Miscellaneous'),
 ]
@@ -277,10 +281,10 @@ texinfo_documents = [
 # -- Options for Epub output -------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'RepoBuddy'
-epub_author = u'Ash <tuxdude.github@gmail.com>'
-epub_publisher = u'Ash <tuxdude.github@gmail.com>'
-epub_copyright = u'2013, Ash <tuxdude.github@gmail.com>'
+epub_title = project
+epub_author = author
+epub_publisher = author
+epub_copyright = copyright
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
@@ -336,18 +340,27 @@ epub_copyright = u'2013, Ash <tuxdude.github@gmail.com>'
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
 
+# Enable documenting members, undocumented members and displaying inheritance
+# by default
 autodoc_default_flags = ['members',
                          'undoc-members',
-                         'private-members',
                          'show-inheritance']
+
+# Enable documenting private members only on non-RTD builds.
+if not on_rtd:
+    autodoc_default_flags.append('private-members')
+
+# Preserve the order of members in the sources.
 autodoc_member_order = 'bysource'
 
 
+# Do not skip documenting __init__
 def skip(app, what, name, obj, skip, options):
     if name == "__init__":
         return False
     return skip
 
 
+# Hook up the skip() function
 def setup(app):
     app.connect("autodoc-skip-member", skip)
