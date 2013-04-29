@@ -118,7 +118,7 @@ class ClientInfo(object):
         :type config_file_name: str
         :raises: :class:`ClientInfoError` when ``config_file_name`` is not
             ``None`` and any of the following conditions are met:
-            
+
             - Failed to open the config file.
             - Parsing errors have been detected.
             - Validating the config failed.
