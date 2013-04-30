@@ -17,6 +17,13 @@
 #   License along with this program.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
+"""
+.. module: client_info
+   :platform: Unix, Windows
+   :synopsis: Parses/Stores/Retrieves client specific configuration.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import os as _os
 import shutil as _shutil
@@ -29,13 +36,33 @@ from repobuddy.client_info import ClientInfo, ClientInfoError
 
 
 class CommandHandlerError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`CommandHandler`."""
+
     def __init__(self, error_str):
         super(CommandHandlerError, self).__init__(error_str)
         return
 
 
 class CommandHandler(object):
+
+    """Provides handlers for the ``repobuddy`` commands."""
+
     def _get_manifest(self, manifest):
+        """Retrieve the ``manifest`` into ``.repobuddy`` directory.
+
+        If ``manifest`` is a file, it is copied into the ``.repobuddy``
+        directory.
+
+        As of now, the ``manifest`` argument needs to be a filename. Other
+        protocols for fetching the manifest might be supported in the future.
+
+        :param manifest: Manifest to retrieve.
+        :type manifest: str
+        :returns: None
+        :raises: :exc:`CommandHandlerError` if unable to open the manifest.
+
+        """
         # FIXME: Support various protcols for fetching the manifest XML file
         input_manifest = None
         if not _os.path.isabs(manifest):
@@ -52,7 +79,12 @@ class CommandHandler(object):
         return
 
     def _parse_manifest(self):
-        # Parse the manifest file
+        """Parse the ``manifest``.
+
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on parsing errors.
+
+        """
         manifest_parser = ManifestParser()
         try:
             manifest_parser.parse(open(self._manifest_file, 'r'))
@@ -62,8 +94,16 @@ class CommandHandler(object):
         self._manifest = manifest_parser.get_manifest()
         return
 
-    # Retrieve the client spec corresponding to the command-line argument
     def _get_client_spec(self, client_spec_name):
+        """Retrieve the ``client_spec``.
+
+        :param client_spec_name: The name of the client_spec.
+        :type client_spec_name: str
+        :returns: Client Spec
+        :rtype: :class:`repobuddy.manifest_parser.ClientSpec`
+        :raises: :exc:`CommandHandlerError`
+
+        """
         client_spec = None
         for spec in self._manifest.client_spec_list:
             if spec.name == client_spec_name:
@@ -76,6 +116,15 @@ class CommandHandler(object):
         return client_spec
 
     def _store_client_info(self, client_spec_name):
+        """Write the client config to ``.repobuddy/client.config``.
+
+        :param client_spec_name: Name of the client_spec.
+        :type client_spec: str
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on any failures in creating
+            or storing the config.
+
+        """
         try:
             client_info = ClientInfo()
             client_info.set_client_spec(client_spec_name)
@@ -85,7 +134,14 @@ class CommandHandler(object):
             raise CommandHandlerError(str(err))
         return
 
-    def _get_client_info(self):
+    def _get_client_spec_name_from_config(self):
+        """Retrieve the client_spec name from the client config.
+
+        :returns: Value of client_spec in the config.
+        :rtype: str
+        :raises: :exc:`CommandHandlerError` on any failures.
+
+        """
         try:
             client_info = ClientInfo(self._client_info_file)
             return client_info.get_client_spec()
@@ -94,11 +150,27 @@ class CommandHandler(object):
         return
 
     def _is_client_initialized(self):
+        """Determine if the client is initialized.
+
+        :returns: ``True`` is the client is initialized, ``False`` otherwise.
+        :rtype: Boolean
+
+        """
         return _os.path.isfile(
             _os.path.join(self._repo_buddy_dir, 'client.config'))
 
-    # Calls exec_method while holding the .repobuddy/lock
     def _exec_with_lock(self, exec_method, *method_args):
+        """Call ``exec_method`` while holding the ``.repobuddy/lock``.
+
+        :param exec_method: The method to execute.
+        :type exec_method: Reference to a method
+        :param method_args: Arguments to the method.
+        :type method_args: list
+        :returns: None
+        :raises: :exc:`CommandHandlerError` if failing to create the lock
+            file or any errors in executing the method.
+
+        """
         lock_file = _os.path.join(self._repo_buddy_dir, 'lock')
 
         if not _os.path.isdir(self._repo_buddy_dir):
@@ -132,6 +204,16 @@ class CommandHandler(object):
 
     # Init command which runs after acquiring the Lock
     def _exec_init(self, args):
+        """Execute ``init`` command.
+
+        This method needs to be called after acquiring the lock.
+
+        :param args: Arguments to the init command.
+        :type args: Namespace containing the arguments.
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on any errors.
+
+        """
         if self._is_client_initialized():
             raise CommandHandlerError('Error: Client is already initialized')
 
@@ -157,6 +239,14 @@ class CommandHandler(object):
         return
 
     def _exec_status(self):
+        """Execute the ``status`` command.
+
+        This method needs to be called after acquiring the lock.
+
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on errors.
+
+        """
         if not self._is_client_initialized():
             raise CommandHandlerError(
                 'Error: Uninitialized client, ' +
@@ -166,7 +256,8 @@ class CommandHandler(object):
         self._parse_manifest()
 
         # Get the client spec name from client info
-        client = self._get_client_spec(self._get_client_info())
+        client = self._get_client_spec(
+            self._get_client_spec_name_from_config())
 
         # Process each repo in the Client Spec
         for repo in client.repo_list:
@@ -213,6 +304,7 @@ class CommandHandler(object):
         return
 
     def __init__(self):
+        """Initializer."""
         self._manifest = None
         self._current_dir = _os.getcwd()
         self._repo_buddy_dir = _os.path.join(self._current_dir, '.repobuddy')
@@ -224,15 +316,34 @@ class CommandHandler(object):
         return
 
     def get_handlers(self):
+        """Get the command handlers.
+
+        :returns: Dictionary with command names as keys and the methods as
+            values.
+        :rtype: dict
+
+        """
         handlers = {}
         handlers['init'] = self.init_command_handler
         handlers['status'] = self.status_command_handler
         return handlers
 
     def init_command_handler(self, args):
+        """Handler for the ``init`` command.
+
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on errors.
+
+        """
         self._exec_with_lock(self._exec_init, args)
         return
 
     def status_command_handler(self, _args):
+        """Handler for the ``status`` command.
+
+        :returns: None
+        :raises: :exc:`CommandHandlerError` on errors.
+
+        """
         self._exec_with_lock(self._exec_status)
         return
