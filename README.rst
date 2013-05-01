@@ -23,9 +23,10 @@ Build Status
 ------------
 **Branch dev ⇒** |dev-travis-status|
 
-.. |dev-travis-status| image:: https://travis-ci.org/Tuxdude/repobuddy.png?branch=dev
-    :target: `travis-build-status`_
-    :alt: Build Status
+.. |dev-travis-status| image::
+   https://travis-ci.org/Tuxdude/repobuddy.png?branch=dev
+   :target: `travis-build-status`_
+   :alt: Build Status
 .. _travis-build-status: https://travis-ci.org/Tuxdude/repobuddy
 
 Bug Reports and Feature Requests
@@ -38,7 +39,18 @@ Contact Info
 ------------
 Ash (Tuxdude) <tuxdude.github@gmail.com>
 
-License
--------
-RepoBuddy sources are released under GNU LGPL v3 license. Feel free to
-redistribute and/or modify under the same or equivalent license.
+Copyright and License
+---------------------
+Copyright (C) 2013 Ash (Tuxdude) <tuxdude.github@gmail.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
