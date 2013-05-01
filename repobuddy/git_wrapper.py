@@ -37,9 +37,9 @@ class GitWrapperError(RepoBuddyBaseException):
 
     """Exception raised by :class:`GitWrapper`.
 
-    :ivar exit_prog_without_error: Set to ``True`` if :class:`ArgParser`
-        completed parsing the command line arguments without any errors,
-        otherwise ``False``.
+    :ivar is_git_error: Set to ``True`` if :class:`GitWrapper` got back a
+        non-zero status after executing of any of the git commands, otherwise
+        ``False``.
 
     """
 
@@ -54,8 +54,9 @@ class GitWrapper(object):
 
     """Helper for invoking ``git``.
 
-    Provides a way to access and/or control the state of a git repo. It runs
-    the ``git`` commands directly in the work-tree.
+    Provides a way to access and/or control the state of a git repository.
+    Internally, it executes ``git`` commands in the work-tree for various
+    operations.
 
     """
 
@@ -89,6 +90,7 @@ class GitWrapper(object):
               not both, the corresponding output as a string.
             - If both ``capture_stdout`` and ``capture_stderr`` are ``False``,
               None.
+        :rtype: str or Tuple
         :raises: :exc:`GitWrapperError` if the ``git`` command executed
             returns a non-zero status.
 
@@ -159,6 +161,7 @@ class GitWrapper(object):
         :returns: None
         :raises: :exc:`GitWrapperError` if ``base_dir`` is not an absolute
             path.
+
         """
         if not _os.path.isabs(base_dir):
             raise GitWrapperError(
@@ -167,10 +170,23 @@ class GitWrapper(object):
         self._base_dir = base_dir
         return
 
-    # Clone the git repo at remote_url checking out branch
-    # Equivalent of git clone -b branch remote_url
     # It also changes the current Dir to dest_dir
     def clone(self, remote_url, branch, dest_dir):
+        """Clone a repo.
+
+        Executes ``git clone -b branch remote_url dest_dir``. At the end of
+        the ``clone`` operation, the working directory is changed to
+        ``dest_dir``.
+
+        :param remote_url: URL of the repository.
+        :type remote_url: str
+        :param branch: Branch to checkout after the clone.
+        :type branch: str
+        :dest_dir: Destination path to store the cloned repository.
+        :returns: None
+        :raises: :exc:`GitWrapperError` if the ``git clone`` command fails.
+
+        """
         self._exec_git('clone -b %s %s %s' % (branch, remote_url, dest_dir),
                        no_work_tree=True, no_git_dir=True)
         if _os.path.isabs(dest_dir):
@@ -180,10 +196,29 @@ class GitWrapper(object):
         return
 
     def update_index(self):
+        """Refresh the index.
+
+        Executes ``git update-index -q --ignore-submodules --refresh``.
+
+        :returns: None
+        :raises: :exc:`GitWrapperError` if the ``git update-index`` command
+            fails.
+
+        """
         self._exec_git('update-index -q --ignore-submodules --refresh')
         return
 
     def get_untracked_files(self):
+        """Get a list of all untracked files in the repository.
+
+        Returns the files in ``git ls-files --exclude-standard --others --``
+        as a list.
+
+        :returns: List of untracked files.
+        :rtype: list of str
+        :raises: :exc:`GitWrapperError` if the ``git ls-files`` command fails.
+
+        """
         untracked_files = self._exec_git(
             'ls-files --exclude-standard --others --',
             capture_stdout=True)
@@ -193,6 +228,17 @@ class GitWrapper(object):
             return untracked_files.split('\n')
 
     def get_unstaged_files(self):
+        """Get a list of all unstaged files in the repository.
+
+        Returns the files in ``git diff-files --name-status -r
+        --ignore-submodules --`` as a list.
+
+        :returns: List of unstaged files.
+        :rtype: list of str
+        :raises: :exc:`GitWrapperError` if the ``git diff-files`` command
+            fails.
+
+        """
         unstaged_files = self._exec_git(
             'diff-files --name-status -r --ignore-submodules --',
             capture_stdout=True)
@@ -202,8 +248,20 @@ class GitWrapper(object):
             return unstaged_files.split('\n')
 
     def get_uncommitted_staged_files(self):
+        """Get a list of all uncommitted but staged files.
+
+        Returns the files in ``git diff-index --cached --name-status -r
+        --ignore-submodules``.
+
+        :returns: List of uncommitted files in the staging area.
+        :rtype: list of str
+        :raises: :exc:`GitWrapperError` if the ``git diff-index`` command
+            fails.
+
+        """
         uncommited_staged_files = self._exec_git(
-            'diff-index --cached --name-status -r --ignore-submodules HEAD --',
+            'diff-index --cached --name-status -r ' +
+            '--ignore-submodules HEAD --',
             capture_stdout=True)
         if uncommited_staged_files == '':
             return []
@@ -211,6 +269,14 @@ class GitWrapper(object):
             return uncommited_staged_files.split('\n')
 
     def get_current_branch(self):
+        """Get the currently checked out branch.
+
+        :returns: Currently checked out Branch name if ``HEAD`` points to a
+            branch, otherwise ``None``
+        :rtype: str
+        :raises: :exc:`GitWrapperError` on errors.
+
+        """
         try:
             out_msg = self._exec_git('symbolic-ref HEAD',
                                      capture_stdout=True,
@@ -230,6 +296,15 @@ class GitWrapper(object):
         return
 
     def get_current_tag(self):
+        """Get the currently checked out tag.
+
+        :returns: The tag name which is currently checked out, ``None``
+            otherwise. If the commit pointed by ``HEAD`` contains more than
+            one tag, the returned tag name could be any one of those tags.
+        :rtype: str
+        :raises: :exc:`GitWrapperError` on errors.
+
+        """
         try:
             out_msg = self._exec_git(
                 'name-rev --name-only --tags --no-undefined HEAD',
