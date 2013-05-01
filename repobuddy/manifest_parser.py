@@ -15,6 +15,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.manifest_parser
+   :platform: Unix, Windows
+   :synopsis: Classes to parse the ``repobuddy`` manifest.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import copy as _copy
 import xml.sax as _sax
@@ -23,13 +30,29 @@ from repobuddy.utils import EqualityBase, RepoBuddyBaseException
 
 
 class ManifestParserError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`ManifestParser`."""
+
     def __init__(self, error_str):
         super(ManifestParserError, self).__init__(error_str)
         return
 
 
 class Repo(EqualityBase):
+
+    """Represents the Repository in the manifest."""
+
     def __init__(self, url=None, branch=None, dest=None):
+        """Initializer.
+
+        :param url: URL of the repository.
+        :type url: str
+        :param branch: Name of the branch to checkout.
+        :type branch: str
+        :dest: Destination directory.
+        :type dest: str
+
+        """
         self.url = url
         self.branch = branch
         self.dest = dest
@@ -44,7 +67,18 @@ class Repo(EqualityBase):
 
 
 class ClientSpec(EqualityBase):
+
+    """Represents the Client Spec in the manifest."""
+
     def __init__(self, name=None, repo_list=None):
+        """Initializer.
+
+        :param name: Name of the client spec.
+        :type name: str
+        :param repo_list: List of Repositories in the manifest.
+        :type: list of :class:`Repo`
+
+        """
         self.name = name
         if not repo_list is None:
             self.repo_list = repo_list[:]
@@ -61,7 +95,18 @@ class ClientSpec(EqualityBase):
 
 
 class Manifest(EqualityBase):
+
+    """Represents the manifest."""
+
     def __init__(self, default_client_spec=None, client_spec_list=None):
+        """Initializer.
+
+        :param default_client_spec: Default client spec.
+        :type default_client_spec: str
+        :param client_spec_list: List of client specs.
+        :type client_spec_list: list of :class:`ClientSpec`
+
+        """
         self.default_client_spec = default_client_spec
         if not client_spec_list is None:
             self.client_spec_list = client_spec_list[:]
