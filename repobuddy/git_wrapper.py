@@ -16,7 +16,7 @@
 #   limitations under the License.
 #
 """
-.. module: git_wrapper
+.. module: repobuddy.git_wrapper
    :platform: Unix, Windows
    :synopsis: Helper classes to run the git commands for ``repobuddy``.
 .. moduleauthor: Ash <tuxdude.github@gmail.com>

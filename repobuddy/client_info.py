@@ -16,7 +16,7 @@
 #   limitations under the License.
 #
 """
-.. module: client_info
+.. module: repobuddy.client_info
    :platform: Unix, Windows
    :synopsis: Parses/Stores/Retrieves client specific configuration.
 .. moduleauthor: Ash <tuxdude.github@gmail.com>

@@ -16,7 +16,7 @@
 #   limitations under the License.
 #
 """
-.. module: arg_parser
+.. module: repobuddy.arg_parser
    :platform: Unix, Windows
    :synopsis: Helper classes to parse ``repobuddy`` command line arguments.
 .. moduleauthor: Ash <tuxdude.github@gmail.com>
