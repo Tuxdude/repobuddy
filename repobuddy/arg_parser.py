@@ -48,8 +48,6 @@ class ArgParserError(RepoBuddyBaseException):
         return
 
 
-# Class derived from argparse.ArgumentParser just to override the error method
-# and display the help message on errors
 class _MasterParser(_argparse.ArgumentParser):
 
     """A customized argument parser class.
@@ -152,7 +150,6 @@ class ArgParser(object):
                 self._help_command_parser.format_help())
         return
 
-    # Setup the master and the sub-parsers for each of the commands
     def _setup_parsers(self, handlers):
         """Configure the argument parsers.
 
@@ -226,7 +223,6 @@ class ArgParser(object):
         self._setup_parsers(handlers)
         return
 
-    # Parse
     def parse(self, args):
         """Parse the command line arguments to ``repobuddy``.
 
