@@ -39,12 +39,18 @@ class GitWrapper(object):
                   command,
                   capture_stdout=False,
                   capture_stderr=False,
-                  is_clone=False):
-        if is_clone:
-            git_command = _shlex.split('git ' + command)
-        else:
-            git_command = _shlex.split(
-                'git --work-tree=. --git-dir=.git ' + command)
+                  no_work_tree=False,
+                  no_git_dir=False):
+        git_command = 'git '
+
+        if not no_work_tree:
+            git_command += '--work-tree=. '
+
+        if not no_git_dir:
+            git_command += '--git-dir=.git '
+
+        git_command += command
+
         Logger.debug('Exec: git %s' % command)
         try:
             kwargs = {}
@@ -54,7 +60,7 @@ class GitWrapper(object):
                 kwargs['stderr'] = _subprocess.PIPE
 
             proc = _subprocess.Popen(   # pylint: disable=W0142
-                git_command,
+                _shlex.split(git_command),
                 cwd=self._base_dir,
                 **kwargs)
 
@@ -111,7 +117,7 @@ class GitWrapper(object):
     # It also changes the current Dir to dest_dir
     def clone(self, remote_url, branch, dest_dir):
         self._exec_git('clone -b %s %s %s' % (branch, remote_url, dest_dir),
-                       is_clone=True)
+                       no_work_tree=True, no_git_dir=True)
         if _os.path.isabs(dest_dir):
             self._base_dir = dest_dir
         else:
