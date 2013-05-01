@@ -17,6 +17,13 @@
 #   License along with this program.  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
+"""
+.. module: git_wrapper
+   :platform: Unix, Windows
+   :synopsis: Helper classes to run the git commands for ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import os as _os
 import re as _re
@@ -27,6 +34,15 @@ from repobuddy.utils import Logger, RepoBuddyBaseException
 
 
 class GitWrapperError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`GitWrapper`.
+
+    :ivar exit_prog_without_error: Set to ``True`` if :class:`ArgParser`
+        completed parsing the command line arguments without any errors,
+        otherwise ``False``.
+
+    """
+
     def __init__(self, error_str, is_git_error, git_error_msg=''):
         super(GitWrapperError, self).__init__(error_str)
         self.is_git_error = is_git_error
@@ -35,12 +51,48 @@ class GitWrapperError(RepoBuddyBaseException):
 
 
 class GitWrapper(object):
+
+    """Helper for invoking ``git``.
+
+    Provides a way to access and/or control the state of a git repo. It runs
+    the ``git`` commands directly in the work-tree.
+
+    """
+
     def _exec_git(self,
                   command,
                   capture_stdout=False,
                   capture_stderr=False,
                   no_work_tree=False,
                   no_git_dir=False):
+        """Execute the git command.
+
+        :param command: The command string.
+        :type command: str
+        :param capture_stdout: If ``True``, ``stdout`` is captured, otherwise
+            not.
+        :type capture_stdout: Boolean
+        :param capture_stderr: If ``True``, ``stderr` is captured, otherwise
+            not.
+        :param no_work_tree: If ``False``, ``--work-tree=.`` command line
+            argument is passed to ``git``, otherwise not.
+        :type no_work_tree: Boolean
+        :param no_git_dir: If ``False``, ``--git-dir=.git`` command line
+            argument is passed to ``git``, otherwise not.
+        :type no_git_dir: Boolean
+        :returns: Depends on the parameters to this method:
+
+            - If both ``capture_stdout`` are ``capture_stderr`` are ``True``,
+              a tuple with the corresponding strings as output, i.e.
+              ``(stdout, stderr)``
+            - If one of ``capture_stdout`` and ``capture_stderr`` is True, but
+              not both, the corresponding output as a string.
+            - If both ``capture_stdout`` and ``capture_stderr`` are ``False``,
+              None.
+        :raises: :exc:`GitWrapperError` if the ``git`` command executed
+            returns a non-zero status.
+
+        """
         git_command = 'git '
 
         if not no_work_tree:
@@ -99,17 +151,20 @@ class GitWrapper(object):
             raise GitWrapperError(str(err), is_git_error=False)
         return
 
-    # Constructor
-    # base_dir - is the base directory of the git repo
     def __init__(self, base_dir):
+        """Initializer.
+
+        :param base_dir: Absolute path of the git repository work-tree.
+        :type base_dir: str
+        :returns: None
+        :raises: :exc:`GitWrapperError` if ``base_dir`` is not an absolute
+            path.
+        """
         if not _os.path.isabs(base_dir):
             raise GitWrapperError(
                 'Error: base_dir \'' + base_dir +
                 '\' needs to be an absolute path')
         self._base_dir = base_dir
-        return
-
-    def __del__(self):
         return
 
     # Clone the git repo at remote_url checking out branch
