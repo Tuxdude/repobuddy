@@ -15,6 +15,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.main
+   :platform: Unix, Windows
+   :synopsis: Module to define the entry point for ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import sys as _sys
 
@@ -24,6 +31,13 @@ from repobuddy.utils import Logger
 
 
 def run_repobuddy():
+    """Invoke repobuddy with the command line arguments.
+
+    Exits with status ``1`` on errors, ``0`` otherwise.
+
+    returns: None
+
+    """
     # Initialize the Command Handler core
     command_handler = CommandHandler()
     handlers = command_handler.get_handlers()

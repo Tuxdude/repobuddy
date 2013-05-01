@@ -15,6 +15,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.globals
+   :platform: Unix, Windows
+   :synopsis: Global Definitions used by the rest of ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 from repobuddy.version import __version__
 
@@ -22,12 +29,18 @@ from repobuddy.utils import RepoBuddyBaseException
 
 
 class HelpStringsError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`HelpStrings`."""
+
     def __init__(self, error_str):
         super(HelpStringsError, self).__init__(error_str)
         return
 
 
 class HelpStrings:  # pylint: disable=W0232
+
+    """Definition of various strings used by the rest of ``repobuddy``."""
+
     PROGRAM_DESCRIPTION = 'Multi-repo manager for Git'
     PROGRAM_NAME = 'repobuddy'
     PROGRAM_VERSION = '%(prog)s ' + __version__
@@ -42,4 +55,5 @@ class HelpStrings:  # pylint: disable=W0232
     STATUS_COMMAND = 'Show status of the current client config'
 
     def __new__(cls):
+        """Ensure this class should not be instantiated."""
         raise HelpStringsError('This class should not be instantiated')
