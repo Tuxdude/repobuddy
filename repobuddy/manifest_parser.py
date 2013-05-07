@@ -126,15 +126,30 @@ class Manifest(EqualityBase):
 # Each client Spec - a list of repos
 # Each repo - a dict with following keys { Url, Branch, Destination }
 class _XmlContentHandler(_sax.ContentHandler):
+
+    """Handler for the SAX XML parser events.
+
+    Helps in parsing and storing the information from the manifest.
+
+    """
+
     def _validate_manifest(self):
+        """Validate the current manifest.
+
+        :returns: None
+        :raises: :exc:`ManifestParserError` on errors.
+
+        """
         # Verify that default_client_spec is set
         if self._manifest.default_client_spec == '':
             raise ManifestParserError(
                 'Error: default_client_spec cannot be empty')
+
         # Verify that there is at least one element in the client_spec_list
         if self._manifest.client_spec_list is None:
             raise ManifestParserError(
                 'Error: There should be at least one valid Client Spec')
+
         # Verify default_client_spec is part of client_spec_list
         # Check for duplicate names
         found_default_client_spec = False
@@ -185,6 +200,7 @@ class _XmlContentHandler(_sax.ContentHandler):
                         'has an empty Repo \'Destination\'')
 
             found_client_specs.add(client_spec.name)
+
         if not found_default_client_spec:
             raise ManifestParserError(
                 'Error: Unable to find the Client Spec \'' +
@@ -193,6 +209,7 @@ class _XmlContentHandler(_sax.ContentHandler):
         return
 
     def __init__(self):
+        """Initializer."""
         self._last_repo = None
         self._manifest = None
         self._last_content = None
@@ -200,16 +217,18 @@ class _XmlContentHandler(_sax.ContentHandler):
         _sax.ContentHandler.__init__(self)
         return
 
-    # Overriden methods of _sax.ContentHandler
     def startDocument(self):
+        """Overriden method of :class:`xml.sax.handler.ContentHandler`."""
         self._manifest = Manifest()
         return
 
     def endDocument(self):
+        """Overriden method of :class:`xml.sax.handler.ContentHandler`."""
         self._validate_manifest()
         return
 
     def startElement(self, name, attrs):
+        """Overriden method of :class:`xml.sax.handler.ContentHandler`."""
         if name == 'RepoBuddyManifest':
             try:
                 self._manifest.default_client_spec = \
@@ -235,6 +254,7 @@ class _XmlContentHandler(_sax.ContentHandler):
         return
 
     def endElement(self, name):
+        """Overriden method of :class:`xml.sax.handler.ContentHandler`."""
         if name == 'ClientSpec':
             # Add this clientspec to the manifest
             self._manifest.client_spec_list.append(self._last_client_spec)
@@ -253,19 +273,38 @@ class _XmlContentHandler(_sax.ContentHandler):
         return
 
     def characters(self, content):
+        """Overriden method of :class:`xml.sax.handler.ContentHandler`."""
         self._last_content += str(content)
         return
 
     def get_manifest(self):
+        """Get the manifest.
+
+        :returns: The parsed manifest.
+        :rtype: :class:`Manifest`.
+
+        """
         return self._manifest
 
 
 class ManifestParser(object):
+
+    """Helper class for parsing the manifest XML."""
+
     def __init__(self):
+        """Initializer."""
         self._manifest = None
         return
 
     def parse(self, file_handle):
+        """Parse the manifest from the stream.
+
+        :param file_handle: The stream to parse the manifest from.
+        :type file_handle: File object.
+        :returns: None
+        :raises: :exc:`ManifestParserError` on errors.
+
+        """
         if file_handle is None:
             raise ManifestParserError(
                 'Error: file_handle cannot be None')
@@ -300,4 +339,10 @@ class ManifestParser(object):
         return
 
     def get_manifest(self):
+        """Get the manifest.
+
+        :returns: The parsed manifest.
+        :rtype: :class:`Manifest`.
+
+        """
         return self._manifest
