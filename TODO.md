@@ -3,14 +3,17 @@ RepoBuddy TODO
 
 Command TODOs
 -------------
--   refresh config - re-fetch the xml config file
--   refresh client - fetch the latest for all repos
--   cleanup client - cleanup the .repobuddy dirs in the client
+-   client refresh - fetch the latest for all repos.
+-   client cleanup - cleanup the .repobuddy dirs in the client.
+-   manifest create - Interactively create a new .
+-   manifest edit - Edit a new config.
+-   manifest parse - Parse a config.
+-   manifest refresh - Re-fetch the manifest.
+-   init - Support more ways to fetch the manifest.
 
 General TODOs
 -------------
 -   Means to specify the URL for xml config during init
--   Add unit test for arg_parser
--   Add command specific functional-tests
--   Achieve better unit test and functional-level coverage
--   Better comments and complete usage documentation
+-   Add command_handler tests.
+-   Functional usage cases tests.
+-   Document test code.
