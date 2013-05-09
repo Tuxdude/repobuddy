@@ -15,5 +15,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.version
+   :platform: Unix, Windows
+   :synopsis: Version information for ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 __version__ = '0.2alpha'
