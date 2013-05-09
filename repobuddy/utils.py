@@ -58,6 +58,7 @@ class FileLockError(RepoBuddyBaseException):
 
     :ivar is_time_out: Set to ``True`` if a timeout occurred when trying to
         acquire the lock, ``False`` otherwise.
+
     """
 
     def __init__(self, error_str, is_time_out=False):
@@ -84,6 +85,7 @@ class FileLock(object):
 
     def __init__(self, file_name, timeout=1, delay=.1):
         """Initializer.
+
         :param file_name: Name of the lock file to be created. Filename can be
             either an absolute or a relative file path.
         :type file_name: str
@@ -91,7 +93,10 @@ class FileLock(object):
             in trying to acquire the lock.
             If ``timeout`` seconds have elapsed without
             successfully acquiring the lock, :exc:`FileLockError` is raised.
-        :param
+        :type timeout: float
+        :param delay: Time interval in seconds between 2 successive lock
+            attempts.
+        :type delay: float
 
         """
         self._is_locked = False
@@ -116,6 +121,17 @@ class FileLock(object):
         return
 
     def acquire(self):
+        """Acquire the lock.
+
+        Acquires the lock within the designated ``timeout``, failing
+        which it raises :exc:`FileLockError` with ``is_time_out`` set to
+        ``True``.
+
+        :returns: None
+        :raises: :exc:`FileLockError` on errors. ``is_time_out`` is set to
+            ``True`` only if the designated ``timeout`` has elapsed.
+
+        """
         begin = _time.time()
         while True:
             try:
@@ -137,6 +153,13 @@ class FileLock(object):
         return
 
     def release(self):
+        """Release the lock.
+
+        :returns: None
+        :raises: :exc:`FileLockError` on errors. If the lock file has already
+            been deleted, no exception is raised.
+
+        """
         if self._is_locked:
             _os.close(self._fd)
             try:
@@ -150,14 +173,37 @@ class FileLock(object):
 
 
 class ResourceHelperError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`ResourceHelper`."""
+
     def __init__(self, error_str):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(ResourceHelperError, self).__init__(error_str)
         return
 
 
 class ResourceHelper:   # pylint: disable=W0232
+
+    """A helper class for loading resources."""
+
     @classmethod
     def open_data_file(cls, package_name, file_name):
+        """Get a stream handle to the resource.
+
+        :param package_name: Package name to fetch the resource from.
+        :type package_name: str
+        :param file_name: Filename of the resource.
+        :type file_name: str
+        :returns: A stream object representing the resource file.
+        :raises: :exc:`ResourceHelperError` if unable to locate the resource
+            ``file_name`` in ``package_name``.
+
+        """
         if _pkg_resources.resource_exists(package_name, file_name):
             return _pkg_resources.resource_stream(package_name, file_name)
         else:
@@ -168,6 +214,15 @@ class ResourceHelper:   # pylint: disable=W0232
 
 
 class EqualityBase(object):
+
+    """Rrovides equality comparison operations.
+
+    A base class which provides support for performing equality comparison
+    on the instance. The type and the instance dictionary are used for
+    comparison.
+
+    """
+
     def __eq__(self, other):
         return (type(other) is type(self)) and self.__dict__ == other.__dict__
 
@@ -176,7 +231,16 @@ class EqualityBase(object):
 
 
 class LoggerError(Exception):
+
+    """Exception raised by :class:`Logger`."""
+
     def __init__(self, error_str):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(LoggerError, self).__init__(error_str)
         self._error_str = error_str
         return
@@ -189,6 +253,17 @@ class LoggerError(Exception):
 
 
 class Logger:   # pylint: disable=W0232
+
+    """Provides logging support for the rest of ``repobuddy``.
+
+    Currently supported log levels are:
+
+    -   DEBUG
+    -   MESSAGE
+    -   ERROR
+
+    """
+
     disable_debug = True
     debug_stream = _sys.stdout
     msg_stream = _sys.stdout
@@ -199,6 +274,17 @@ class Logger:   # pylint: disable=W0232
 
     @classmethod
     def msg(cls, msg, append_new_line=True):
+        """Add a log entry of level ``MESSAGE``.
+
+        :param msg: The message to log.
+        :type msg: str
+        :param append_new_line: Appends a new line after the log message when
+            set to ``True``.
+        :type append_new_line: Boolean
+        :returns: None
+        :raises: :exc:`LoggerError` on errors.
+
+        """
         if append_new_line:
             cls.msg_stream.write(msg + '\n')
         else:
@@ -207,6 +293,17 @@ class Logger:   # pylint: disable=W0232
 
     @classmethod
     def debug(cls, msg, append_new_line=True):
+        """Add a log entry of level ``DEBUG``.
+
+        :param msg: The message to log.
+        :type msg: str
+        :param append_new_line: Appends a new line after the log message when
+            set to ``True``.
+        :type append_new_line: Boolean
+        :returns: None
+        :raises: :exc:`LoggerError` on errors.
+
+        """
         if not cls.disable_debug:
             if append_new_line:
                 cls.debug_stream.write(msg + '\n')
@@ -216,6 +313,17 @@ class Logger:   # pylint: disable=W0232
 
     @classmethod
     def error(cls, msg, append_new_line=True):
+        """Add a log entry of level ``ERROR``.
+
+        :param msg: The message to log.
+        :type msg: str
+        :param append_new_line: Appends a new line after the log message when
+            set to ``True``.
+        :type append_new_line: Boolean
+        :returns: None
+        :raises: :exc:`LoggerError` on errors.
+
+        """
         if append_new_line:
             cls.error_stream.write(msg + '\n')
         else:
