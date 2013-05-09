@@ -8,6 +8,7 @@ COVERAGE_HTML_DIR   := coverage-html-report
 BROWSER             := xdg-open
 INSTALL_TEST_DEPS   := $(TOP_DIR)/repobuddy/tests/install-deps.sh
 SRCS                := $(shell find . \( -path ./build \) -prune -o -name '*.py' -print)
+SRCS_NO_TESTS       := $(shell find repobuddy -maxdepth 1 -name '*.py' -print)
 PYTHON_VERSION      := $($(PYTHON) --version 2>&1 | sed 's/^Python \([0-9]\.[0-9]\)\.[0-9]$/\1/')
 CLEANUP_FILES       := \
                        $$HOME/.local/bin/repobuddy \
@@ -43,10 +44,14 @@ docs:
 	@$(MAKE) -C ./docs clean && $(MAKE) -C ./docs html
 
 pep8:
+	@echo "Running $@ ..."
 	@$(PEP8) $(SRCS)
+	@echo
 
 pep257:
-	@$(PEP257) --explain $(SRCS)
+	@echo "Running $@ ..."
+	@$(PEP257) --explain $(SRCS_NO_TESTS)
+	@echo
 
 pylint:
 	@$(PYLINT) --rcfile=.pylintrc --reports=n --include-ids=y $(SRCS)
@@ -65,14 +70,14 @@ coverage:
 
 ifeq ($(REPOBUDDY_TESTS),)
 test:
-	@$(MAKE) coverage || ($(MAKE) pep8 && /bin/false)
-	@$(MAKE) pep8
+	@$(MAKE) coverage || ($(MAKE) pep8 pep257 && /bin/false)
+	@$(MAKE) pep8 pep257
 
 else
 coverage:REPOBUDDY_TESTS=
 
 test:
-	@./run_tests.py && $(MAKE) pep8 || ($(MAKE) pep8 && /bin/false)
+	@./run_tests.py && $(MAKE) pep8 pep257 || ($(MAKE) pep8 pep257 && /bin/false)
 endif
 
 .PHONY: dev-install dev-uninstall sdist install install-test-deps clean docs
