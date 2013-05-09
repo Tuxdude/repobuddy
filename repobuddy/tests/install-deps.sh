@@ -6,4 +6,4 @@ if python -c 'import sys as _sys; _sys.exit(_sys.version_info[0] != 2)'; then
         pip install argparse ordereddict unittest2
     fi
 fi
-pip install coverage pep8
+pip install coverage pep8 pep257
