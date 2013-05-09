@@ -23,4 +23,4 @@
 
 """
 
-__version__ = '0.2alpha'
+__version__ = '0.3beta'
