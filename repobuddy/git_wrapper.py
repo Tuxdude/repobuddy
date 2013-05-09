@@ -71,7 +71,7 @@ class GitWrapper(object):
         :param capture_stdout: If ``True``, ``stdout`` is captured, otherwise
             not.
         :type capture_stdout: Boolean
-        :param capture_stderr: If ``True``, ``stderr` is captured, otherwise
+        :param capture_stderr: If ``True``, ``stderr`` is captured, otherwise
             not.
         :param no_work_tree: If ``False``, ``--work-tree=.`` command line
             argument is passed to ``git``, otherwise not.
