@@ -15,6 +15,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.utils
+   :platform: Unix, Windows
+   :synopsis: Utility classes used by the rest of ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import errno as _errno
 import os as _os
@@ -24,7 +31,16 @@ import time as _time
 
 
 class RepoBuddyBaseException(Exception):
+
+    """Base class of all exceptions in ``repobuddy``."""
+
     def __init__(self, error_str):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(RepoBuddyBaseException, self).__init__(error_str)
         self._error_str = str(error_str)
         return
@@ -37,7 +53,23 @@ class RepoBuddyBaseException(Exception):
 
 
 class FileLockError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`FileLock`.
+
+    :ivar is_time_out: Set to ``True`` if a timeout occurred when trying to
+        acquire the lock, ``False`` otherwise.
+    """
+
     def __init__(self, error_str, is_time_out=False):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+        :param is_time_out: If ``True``, the error is because of a timeout in
+            acquiring the lock. The ``is_time_out`` instance variable in the
+            exception object is set to this value.
+
+        """
         super(FileLockError, self).__init__(error_str)
         self.is_time_out = is_time_out
         return
@@ -47,7 +79,21 @@ class FileLockError(RepoBuddyBaseException):
 # noqa http://www.evanfosmark.com/2009/01/cross-platform-file-locking-support-in-python/ # pylint: disable=C0301
 # Have made minor changes to the original version
 class FileLock(object):
+
+    """A mutual exclusion primitive using lock files."""
+
     def __init__(self, file_name, timeout=1, delay=.1):
+        """Initializer.
+        :param file_name: Name of the lock file to be created. Filename can be
+            either an absolute or a relative file path.
+        :type file_name: str
+        :param timeout: Maxium time in seconds until :meth:`acquire()` blocks
+            in trying to acquire the lock.
+            If ``timeout`` seconds have elapsed without
+            successfully acquiring the lock, :exc:`FileLockError` is raised.
+        :param
+
+        """
         self._is_locked = False
         self._lock_file = _os.path.join(file_name)
         self._timeout = timeout
