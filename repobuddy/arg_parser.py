@@ -41,6 +41,16 @@ class ArgParserError(RepoBuddyBaseException):
     """
 
     def __init__(self, error_str=None, exit_prog_without_error=False):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+        :param exit_prog_without_error: If ``True`` indicates that the program
+            exited without any errors, otherwise not. The instance variable
+            ``exit_prog_without_error`` stores this value.
+        :type exit_prog_without_error: Boolean
+
+        """
         super(ArgParserError, self).__init__(error_str)
         self.exit_prog_without_error = exit_prog_without_error
         return

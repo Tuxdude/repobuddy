@@ -33,6 +33,12 @@ class HelpStringsError(RepoBuddyBaseException):
     """Exception raised by :class:`HelpStrings`."""
 
     def __init__(self, error_str):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(HelpStringsError, self).__init__(error_str)
         return
 

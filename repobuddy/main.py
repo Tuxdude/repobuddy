@@ -33,7 +33,7 @@ from repobuddy.utils import Logger
 def run_repobuddy():
     """Invoke repobuddy with the command line arguments.
 
-    Exits with status ``1`` on errors, ``0`` otherwise.
+    The application exits with status ``1`` on errors, ``0`` otherwise.
 
     returns: None
 

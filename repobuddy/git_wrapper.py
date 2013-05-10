@@ -42,6 +42,12 @@ class GitWrapperError(RepoBuddyBaseException):
     """
 
     def __init__(self, error_str, is_git_error, git_error_msg=''):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(GitWrapperError, self).__init__(error_str)
         self.is_git_error = is_git_error
         self.git_error_msg = git_error_msg
