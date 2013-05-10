@@ -11,6 +11,7 @@ Contents:
 
    intro
    codedoc
+   testcodedoc
 
 Indices and tables
 ==================

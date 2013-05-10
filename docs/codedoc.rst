@@ -8,15 +8,15 @@ Code Documentation
 
 .. automodule:: repobuddy
 
-:mod:`repobuddy.client_info` -- Client Info
--------------------------------------------
-
-.. automodule:: repobuddy.client_info
-
 :mod:`repobuddy.arg_parser` - Argument Parser
 ---------------------------------------------
 
 .. automodule:: repobuddy.arg_parser
+
+:mod:`repobuddy.client_info` -- Client Info
+-------------------------------------------
+
+.. automodule:: repobuddy.client_info
 
 :mod:`repobuddy.command_handler` - Command Handler
 --------------------------------------------------
