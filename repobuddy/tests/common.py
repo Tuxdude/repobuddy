@@ -15,6 +15,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
+"""
+.. module: repobuddy.tests.common
+   :platform: Unix, Windows
+   :synopsis: Provides the test framework used by the tests for ``repobuddy``.
+.. moduleauthor: Ash <tuxdude.github@gmail.com>
+
+"""
 
 import os as _os
 import shlex as _shlex
@@ -41,14 +48,39 @@ from repobuddy.utils import RepoBuddyBaseException, Logger
 
 
 class ShellError(RepoBuddyBaseException):
+
+    """Exception raised by :class:`ShellHelper`."""
+
     def __init__(self, error_str):
+        """Initializer.
+
+        :param error_str: The error string to store in the exception.
+        :type error_str: str
+
+        """
         super(ShellError, self).__init__(error_str)
         return
 
 
 class ShellHelper:  # pylint: disable=W0232
+
+    """Helper for performing shell operations."""
+
     @classmethod
     def exec_command(cls, command, base_dir, debug_output=True):
+        """Execute a command.
+
+        :param command: The command to execute.
+        :type command: str
+        :param base_dir: The base directory path.
+        :type base_dir: str
+        :param debug_output: If set to ``False``, the output of the command is
+            **NOT** printed on ``stdout`` and ``stderr``.
+        :returns: None
+        :raises: :exc:`ShellError` if the program's execution returned a
+            non-zero return or any other errors.
+
+        """
         Logger.msg('>> ' + ' '.join(command))
         try:
             kwargs = {}
@@ -77,6 +109,15 @@ class ShellHelper:  # pylint: disable=W0232
 
     @classmethod
     def read_file_as_string(cls, filename):
+        """Read the contents of the file as a string and return it.
+
+        :param filename: The name of the file to read.
+        :type filename: str
+        :returns: Contents of the file.
+        :rtype: str
+        :raises: :exc:`ShellError` on errors.
+
+        """
         try:
             with open(filename, 'r') as file_handle:
                 data = file_handle.read()
